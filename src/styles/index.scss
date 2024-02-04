@@ -1,0 +1,14 @@
+@use './variables.scss';
+
+html,
+body {
+    margin: 0;
+    font-family: variables.$font-family;
+    letter-spacing: 0.01em;
+}
+
+html,
+body,
+#root {
+    height: 100vh;
+}

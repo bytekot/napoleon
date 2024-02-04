@@ -4,18 +4,25 @@ import { REQUEST_STATUSES } from '../../../constants/request-statuses'
 import { createTask } from './thunks/create-task'
 import { Task } from '../../../types'
 
-interface TaskEntities {
+type TaskEntities = {
     [key: string]: Task
+}
+
+export type TaskState = {
+    entities: TaskEntities
+    ids: string[]
+    status: string
+    error: string | null
 }
 
 export const taskSlice = createSlice({
     name: 'task',
     initialState: {
-        entities: {} as TaskEntities,
-        ids: [] as string[],
+        entities: {},
+        ids: [],
         status: REQUEST_STATUSES.idle,
-        error: null as string | null
-    },
+        error: null,
+    } as TaskState,
     reducers: {},
     extraReducers: builder => {
         builder

@@ -1,5 +1,5 @@
 export const TASK_STATUSES = {
-    todo: 'todo',
-    planed: 'planed',
+    unplanned: 'unplanned',
+    planned: 'planned',
     completed: 'completed',
 }

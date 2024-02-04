@@ -1,11 +1,17 @@
-import { RootState } from '@reduxjs/toolkit/query'
+import { State } from '../../types'
 
-export const selectTaskModule = (state: RootState) => state.task
+export const selectTaskModule = (state: State) => state.task
 
-export const selectTaskEntities = (state: RootState) => selectTaskModule(state).entities
+export const selectTaskEntities = (state: State) => selectTaskModule(state).entities
 
-export const selectTaskIds = (state: RootState) => selectTaskModule(state).ids
+export const selectTaskIds = (state: State) => selectTaskModule(state).ids
 
-export const selectTaskLoadingStatus = (state: RootState) => selectTaskModule(state).status
+export const selectTaskLoadingStatus = (state: State) => selectTaskModule(state).status
 
-export const selectTaskById = (state: RootState, id: string) => selectTaskEntities(state)[id]
+export const selectTaskById = (state: State, id: string) => selectTaskEntities(state)[id]
+
+export const selectUnplannedTaskIds = (state: State) =>
+    selectTaskIds(state).filter(id => !selectTaskById(state, id).dueDate)
+
+export const selectTaskIdsByDueDate = (state: State, dueDate: string) =>
+    selectTaskIds(state).filter(id => selectTaskById(state, id).dueDate === dueDate)

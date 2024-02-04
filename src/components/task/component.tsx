@@ -1,5 +1,5 @@
-import { Task as TaskType } from '../../store/entities/task/thunks/get-tasks'
+import { Task as TaskType } from '../../types'
 
 export const Task = ({ task }: { task: TaskType }) => {
-    return <div>{task.name}</div>
+    return <div>{task.name || '—'}</div>
 }

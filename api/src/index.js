@@ -18,6 +18,7 @@ router.post('/task', (request, response) => {
     }
 
     tasks.push(newTask)
+    console.log(`Created new task: ${newTask.id}`)
   }
 
   reply(response, newTask)

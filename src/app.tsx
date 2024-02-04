@@ -1,8 +1,11 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
+import { Provider } from 'react-redux'
+import store from './store'
+import { MainPage } from './pages/main/component'
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    Napoleon
-  </React.StrictMode>,
-)
+export function App () {
+    return (
+        <Provider store={store}>
+            <MainPage />
+        </Provider>
+    )
+}

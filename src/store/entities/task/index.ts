@@ -3,6 +3,7 @@ import { getTasks } from './thunks/get-tasks'
 import { REQUEST_STATUSES } from '../../../constants/request-statuses'
 import { createTask } from './thunks/create-task'
 import { Task } from '../../../types'
+import { editTask } from './thunks/edit-task'
 
 type TaskEntities = {
     [key: string]: Task
@@ -47,10 +48,10 @@ export const taskSlice = createSlice({
             .addCase(createTask.fulfilled, (state, { payload }) => {
                 state.entities[payload.id] = payload
                 state.ids.push(payload.id)
-                state.status = REQUEST_STATUSES.success
             })
-            // .addCase(createTask.pending, state => {
-            //     state.status = REQUEST_STATUSES.pending
-            // })
+
+            .addCase(editTask.fulfilled, (state, { payload }) => {
+                state.entities[payload.id] = payload
+            })
     },
 })

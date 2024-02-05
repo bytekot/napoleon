@@ -1,0 +1,22 @@
+@use '../../styles/variables';
+
+$max-width: 800px;
+
+.layout {
+    background-color: #eee;
+    // display: grid;
+    // grid-template-rows: auto 1fr auto;
+    height: 100%;
+    margin: 0 auto;
+
+    .header {
+        position: sticky;
+        top: 0;
+    }
+
+    main {
+        width: 100%;
+        margin: 0 auto;
+        // padding: 15px;
+    }
+}

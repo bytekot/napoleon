@@ -5,6 +5,9 @@ import { TasksContainer } from '../../components/tasks/container'
 import { TASK_STATUSES } from '../../constants/task-statuses'
 import { useEffect } from 'react'
 import { getTasks } from '../../store/entities/task/thunks/get-tasks'
+import { Layout } from '../../components/layout/component'
+
+import styles from './styles.module.scss'
 
 export function MainPage () {
     const dispatch = useDispatch()
@@ -14,10 +17,14 @@ export function MainPage () {
     })
 
     return (
-        <div>
-            <TaskForm />
-            <TasksContainer status={TASK_STATUSES.unplanned} />
-            <CalendarWeek />
-        </div>
+        <Layout>
+            <div className={styles.mainPage}>
+                <div>
+                    <TaskForm />
+                    <TasksContainer status={TASK_STATUSES.unplanned} />
+                </div>
+                <CalendarWeek />
+            </div>
+        </Layout>
     )
 }

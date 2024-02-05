@@ -1,3 +1,5 @@
+import styles from './styles.module.scss'
+
 interface Button {
     disabled?: boolean
     onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
@@ -11,6 +13,7 @@ export const Button = ({
 }: Button) => (
 
     <button
+        className={styles.button}
         disabled={disabled}
         onClick={onClick}
     >

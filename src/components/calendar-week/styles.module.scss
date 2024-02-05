@@ -1,10 +1,11 @@
-.root {
+.calendarWeek {
   display: flex;
   flex-direction: row;
+  align-items: stretch;
+  justify-content: space-evenly;
 
-  div {
-    height: 100%;
-    width: 100%;
-    border-right: 1px solid #ddd;
-  }
+  div:first-child {
+    // border-right: 1px solid #ddd;
+    padding: 10px;
+  } 
 }

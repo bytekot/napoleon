@@ -14,7 +14,7 @@ export function CalendarWeek () {
     })
 
     return (
-        <div className={styles.root}>
+        <div className={styles.calendarWeek}>
             {
                 week.map(day => <CalendarWeekDayContainer key={day.date} day={day} />)
             }

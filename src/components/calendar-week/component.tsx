@@ -1,5 +1,5 @@
 import { DAYS } from '../../constants/calendar'
-import { CalendarWeekDay } from '../calendar-week-day/component'
+import { CalendarWeekDayContainer } from '../calendar-week-day/container'
 import styles from './styles.module.scss'
 
 export function CalendarWeek () {
@@ -16,7 +16,7 @@ export function CalendarWeek () {
     return (
         <div className={styles.root}>
             {
-                week.map(day => <CalendarWeekDay key={day.date} day={day} />)
+                week.map(day => <CalendarWeekDayContainer key={day.date} day={day} />)
             }
         </div>
     )

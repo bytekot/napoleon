@@ -1,5 +1,11 @@
 import { Task as TaskType } from '../../types'
 
 export const Task = ({ task }: { task: TaskType }) => {
-    return <div>{task.name || '—'}</div>
+    const onDragStart = (event: React.DragEvent) => {
+        event.dataTransfer.setData('taskId', task.id)
+    }
+
+    return (
+        <div draggable onDragStart={onDragStart}>{task.name || '—'}</div>
+    )
 }

@@ -1,2 +1,21 @@
 .calendarWeekDay {
+    height: 100%;
+    padding: 0 10px;
+    border-left: 1px solid #ddd;
+
+    .header {
+        margin-bottom: 15px;
+        padding-top: 10px;
+        letter-spacing: 1px;
+
+        strong {
+            font-size: 28px;
+        }
+    }
+
+    &.today {
+        background: rgba(216, 214, 214, 0.364);
+        box-shadow: inset 1px 1px 2px 0 rgba(0, 0, 0, 0.2),
+                inset -1px -1px 2px 0 rgba(255, 255, 255, 0.5);
+    }
 }

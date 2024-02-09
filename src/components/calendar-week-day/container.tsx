@@ -7,6 +7,7 @@ export function CalendarWeekDayContainer ({ day }: { day: Day }) {
     const dispatch = useDispatch()
     const onDragOver = (event: React.DragEvent) => {
         event.preventDefault()
+        event.dataTransfer.dropEffect = 'move'
     }
     const onDrop = (event: React.DragEvent) => {
         dispatch(editTask({

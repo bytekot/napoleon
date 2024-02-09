@@ -10,35 +10,39 @@
     margin: 0 0 0.75rem 0;
     cursor: pointer;
 
-    .style {
-        width: 10px;
-        position: absolute;
-        left: 0;
-        top: 0;
-        height: 100%;
+    // .style {
+    //     width: 10px;
+    //     position: absolute;
+    //     left: 0;
+    //     top: 0;
+    //     height: 100%;
 
-        &:after {
-            content: "";
-            position: absolute;
-            z-index: 1;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            margin-top: -5px;
-            height: 5px;
-            background: #4e8ad1;
-        }
-    }
+    //     &:after {
+    //         content: "";
+    //         position: absolute;
+    //         z-index: 1;
+    //         top: 100%;
+    //         left: 0;
+    //         width: 100%;
+    //         margin-top: -5px;
+    //         height: 5px;
+    //         background: #4e8ad1;
+    //     }
+    // }
 
-    &:after {
-        content: "";
-        position: absolute;
-        background: #e6e6e6;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        margin-top: -5px;
-        height: 5px;
+    // &:after {
+    //     content: "";
+    //     position: absolute;
+    //     background: #e6e6e6;
+    //     top: 100%;
+    //     left: 0;
+    //     width: 100%;
+    //     margin-top: -5px;
+    //     height: 5px;
+    // }
+
+    &:hover {
+        background-color: #ffffff8a;
     }
 }
 

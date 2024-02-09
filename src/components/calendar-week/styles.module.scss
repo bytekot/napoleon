@@ -1,11 +1,7 @@
 .calendarWeek {
   display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  justify-content: space-evenly;
 
-  div:first-child {
-    // border-right: 1px solid #ddd;
-    padding: 10px;
-  } 
+  div {
+    flex: 1;
+  }
 }

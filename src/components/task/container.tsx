@@ -6,6 +6,14 @@ import { State } from '../../store/types'
 
 export const TaskContainer = ({ taskId }: { taskId: string }) => {
     const task: TaskType = useSelector((state: State) => selectTaskById(state, taskId))
+    const onDragStart = (event: React.DragEvent) => {
+        event.dataTransfer.setData('taskId', task.id)
+        event.dataTransfer.effectAllowed = 'move'
+    }
 
-    return <Task task={task} />
+    return (
+        <span draggable onDragStart={onDragStart}>
+            <Task task={task} />
+        </span>
+    )
 }

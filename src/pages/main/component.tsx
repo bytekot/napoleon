@@ -19,7 +19,7 @@ export function MainPage () {
     return (
         <Layout>
             <div className={styles.mainPage}>
-                <div>
+                <div className={styles.tasks}>
                     <TaskForm />
                     <TasksContainer status={TASK_STATUSES.unplanned} />
                 </div>

@@ -7,4 +7,5 @@ export type Task = {
 export type Day = {
     day: string
     date: string
+    isToday?: boolean
 }

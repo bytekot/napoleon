@@ -1,0 +1,15 @@
+.textArea {
+    background: #ffffffe6;
+    border: none;
+    border-radius: 6px;
+    padding: 10px;
+    resize: none;
+    box-shadow: inset 1px 1px 1px 0 rgba(0, 0, 0, 0.2),
+            inset -1px -1px 1px 0 rgba(255, 255, 255, 0.5);
+
+    &:focus {
+        outline: none;
+        // box-shadow: inset 2px 2px 2px 0 #7daee9,
+        //         inset -2px -2px 2px 0 #7daee9;
+    } 
+}

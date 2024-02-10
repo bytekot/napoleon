@@ -1,12 +1,12 @@
-import { TaskContainer } from '../task/container'
+import { TaskDraggableContainer } from '../task/container'
 
-export function Tasks ({taskIds}: {taskIds: string[]}) {
+import styles from './styles.module.scss'
+
+export function Tasks({ taskIds }: { taskIds: string[] }) {
     return (
-        <div>
+        <div className={styles.tasks}>
             {
-                taskIds.map((taskId: string) => (
-                    <TaskContainer key={taskId} taskId={taskId} />
-                ))
+                taskIds.map((taskId: string) => <TaskDraggableContainer key={taskId} taskId={taskId} />)
             }
         </div>
     )

@@ -8,6 +8,7 @@ import { getTasks } from '../../store/entities/task/thunks/get-tasks'
 import { Layout } from '../../components/layout/component'
 
 import styles from './styles.module.scss'
+import { DragAndDropProvider } from '../../contexts/drag-and-drop/context'
 
 export function MainPage () {
     const dispatch = useDispatch()
@@ -18,13 +19,15 @@ export function MainPage () {
 
     return (
         <Layout>
-            <div className={styles.mainPage}>
-                <div className={styles.tasks}>
-                    <TaskForm />
-                    <TasksContainer status={TASK_STATUSES.unplanned} />
+            <DragAndDropProvider>
+                <div className={styles.mainPage}>
+                    <div className={styles.tasks}>
+                        <TaskForm />
+                        <TasksContainer status={TASK_STATUSES.unplanned} />
+                    </div>
+                    <CalendarWeek />
                 </div>
-                <CalendarWeek />
-            </div>
+            </DragAndDropProvider>
         </Layout>
     )
 }

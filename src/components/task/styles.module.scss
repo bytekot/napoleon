@@ -42,7 +42,7 @@
     // }
 
     &:hover {
-        background-color: #ffffff8a;
+        background-color: rgba(255, 255, 255, 0.83);
     }
 }
 
@@ -52,4 +52,8 @@
     .style {
         background: #7daee9;
     }
+}
+
+.dragged {
+    opacity: 0.5;
 }

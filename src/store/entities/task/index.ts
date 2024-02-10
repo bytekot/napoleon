@@ -53,5 +53,10 @@ export const taskSlice = createSlice({
             .addCase(editTask.fulfilled, (state, { payload }) => {
                 state.entities[payload.id] = payload
             })
+            .addCase(editTask.pending, (state, action) => {
+                const params = action.meta.arg
+
+                state.entities[params.id] = { ...state.entities[params.id], ...params}
+            })
     },
 })

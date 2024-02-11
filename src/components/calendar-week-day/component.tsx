@@ -6,13 +6,13 @@ import styles from './styles.module.scss'
 
 import classNames from 'classnames'
 
-type CalendarWeekDay = {
+interface CalendarWeekDayProps {
     day: Day
     onDragOver: (event: React.DragEvent) => void
     onDrop: (event: React.DragEvent) => void
 }
 
-export function CalendarWeekDay({ day, onDragOver, onDrop } : CalendarWeekDay) {
+export function CalendarWeekDay({ day, onDragOver, onDrop }: CalendarWeekDayProps) {
     return (
         <div
             className={classNames(styles.calendarWeekDay, {

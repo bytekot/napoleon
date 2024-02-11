@@ -1,10 +1,10 @@
-export type Task = {
+export interface Task {
     id: string
     name: string
     dueDate?: string
 }
 
-export type Day = {
+export interface Day {
     day: string
     date: string
     isToday?: boolean

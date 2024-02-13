@@ -8,7 +8,13 @@ import { getDraggedTaskOrder } from '../../utils/calendar'
 import { useState } from 'react'
 import { editTask } from '../../store/entities/task/thunks/edit-task'
 
-export function TasksContainer({ status, dueDate }: { status?: string, dueDate?: string }) {
+interface TasksContainerProps {
+    status?: string
+    dueDate?: string
+    emptyText?: string
+}
+
+export function TasksContainer({ status, dueDate, emptyText }: TasksContainerProps) {
     const [draggedTaskOrder, setDraggedTaskOrder] = useState<number | null>(null)
     const dispatch = useDispatch()
     let selector
@@ -59,6 +65,7 @@ export function TasksContainer({ status, dueDate }: { status?: string, dueDate?:
             ? 'Загрузка...'
             : <Tasks
                 taskIds={taskIds}
+                emptyText={emptyText}
                 draggedTaskOrder={draggedTaskOrder}
                 onDragOver={onDragOver}
                 onDragLeave={onDragLeave}

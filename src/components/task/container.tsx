@@ -20,7 +20,6 @@ export function TaskDraggableContainer ({ taskId, className }: { taskId: string,
         }
         setIsDragged(true)
     }
-
     const onDragEnd = () => setIsDragged(false)
 
     return (

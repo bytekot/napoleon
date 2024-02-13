@@ -4,13 +4,14 @@ import styles from './styles.module.scss'
 
 interface TasksProps {
     taskIds: string[]
+    emptyText?: string
     onDragOver?: (event: React.DragEvent) => void
     onDrop?: (event: React.DragEvent) => void
     onDragLeave?: (event: React.DragEvent) => void
     draggedTaskOrder: number | null
 }
 
-export function Tasks({ taskIds, onDragOver, onDrop, onDragLeave, draggedTaskOrder }: TasksProps) {
+export function Tasks ({ taskIds, emptyText, onDragOver, onDrop, onDragLeave, draggedTaskOrder }: TasksProps) {
     return (
         <div
             data-tasks
@@ -19,6 +20,10 @@ export function Tasks({ taskIds, onDragOver, onDrop, onDragLeave, draggedTaskOrd
             onDragLeave={onDragLeave}
             onDrop={onDrop}
         >
+            {emptyText && !taskIds.length
+                ? <div className={styles.emptyText}>{emptyText}</div>
+                : false
+            }
             {
                 taskIds.map((taskId: string, index: number) => {
                     let className

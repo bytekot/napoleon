@@ -3,43 +3,35 @@ import { selectTaskById } from '../../store/entities/task/selectors'
 import { Task } from './component'
 import { Task as TaskType } from '../../types'
 import { State } from '../../store/types'
-import { useContext, useState } from 'react'
-import { DragAndDropContext } from '../../contexts/drag-and-drop/context'
+import { useState } from 'react'
 
 import styles from './styles.module.scss'
 
-export function TaskContainer ({ taskId, className }: { taskId: string, className?: string }) {
+import classNames from 'classnames'
+
+export function TaskDraggableContainer ({ taskId, className }: { taskId: string, className?: string }) {
     const task: TaskType = useSelector((state: State) => selectTaskById(state, taskId))
+    const [isDragged, setIsDragged] = useState(false)
 
-    return <Task task={task} className={className} />
-}
+    const onDragStart = (event: DragEvent) => {
+        if (event.dataTransfer) {
+            event.dataTransfer.effectAllowed = 'move'
+            event.dataTransfer.setData('text/plain', taskId)
+        }
+        setIsDragged(true)
+    }
 
-export function TaskDraggableContainer ({ taskId }: { taskId: string }) {
-    const task: TaskType = useSelector((state: State) => selectTaskById(state, taskId))
-
-    const { draggedTaskId, setDraggedTaskId } = useContext(DragAndDropContext)
-    const [ draggedTaskVisible, setDraggedTaskVisible ] = useState(false)
-
-    const onDragStart = () => setDraggedTaskId(taskId)
-    const onDragEnd = () => setDraggedTaskId(null)
-    const onDragOver = () => setDraggedTaskVisible(true)
-    const onDragLeave = () => setDraggedTaskVisible(false)
+    const onDragEnd = () => setIsDragged(false)
 
     return (
-        <>
-            <Task
-                task={task}
-                className={draggedTaskVisible && (draggedTaskId === taskId) ? styles.dragged : ''}
-                draggable={true}
-                onDragStart={onDragStart}
-                onDragEnd={onDragEnd}
-                // onDragOver={onDragOver}
-                // onDragLeave={onDragLeave}
-            />
-            {
-                !(draggedTaskId && draggedTaskVisible && (draggedTaskId !== taskId))
-                || <TaskContainer className={styles.dragged} taskId={draggedTaskId} />
-            }
-        </>
+        <Task
+            task={task}
+            className={classNames(className, {
+                [styles.dragged]: isDragged,
+            })}
+            draggable={true}
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
+        />
     )
 }

@@ -17,7 +17,8 @@ export const TextArea = ({
     autoFocus,
 }: TextArea) => (
 
-    <textarea
+    <input
+        type='text'
         className={styles.textArea}
         value={value}
         onChange={onChange}

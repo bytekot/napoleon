@@ -1,11 +1,16 @@
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { selectTaskIds, selectTaskIdsByDueDate, selectTaskLoadingStatus, selectUnplannedTaskIds } from '../../store/entities/task/selectors'
 import { Tasks } from './component'
 import { REQUEST_STATUSES } from '../../constants/request-statuses'
 import { TASK_STATUSES } from '../../constants/task-statuses'
 import { State } from '../../store/types'
+import { getDraggedTaskOrder } from '../../utils/calendar'
+import { useState } from 'react'
+import { editTask } from '../../store/entities/task/thunks/edit-task'
 
 export function TasksContainer({ status, dueDate }: { status?: string, dueDate?: string }) {
+    const [draggedTaskOrder, setDraggedTaskOrder] = useState<number | null>(null)
+    const dispatch = useDispatch()
     let selector
 
     switch (status) {
@@ -13,7 +18,7 @@ export function TasksContainer({ status, dueDate }: { status?: string, dueDate?:
             selector = selectUnplannedTaskIds
             break
         case TASK_STATUSES.planned:
-            selector = (state: State) => selectTaskIdsByDueDate(state, dueDate || new Date().toISOString())
+            selector = (state: State) => selectTaskIdsByDueDate(state, dueDate ?? new Date().toISOString())
             break
         case TASK_STATUSES.completed:
             selector = selectTaskIds
@@ -25,5 +30,39 @@ export function TasksContainer({ status, dueDate }: { status?: string, dueDate?:
     const taskIds = useSelector(selector)
     const isLoading = useSelector(selectTaskLoadingStatus) === REQUEST_STATUSES.pending
 
-    return !isLoading ? <Tasks taskIds={taskIds} /> : 'Загрузка...'
+    const onDragOver = (event: React.DragEvent) => {
+        event.preventDefault()
+
+        const newDraggedTaskOrder = getDraggedTaskOrder(event)
+
+        if (newDraggedTaskOrder !== draggedTaskOrder) {
+            setDraggedTaskOrder(newDraggedTaskOrder)
+        }
+    }
+    const onDragLeave = () => setDraggedTaskOrder(null)
+    const onDrop = (event: React.DragEvent) => {
+        const taskId = event.dataTransfer.getData('text/plain')
+
+        if (taskId) {
+            dispatch(editTask({
+                id: taskId,
+                dueDate: dueDate,
+                order: draggedTaskOrder,
+            }))
+            event.dataTransfer.setData('text/plain', '')
+            setDraggedTaskOrder(null)
+        }
+    }
+
+    return (
+        isLoading
+            ? 'Загрузка...'
+            : <Tasks
+                taskIds={taskIds}
+                draggedTaskOrder={draggedTaskOrder}
+                onDragOver={onDragOver}
+                onDragLeave={onDragLeave}
+                onDrop={onDrop}
+            />
+    )
 }

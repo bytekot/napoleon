@@ -6,20 +6,12 @@ import styles from './styles.module.scss'
 
 import classNames from 'classnames'
 
-interface CalendarWeekDayProps {
-    day: Day
-    onDragOver: (event: React.DragEvent) => void
-    onDrop: (event: React.DragEvent) => void
-}
-
-export function CalendarWeekDay({ day, onDragOver, onDrop }: CalendarWeekDayProps) {
+export function CalendarWeekDay({ day }: { day: Day }) {
     return (
         <div
             className={classNames(styles.calendarWeekDay, {
                 [styles.today]: day.isToday,
             })}
-            onDragOver={onDragOver}
-            onDrop={onDrop}
         >
             <div className={styles.header}>
                 <strong>{new Date(day.date).getDate()} </strong>

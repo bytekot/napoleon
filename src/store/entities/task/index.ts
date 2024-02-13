@@ -51,12 +51,18 @@ export const taskSlice = createSlice({
             })
 
             .addCase(editTask.fulfilled, (state, { payload }) => {
-                state.entities[payload.id] = payload
+                if (Array.isArray(payload)) {
+                    payload.forEach(entity => {
+                        state.entities[entity.id] = entity
+                    })
+                } else {
+                    state.entities[payload.id] = payload
+                }
             })
-            .addCase(editTask.pending, (state, action) => {
-                const params = action.meta.arg
+            // .addCase(editTask.pending, (state, action) => {
+            //     const params = action.meta.arg
 
-                state.entities[params.id] = { ...state.entities[params.id], ...params}
-            })
+            //     state.entities[params.id] = { ...state.entities[params.id], ...params}
+            // })
     },
 })

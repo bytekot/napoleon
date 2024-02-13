@@ -9,11 +9,12 @@
     .tasks {
         max-width: 350px;
         padding: 10px 20px;
+        background: #e5e5e5;
 
-        textarea {
-            height: 100px;
+        input {
+            height: 30px;
             width: 330px;
-            margin: 45px 0 10px 0;
+            margin: 0 0 15px 0;
         }
     }
 }

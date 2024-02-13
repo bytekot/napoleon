@@ -4,26 +4,22 @@ import styles from './styles.module.scss'
 
 import classNames from 'classnames'
 
-type TaskProps = {
+interface TaskProps {
     task: TaskType
     className?: string
     draggable?: boolean
-    onDragStart?: () => void
-    onDragEnd?: () => void
-    onDragOver?: () => void
-    onDragLeave?: () => void
+    onDragStart?: (event: DragEvent) => void
+    onDragEnd?: (event: DragEvent) => void
 }
 
-export function Task({ task, className, draggable = false, onDragStart, onDragEnd, onDragOver, onDragLeave }: TaskProps) {
+export function Task({ task, className, draggable = false, onDragStart, onDragEnd }: TaskProps) {
     return (
         <div
-            data-taskid={task.id}
+            data-task
             className={classNames(styles.task, className)}
             draggable={draggable}
             onDragStart={onDragStart}
             onDragEnd={onDragEnd}
-            onDragOver={onDragOver}
-            onDragLeave={onDragLeave}
         >
             <span className={styles.style}></span>
             <span>{task?.name || '—'}</span>

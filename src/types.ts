@@ -1,7 +1,8 @@
 export interface Task {
     id: string
     name: string
-    dueDate?: string
+    dueDate: string | null
+    order: number | null
 }
 
 export interface Day {

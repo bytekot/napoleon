@@ -1,59 +1,21 @@
-%task {
-    display: block;
-    background: white;
+.task {
+    background: #fff;
     padding: 20px;
-    position: relative;
     color: #999;
     box-shadow: 0 2px 1px -1px rgba(black, 0.2);
     border-radius: 10px;
     overflow: hidden;
-    margin: 0 0 0.75rem 0;
-    cursor: pointer;
-
-    // .style {
-    //     width: 10px;
-    //     position: absolute;
-    //     left: 0;
-    //     top: 0;
-    //     height: 100%;
-
-    //     &:after {
-    //         content: "";
-    //         position: absolute;
-    //         z-index: 1;
-    //         top: 100%;
-    //         left: 0;
-    //         width: 100%;
-    //         margin-top: -5px;
-    //         height: 5px;
-    //         background: #4e8ad1;
-    //     }
-    // }
-
-    // &:after {
-    //     content: "";
-    //     position: absolute;
-    //     background: #e6e6e6;
-    //     top: 100%;
-    //     left: 0;
-    //     width: 100%;
-    //     margin-top: -5px;
-    //     height: 5px;
-    // }
+    cursor: move;
 
     &:hover {
         background-color: rgba(255, 255, 255, 0.83);
     }
-}
 
-.task {
-    @extend %task;
+    &.dragged {
+        opacity: 0.5;
+    }
 
     .style {
         background: #7daee9;
     }
-}
-
-.dragged {
-    opacity: 0.5;
 }

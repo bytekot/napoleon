@@ -13,8 +13,11 @@ router.post('/task', (request, response) => {
 
   if (body) {
     newTask = {
-      ...body,
       id: nanoid(),
+      name: null,
+      dueDate: null,
+      order: null,
+      ...body,
     }
 
     tasks.push(newTask)

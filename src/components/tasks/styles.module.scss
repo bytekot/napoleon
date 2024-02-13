@@ -1,0 +1,23 @@
+.tasks {
+    height: 100%;
+    padding: 10px;
+
+    div {
+        margin-bottom: 10px;
+    }
+
+    .borderTop,
+    .borderBottom {
+        transition: 0.25s all ease-in-out;
+    }
+
+    .borderTop {
+        box-shadow: 
+            0 -2px 1px 0 #b3d4ff,
+            0 2px 1px -1px rgba(black, 0.2);
+    }
+
+    .borderBottom {
+        box-shadow: 0 2px 1px 0 #b3d4ff;
+    }
+}

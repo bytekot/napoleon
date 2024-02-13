@@ -6,7 +6,7 @@ export function getWeekData () {
     const currentDate = now.getDate()
 
     return DAY_NAMES.map((day, index) => {
-        const date = currentDate - (today - index - 1) - 7
+        const date = currentDate - (today - index - 1)
 
         return {
             day,

@@ -1,5 +1,6 @@
 .tasks {
-    height: 100%;
+    // todo: fix this
+    height: 80%;
     padding: 10px;
 
     .emptyText {
@@ -12,7 +13,7 @@
 
     .borderTop,
     .borderBottom {
-        transition: 0.25s all ease-in-out;
+        transition: 0.2s all ease-in-out;
     }
 
     .borderTop {

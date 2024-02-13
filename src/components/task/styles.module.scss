@@ -1,11 +1,30 @@
 .task {
-    background: #fff;
     padding: 20px;
+    position: relative;
+    background: #fff;
     color: #999;
     box-shadow: 0 2px 1px -1px rgba(black, 0.2);
     border-radius: 10px;
     overflow: hidden;
-    cursor: move;
+    cursor: pointer;
+
+    .style {
+        background: #7daee9;
+    }
+
+    .progressBar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        margin: 0;
+        height: 100%;
+        width: 0;
+        background-color: rgba(0, 128, 0, 0.2);
+    }
+    &.showProgress .progressBar {
+        width: 100%;
+        transition: 1s;
+    }
 
     &:hover {
         background-color: rgba(255, 255, 255, 0.83);
@@ -15,7 +34,12 @@
         opacity: 0.5;
     }
 
-    .style {
-        background: #7daee9;
+    &.completed {
+        opacity: 0.5;
+        box-shadow: none;
+        transition: 0.1s all ease-in;
+
+        &.showProgress .progressBar {
+        }
     }
 }

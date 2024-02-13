@@ -3,6 +3,7 @@ export interface Task {
     name: string
     dueDate: string | null
     order: number | null
+    status?: string
 }
 
 export interface Day {

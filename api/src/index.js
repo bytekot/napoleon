@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const { nanoid } = require('nanoid')
 const { tasks } = require('./mock')
-const { reply, updateById } = require('./utils')
+const { reply, updateById, updateTask } = require('./utils')
 
 router.get('/tasks', (request, response) => {
   reply(response, tasks)
@@ -33,7 +33,7 @@ router.patch('/task:taskId', (request, response) => {
   let updatedTask
 
   if (taskId) {
-    updatedTask = updateById(tasks)(taskId, body)
+    updatedTask = updateTask(taskId, body)
   }
 
   reply(response, updatedTask)

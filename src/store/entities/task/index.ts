@@ -59,10 +59,18 @@ export const taskSlice = createSlice({
                     state.entities[payload.id] = payload
                 }
             })
-            // .addCase(editTask.pending, (state, action) => {
-            //     const params = action.meta.arg
+            .addCase(editTask.pending, (state, action) => {
+                const params = action.meta.arg
 
-            //     state.entities[params.id] = { ...state.entities[params.id], ...params}
-            // })
+                if (params.order) {
+                    state.entities[params.id] = {
+                        ...state.entities[params.id],
+                        ...params,
+                        order: params.order - 0.5
+                    }
+                } else {
+                    state.entities[params.id] = { ...state.entities[params.id], ...params }
+                }
+            })
     },
 })

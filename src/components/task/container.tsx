@@ -58,8 +58,8 @@ export function TaskDraggableContainer ({ taskId, className }: { taskId: string,
             draggable={!timerId}
             onDragStart={onDragStart}
             onDragEnd={onDragEnd}
-            onMouseDown={onMouseDown}
-            onMouseUp={onMouseUp}
+            // onMouseDown={onMouseDown}
+            // onMouseUp={onMouseUp}
         />
     )
 }

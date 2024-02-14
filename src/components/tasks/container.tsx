@@ -12,9 +12,11 @@ interface TasksContainerProps {
     status?: string
     dueDate?: string
     emptyText?: string
+    allowReordering?: boolean
 }
 
-export function TasksContainer({ status, dueDate, emptyText }: TasksContainerProps) {
+// todo: decompose
+export function TasksContainer({ status, dueDate, emptyText, allowReordering = true }: TasksContainerProps) {
     const [draggedTaskOrder, setDraggedTaskOrder] = useState<number | null>(null)
     const dispatch = useDispatch()
     let selector
@@ -67,9 +69,9 @@ export function TasksContainer({ status, dueDate, emptyText }: TasksContainerPro
                 taskIds={taskIds}
                 emptyText={emptyText}
                 draggedTaskOrder={draggedTaskOrder}
-                onDragOver={onDragOver}
-                onDragLeave={onDragLeave}
-                onDrop={onDrop}
+                onDragOver={allowReordering ? onDragOver : undefined}
+                onDragLeave={allowReordering ? onDragLeave : undefined}
+                onDrop={allowReordering ? onDrop : undefined}
             />
     )
 }

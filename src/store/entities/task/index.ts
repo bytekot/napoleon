@@ -45,9 +45,21 @@ export const taskSlice = createSlice({
                 state.status = REQUEST_STATUSES.pending
             })
 
-            .addCase(createTask.fulfilled, (state, { payload }) => {
+            .addCase(createTask.fulfilled, (state, { meta, payload }) => {
+                const tempId = meta.requestId
+
+                delete state.entities[tempId]
+                state.ids = state.ids.filter(id => id!== tempId)
+
                 state.entities[payload.id] = payload
                 state.ids.push(payload.id)
+            })
+            .addCase(createTask.pending, (state, { meta }) => {
+                const { taskName } = meta.arg
+                const id = meta.requestId
+
+                state.entities[id] = { id, name: taskName } as Task
+                state.ids.push(id)
             })
 
             .addCase(editTask.fulfilled, (state, { payload }) => {

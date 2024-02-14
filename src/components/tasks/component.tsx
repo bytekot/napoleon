@@ -24,6 +24,10 @@ export function Tasks ({ taskIds, emptyText, onDragOver, onDrop, onDragLeave, dr
                 ? <div className={styles.emptyText}>{emptyText}</div>
                 : false
             }
+            {draggedTaskOrder !== null && !taskIds.length
+                ? <div className={styles.addTask}>ツ</div>
+                : false
+            }
             {
                 taskIds.map((taskId: string, index: number) => {
                     let className

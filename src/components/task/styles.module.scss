@@ -9,7 +9,11 @@
     cursor: pointer;
 
     .style {
-        background: #7daee9;
+        width: 10px; 
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
     }
 
     .progressBar {
@@ -27,7 +31,8 @@
     }
 
     &:hover {
-        background-color: rgba(255, 255, 255, 0.83);
+        background-color: rgba(255, 255, 255, 0.93);
+        box-shadow: 0 2px 1px 0px rgba(black, 0.2);
     }
 
     &.dragged {
@@ -35,11 +40,23 @@
     }
 
     &.completed {
-        opacity: 0.5;
-        box-shadow: none;
+        background: none;
+        box-shadow: inset 1px 1px 0 0 #ddd, inset -1px -1px 0 0 #ddd;
+        cursor: default;
         transition: 0.1s all ease-in;
 
-        &.showProgress .progressBar {
+        .checked {
+            padding-right: 5px;
+        }
+    }
+
+    &.overdue {
+        .style {
+            background: rgba(255, 0, 0, 0.2);
+        }
+
+        .warning {
+            padding-right: 5px;
         }
     }
 }

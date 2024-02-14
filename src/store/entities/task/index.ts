@@ -55,10 +55,10 @@ export const taskSlice = createSlice({
                 state.ids.push(payload.id)
             })
             .addCase(createTask.pending, (state, { meta }) => {
-                const { taskName } = meta.arg
+                const { name, creationDate } = meta.arg
                 const id = meta.requestId
 
-                state.entities[id] = { id, name: taskName } as Task
+                state.entities[id] = { id, name, creationDate } as Task
                 state.ids.push(id)
             })
 

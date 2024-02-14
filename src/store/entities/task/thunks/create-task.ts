@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import { Task } from '../../../../types'
 
 export const createTask = createAsyncThunk('task/createTask',
-    async ({ taskName }: { taskName: string }, { rejectWithValue }) => {
+    async (params: { taskName: string, creationDate: string }, { rejectWithValue }) => {
         const response = await fetch('http://localhost:3001/api/task', {
             method: 'POST',
 
@@ -11,11 +11,10 @@ export const createTask = createAsyncThunk('task/createTask',
                 'Content-Type': 'application/json'
             },
 
-            body: JSON.stringify({
-                name: taskName,
-            })
+            body: JSON.stringify(params),
         })
-        const task: Task = await response.json()
+
+        const task = await response.json() as Task | null
 
         if (!task) {
             rejectWithValue('Something went wrong.')

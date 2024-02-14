@@ -21,7 +21,7 @@ export function MainPage () {
             <div className={styles.mainPage}>
                 <div className={styles.tasks}>
                     <TaskForm />
-                    <TasksContainer status={TASK_STATUSES.unplanned} emptyText='А делать нечего.' />
+                    <TasksContainer status={TASK_STATUSES.unplanned} emptyText='А ничего.' />
                 </div>
                 <CalendarWeek />
             </div>

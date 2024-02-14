@@ -8,8 +8,11 @@ export function TaskForm() {
     const dispatch = useDispatch()
 
     const createNewTask = (event: React.KeyboardEvent) => {
-        if (event.key === 'Enter') {
-            dispatch(createTask({ taskName }))
+        if (event.key === 'Enter' && taskName) {
+            dispatch(createTask({
+                name: taskName,
+                creationDate: new Date().toISOString(),
+            }))
             setTaskName('')
         }
     }
@@ -20,7 +23,7 @@ export function TaskForm() {
                 value={taskName}
                 onChange={event => setTaskName(event.target.value)}
                 onKeyDown={createNewTask}
-                emptyText='Что будем делать?'
+                emptyText='Что нужно сделать?'
                 autoFocus
             />
         </div>

@@ -16,11 +16,18 @@ interface TaskProps {
 }
 
 export function Task({ task, className, draggable = false, onDragStart, onDragEnd, onMouseDown, onMouseUp }: TaskProps) {
+    const now = new Date()
+    now.setHours(0, 0, 0, 0)
+
+    const isCompleted = task?.status === TASK_STATUSES.completed
+    const isOverdue = !isCompleted && task?.dueDate && new Date(task.dueDate) < now
+
     return (
         <div
             data-task
             className={classNames(styles.task, className, {
-                [styles.completed]: task?.status === TASK_STATUSES.completed,
+                [styles.completed]: isCompleted,
+                [styles.overdue]: isOverdue,
             })}
             draggable={draggable}
             onDragStart={onDragStart}
@@ -30,7 +37,10 @@ export function Task({ task, className, draggable = false, onDragStart, onDragEn
         >
             <div className={styles.progressBar} />
             <span className={styles.style}></span>
-            <span>{task?.name || '—'}</span>
+            <span>
+                {isCompleted ? <span className={styles.checked}>✓</span> : ''}
+                {task?.name || '—'}
+            </span>
         </div>
     )
 }

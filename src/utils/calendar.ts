@@ -10,7 +10,7 @@ export function getWeekData () {
 
         return {
             day,
-            date: `${now.getFullYear()}-${now.getMonth()}-${date}`,
+            date: `${now.getFullYear()}-${now.getMonth() + 1}-${date}`,
             isToday: currentDate === date,
         }
     })

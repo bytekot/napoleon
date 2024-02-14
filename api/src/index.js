@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const { nanoid } = require('nanoid')
 const { tasks } = require('./mock')
-const { reply, updateById, updateTask } = require('./utils')
+const { reply, updateTask } = require('./utils')
 
 router.get('/tasks', (request, response) => {
   reply(response, tasks)
@@ -15,8 +15,10 @@ router.post('/task', (request, response) => {
     newTask = {
       id: nanoid(),
       name: null,
+      creationDate: null,
       dueDate: null,
       order: null,
+      status: 'unplanned',
       ...body,
     }
 

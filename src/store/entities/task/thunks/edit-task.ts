@@ -1,9 +1,16 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { Task } from '../../../../types'
 
+interface TaskParams {
+    id: string,
+    dueDate?: string,
+    order?: number
+    status?: string
+}
+
 export const editTask = createAsyncThunk('task/editTask',
-    async (task: Task) => {
-        const response = await fetch(`http://localhost:3001/api/task${task.id}`, {
+    async (params: TaskParams, { rejectWithValue }) => {
+        const response = await fetch(`http://localhost:3001/api/task${params.id}`, {
             method: 'PATCH',
 
             headers: {
@@ -11,7 +18,7 @@ export const editTask = createAsyncThunk('task/editTask',
                 'Content-Type': 'application/json'
             },
 
-            body: JSON.stringify(task),
+            body: JSON.stringify(params),
         })
         const editedTask: Task = await response.json()
 

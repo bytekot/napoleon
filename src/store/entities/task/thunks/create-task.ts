@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import { Task } from '../../../../types'
 
 export const createTask = createAsyncThunk('task/createTask',
-    async (params: { taskName: string, creationDate: string }, { rejectWithValue }) => {
+    async (params: { name: string, creationDate: string }, { rejectWithValue }) => {
         const response = await fetch('http://localhost:3001/api/task', {
             method: 'POST',
 

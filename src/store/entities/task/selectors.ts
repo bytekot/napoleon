@@ -1,16 +1,16 @@
-import { State } from '../../types'
+import { RootState } from '../../index'
 
-export const selectTaskModule = (state: State) => state.task
+export const selectTaskModule = (state: RootState) => state.task
 
-export const selectTaskEntities = (state: State) => selectTaskModule(state).entities
+export const selectTaskEntities = (state: RootState) => selectTaskModule(state).entities
 
-export const selectTaskIds = (state: State) => selectTaskModule(state).ids
+export const selectTaskIds = (state: RootState) => selectTaskModule(state).ids
 
-export const selectTaskLoadingStatus = (state: State) => selectTaskModule(state).status
+export const selectTaskLoadingStatus = (state: RootState) => selectTaskModule(state).status
 
-export const selectTaskById = (state: State, id: string) => selectTaskEntities(state)[id]
+export const selectTaskById = (state: RootState, id: string) => selectTaskEntities(state)[id]
 
-export const selectUnplannedTaskIds = (state: State) =>
+export const selectUnplannedTaskIds = (state: RootState) =>
     selectTaskIds(state)
         .filter(id => !selectTaskById(state, id).dueDate)
         .sort((task1Id, task2Id) => {
@@ -23,7 +23,7 @@ export const selectUnplannedTaskIds = (state: State) =>
             return 0
         })
 
-export const selectTaskIdsByDueDate = (state: State, dueDate: string) =>
+export const selectTaskIdsByDueDate = (state: RootState, dueDate: string) =>
     selectTaskIds(state)
         .filter(id => selectTaskById(state, id).dueDate === dueDate)
         .sort((task1Id, task2Id) => {

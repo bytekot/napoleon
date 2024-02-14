@@ -2,10 +2,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { selectTaskById } from '../../store/entities/task/selectors'
 import { Task } from './component'
 import { Task as TaskType } from '../../types'
-import { State } from '../../store/types'
 import { useState } from 'react'
 import { TASK_STATUSES } from '../../constants/task-statuses'
 import { editTask } from '../../store/entities/task/thunks/edit-task'
+import { AppDispatch, RootState } from '../../store'
 
 import styles from './styles.module.scss'
 
@@ -15,10 +15,10 @@ import classNames from 'classnames'
 const SET_COMPLETED_TIMEOUT = 1100
 
 export function TaskDraggableContainer ({ taskId, className }: { taskId: string, className?: string }) {
-    const task: TaskType = useSelector((state: State) => selectTaskById(state, taskId))
+    const task: TaskType = useSelector((state: RootState) => selectTaskById(state, taskId))
     const [isDragged, setIsDragged] = useState(false)
     const [timerId, setTimerId] = useState<number | null>(null)
-    const dispatch = useDispatch()
+    const dispatch = useDispatch<AppDispatch>()
 
     const onDragStart = (event: React.DragEvent) => {
         if (event.dataTransfer) {
@@ -36,15 +36,20 @@ export function TaskDraggableContainer ({ taskId, className }: { taskId: string,
         }
     }
     const onMouseDown = () => {
-        setTimerId(setTimeout(() => {
-            clearTimer()
-            dispatch(editTask({
-                id: taskId,
-                status: task.status !== TASK_STATUSES.completed
-                    ? TASK_STATUSES.completed
-                    : TASK_STATUSES.planned,
-            }))
-        }, SET_COMPLETED_TIMEOUT))
+        setTimerId(
+            setTimeout(async () => {
+                clearTimer()
+                await dispatch(editTask(
+                    {
+                        id: taskId,
+                        status: task.status !== TASK_STATUSES.completed
+                            ? TASK_STATUSES.completed
+                            : TASK_STATUSES.planned,
+                    }
+                ))
+            },
+            SET_COMPLETED_TIMEOUT
+        ))
     }
     const onMouseUp = () => clearTimer()
 

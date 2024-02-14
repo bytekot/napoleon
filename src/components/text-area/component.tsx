@@ -3,7 +3,7 @@ import styles from './styles.module.scss'
 interface TextArea {
     className?: string
     value?: string
-    onChange?: (event: React.ChangeEvent) => void
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
     onKeyDown?: (event: React.KeyboardEvent) => void
     emptyText?: string
     autoFocus?: boolean

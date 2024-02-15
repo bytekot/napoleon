@@ -16,8 +16,6 @@ export function Calendar ({ className }: { className?: string }) {
         return `${month.charAt(0).toUpperCase()}${month.slice(1)} ${date.getFullYear()}`
     }()
 
-    setView(CALENDAR_VIEWS.month)
-
     return (
         // todo: add datetime attr
         <time className={classNames(styles.calendar, className)}>

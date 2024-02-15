@@ -1,16 +1,17 @@
 import { useDispatch } from 'react-redux'
-import { CalendarWeek } from '../../components/calendar-week/component'
+import { Calendar } from '../../components/calendar/component'
 import { TaskForm } from '../../components/task-form/component'
 import { TasksContainer } from '../../components/tasks/container'
 import { TASK_STATUSES } from '../../constants/task-statuses'
 import { useEffect } from 'react'
 import { getTasks } from '../../store/entities/task/thunks/get-tasks'
 import { Layout } from '../../components/layout/component'
+import { AppDispatch } from '../../store'
 
 import styles from './styles.module.scss'
 
 export function MainPage () {
-    const dispatch = useDispatch()
+    const dispatch = useDispatch<AppDispatch>()
 
     useEffect(() => {
         dispatch(getTasks())
@@ -27,7 +28,7 @@ export function MainPage () {
                         emptyText='А ничего.'
                     />
                 </div>
-                <CalendarWeek />
+                <Calendar date={new Date()} />
             </div>
         </Layout>
     )

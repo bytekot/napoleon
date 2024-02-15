@@ -2,6 +2,8 @@ import { TaskDraggableContainer } from '../task/container'
 
 import styles from './styles.module.scss'
 
+import classNames from 'classnames'
+
 interface TasksProps {
     taskIds: string[]
     emptyText?: string
@@ -9,13 +11,14 @@ interface TasksProps {
     onDrop?: (event: React.DragEvent) => void
     onDragLeave?: (event: React.DragEvent) => void
     draggedTaskOrder: number | null
+    className?: string
 }
 
-export function Tasks ({ taskIds, emptyText, onDragOver, onDrop, onDragLeave, draggedTaskOrder }: TasksProps) {
+export function Tasks ({ taskIds, emptyText, onDragOver, onDrop, onDragLeave, draggedTaskOrder, className }: TasksProps) {
     return (
         <div
             data-tasks
-            className={styles.tasks}
+            className={classNames(styles.tasks, className)}
             onDragOver={onDragOver}
             onDragLeave={onDragLeave}
             onDrop={onDrop}

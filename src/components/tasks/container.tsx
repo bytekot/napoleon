@@ -13,10 +13,11 @@ interface TasksContainerProps {
     dueDate?: string
     emptyText?: string
     allowReordering?: boolean
+    className?: string
 }
 
 // todo: decompose
-export function TasksContainer({ status, dueDate, emptyText, allowReordering = true }: TasksContainerProps) {
+export function TasksContainer({ status, dueDate, emptyText, allowReordering = true, className }: TasksContainerProps) {
     const [draggedTaskOrder, setDraggedTaskOrder] = useState<number | null>(null)
     const dispatch = useDispatch<AppDispatch>()
     let selector
@@ -51,7 +52,7 @@ export function TasksContainer({ status, dueDate, emptyText, allowReordering = t
     const onDrop = (event: React.DragEvent) => {
         const taskId = event.dataTransfer.getData('text/plain')
 
-        if (taskId && draggedTaskOrder) {
+        if (taskId && draggedTaskOrder !== null) {
             dispatch(editTask({
                 id: taskId,
                 dueDate: dueDate,
@@ -68,6 +69,7 @@ export function TasksContainer({ status, dueDate, emptyText, allowReordering = t
             : <Tasks
                 taskIds={taskIds}
                 emptyText={emptyText}
+                className={className}
                 draggedTaskOrder={draggedTaskOrder}
                 onDragOver={allowReordering ? onDragOver : undefined}
                 onDragLeave={allowReordering ? onDragLeave : undefined}

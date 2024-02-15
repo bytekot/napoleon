@@ -1,11 +1,14 @@
 .textArea {
-    background: #ffffffb4;
+    // background-image: linear-gradient(#f7f8fa, #e7e9ec);
+    background: #eee;
     border: none;
-    border-radius: 6px;
-    padding: 0 10px;
+    border-radius: 3px;
+    color: #555;
+    font-size: 14px;
     resize: none;
     box-shadow: inset 1px 1px 1px 0 rgba(0, 0, 0, 0.2),
         inset -1px -1px 1px 0 rgba(255, 255, 255, 0.5);
+    padding: 10px;
 
     &:focus {
         outline: none;

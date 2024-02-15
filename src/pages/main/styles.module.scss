@@ -7,14 +7,14 @@
     }
 
     .tasks {
+        padding: 0 5px;
         max-width: 250px;
-        padding: 10px 20px;
         background: #e5e5e5;
 
         input {
-            height: 30px;
-            width: 230px;
-            margin: 0 0 15px 0;
+            height: 15px;
+            width: 210px;
+            margin: 10px;
         }
     }
 }

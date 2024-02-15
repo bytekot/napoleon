@@ -1,7 +1,7 @@
 import { DAY_NAMES } from '../constants/calendar'
+import { Day } from '../types'
 
-export function getWeekData () {
-    const now = new Date()
+export function getWeekData (now: Date): Day[] {
     const today = now.getDay()
     const currentDate = now.getDate()
 
@@ -11,7 +11,6 @@ export function getWeekData () {
         return {
             day,
             date: `${now.getFullYear()}-${now.getMonth() + 1}-${date}`,
-            isToday: currentDate === date,
         }
     })
 }

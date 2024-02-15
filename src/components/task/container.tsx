@@ -18,9 +18,12 @@ export function TaskDraggableContainer ({ taskId, className }: { taskId: string,
     const task: TaskType = useSelector((state: RootState) => selectTaskById(state, taskId))
     const [isDragged, setIsDragged] = useState(false)
     const [timerId, setTimerId] = useState<number | null>(null)
+    const [timerId2, setTimerId2] = useState<number | null>(null)
     const dispatch = useDispatch<AppDispatch>()
 
     const onDragStart = (event: React.DragEvent) => {
+        clearTimer2()
+
         if (event.dataTransfer) {
             event.dataTransfer.effectAllowed = 'move'
             event.dataTransfer.setData('text/plain', taskId)
@@ -35,23 +38,40 @@ export function TaskDraggableContainer ({ taskId, className }: { taskId: string,
             setTimerId(null)
         }
     }
-    const onMouseDown = () => {
-        setTimerId(
-            setTimeout(async () => {
-                clearTimer()
-                await dispatch(editTask(
-                    {
-                        id: taskId,
-                        status: task.status !== TASK_STATUSES.completed
-                            ? TASK_STATUSES.completed
-                            : TASK_STATUSES.planned,
-                    }
-                ))
-            },
-            SET_COMPLETED_TIMEOUT
-        ))
+    const clearTimer2 = () => {
+        if (timerId2) {
+            clearTimeout(timerId2)
+            setTimerId2(null)
+        }
     }
-    const onMouseUp = () => clearTimer()
+    const shit = () => setTimerId(
+        setTimeout(async () => {
+            clearTimer()
+            await dispatch(editTask(
+                {
+                    id: taskId,
+                    status: task.status !== TASK_STATUSES.completed
+                        ? TASK_STATUSES.completed
+                        : TASK_STATUSES.planned,
+                }
+            ))
+        },
+        SET_COMPLETED_TIMEOUT
+    ))
+    const onMouseDown = () => {
+        setTimerId2(
+            setTimeout(() => {
+                shit()
+            }, 400)
+        )
+    }
+    const onMouseUp = () => {
+        clearTimer2()
+        clearTimer()
+    }
+
+    const onDoubleClick = () => {
+    }
 
     return (
         <Task
@@ -63,8 +83,9 @@ export function TaskDraggableContainer ({ taskId, className }: { taskId: string,
             draggable={!timerId}
             onDragStart={onDragStart}
             onDragEnd={onDragEnd}
-            // onMouseDown={onMouseDown}
-            // onMouseUp={onMouseUp}
+            onMouseDown={onMouseDown}
+            onMouseUp={onMouseUp}
+            // onDoubleClick={onDoubleClick}
         />
     )
 }

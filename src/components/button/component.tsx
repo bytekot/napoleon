@@ -17,6 +17,6 @@ export const Button = ({
         disabled={disabled}
         onClick={onClick}
     >
-        {children}
+        <span>{children}</span>
     </button>
 )

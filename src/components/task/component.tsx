@@ -13,9 +13,11 @@ interface TaskProps {
     onDragEnd?: (event: React.DragEvent) => void
     onMouseDown?: (event: React.MouseEvent) => void
     onMouseUp?: (event: React.MouseEvent) => void
+    onDoubleClick?: (event: React.MouseEvent) => void
 }
 
-export function Task({ task, className, draggable = false, onDragStart, onDragEnd, onMouseDown, onMouseUp }: TaskProps) {
+export function Task({ task, className, draggable = false, onDragStart, onDragEnd, onMouseDown, onMouseUp, onDoubleClick }: TaskProps) {
+    // todo: move to container
     const now = new Date()
     now.setHours(0, 0, 0, 0)
 
@@ -34,6 +36,7 @@ export function Task({ task, className, draggable = false, onDragStart, onDragEn
             onDragEnd={onDragEnd}
             onMouseDown={onMouseDown}
             onMouseUp={onMouseUp}
+            onDoubleClick={onDoubleClick}
         >
             <div className={styles.progressBar} />
             <span className={styles.style}></span>

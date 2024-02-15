@@ -7,17 +7,23 @@ import styles from './styles.module.scss'
 import classNames from 'classnames'
 
 export function CalendarWeekDay({ day }: { day: Day }) {
+    const date = new Date(day.date)
+
     return (
         <div
             className={classNames(styles.calendarWeekDay, {
-                [styles.today]: day.isToday,
+                [styles.today]: new Date().toDateString() === date.toDateString(),
             })}
         >
             <div className={styles.header}>
-                <strong>{new Date(day.date).getDate()} </strong>
+                <h2>{date.getDate()} </h2>
                 <span>{day.day}</span>
             </div>
-            <TasksContainer status={TASK_STATUSES.planned} dueDate={day.date} />
+            <TasksContainer
+                status={TASK_STATUSES.planned}
+                dueDate={day.date}
+                className={styles.tasks}
+            />
         </div>
     )
 }

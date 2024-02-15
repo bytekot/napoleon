@@ -1,12 +1,18 @@
 .tasks {
+    display: flex;
+    flex-direction: column;
     padding: 10px;
 
     .emptyText {
         color: #999;
     }
 
-    div {
-        margin-bottom: 10px;
+    .container {
+        flex: 1;
+
+        div {
+            margin-bottom: 10px;
+        }
     }
 
     .borderTop,
@@ -25,7 +31,7 @@
     }
 
     .addTask {
-        border-radius: 10px;
+        flex: 0;
         color: #d5d5d5;
         font-size: 32px;
         text-align: center;

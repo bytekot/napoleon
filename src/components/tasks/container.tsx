@@ -52,6 +52,8 @@ export function TasksContainer({ status, dueDate, emptyText, allowReordering = t
     const onDrop = (event: React.DragEvent) => {
         const taskId = event.dataTransfer.getData('text/plain')
 
+        console.log('draggedTaskOrder', draggedTaskOrder)
+
         if (taskId && draggedTaskOrder !== null) {
             dispatch(editTask({
                 id: taskId,

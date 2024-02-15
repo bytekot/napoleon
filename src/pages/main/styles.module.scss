@@ -2,10 +2,6 @@
     height: 100%;
     display: flex;
 
-    div {
-        flex: 1;
-    }
-
     .tasks {
         padding: 0 5px;
         max-width: 250px;
@@ -16,5 +12,9 @@
             width: 210px;
             margin: 10px;
         }
+    }
+
+    .calendar {
+        flex: 1;
     }
 }

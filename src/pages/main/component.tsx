@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux'
-import { Calendar } from '../../components/calendar/component'
+import { CalendarContainer } from '../../components/calendar/container'
 import { TaskForm } from '../../components/task-form/component'
 import { TasksContainer } from '../../components/tasks/container'
 import { TASK_STATUSES } from '../../constants/task-statuses'
@@ -28,7 +28,10 @@ export function MainPage () {
                         emptyText='А ничего.'
                     />
                 </div>
-                <Calendar date={new Date()} />
+                <CalendarContainer
+                    date={new Date()}
+                    className={styles.calendar}
+                />
             </div>
         </Layout>
     )

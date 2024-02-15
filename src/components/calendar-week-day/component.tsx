@@ -1,29 +1,26 @@
 import { TASK_STATUSES } from '../../constants/task-statuses'
-import { Day } from '../../types'
 import { TasksContainer } from '../tasks/container'
 
 import styles from './styles.module.scss'
 
 import classNames from 'classnames'
 
-export function CalendarWeekDay({ day }: { day: Day }) {
-    const date = new Date(day.date)
-
+export function CalendarWeekDay({ date, className }: { date: Date, className?: string }) {
     return (
-        <div
-            className={classNames(styles.calendarWeekDay, {
+        <time
+            className={classNames(styles.calendarWeekDay, className, {
                 [styles.today]: new Date().toDateString() === date.toDateString(),
             })}
         >
             <div className={styles.header}>
                 <h2>{date.getDate()} </h2>
-                <span>{day.day}</span>
+                <span>{date.toLocaleDateString('ru', { weekday: 'short' })}</span>
             </div>
             <TasksContainer
                 status={TASK_STATUSES.planned}
-                dueDate={day.date}
+                dueDate={`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`}
                 className={styles.tasks}
             />
-        </div>
+        </time>
     )
 }

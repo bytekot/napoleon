@@ -1,0 +1,8 @@
+.calendarMonth {
+    display: flex;
+    flex-direction: column;
+
+    .week {
+        flex: 1;
+    }
+}

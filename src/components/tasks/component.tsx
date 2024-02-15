@@ -17,7 +17,6 @@ interface TasksProps {
 export function Tasks ({ taskIds, emptyText, onDragOver, onDrop, onDragLeave, draggedTaskOrder, className }: TasksProps) {
     return (
         <div
-            data-tasks
             className={classNames(styles.tasks, className)}
             onDragOver={onDragOver}
             onDragLeave={onDragLeave}
@@ -31,25 +30,27 @@ export function Tasks ({ taskIds, emptyText, onDragOver, onDrop, onDragLeave, dr
                 ? <div className={styles.addTask}>ツ</div>
                 : false
             }
-            {
-                taskIds.map((taskId: string, index: number) => {
-                    let className
+            <div data-tasks className={styles.container}>
+                {
+                    taskIds.map((taskId: string, index: number) => {
+                        let className
 
-                    if (index === draggedTaskOrder) {
-                        className = styles.borderTop
-                    } else if (draggedTaskOrder !== null && index === draggedTaskOrder - 1) {
-                        className = styles.borderBottom
-                    }
+                        if (index === draggedTaskOrder) {
+                            className = styles.borderTop
+                        } else if (draggedTaskOrder !== null && index === draggedTaskOrder - 1) {
+                            className = styles.borderBottom
+                        }
 
-                    return (
-                        <TaskDraggableContainer
-                            key={index}
-                            taskId={taskId}
-                            className={className}
-                        />
-                    )
-                })
-            }
+                        return (
+                            <TaskDraggableContainer
+                                key={index}
+                                taskId={taskId}
+                                className={className}
+                            />
+                        )
+                    })
+                }
+            </div>
         </div>
     )
 }

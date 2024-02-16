@@ -1,3 +1,6 @@
+import { CALENDAR_PERIODS } from "../constants/calendar"
+import { CalendarPeriod } from "../types"
+
 export function getWeekDayDates (date: Date): Date[] {
     const monday = getThisMonday(date)
 
@@ -14,7 +17,7 @@ export function getMonthWeekDates (date: Date): Date[] {
     )
 }
 
-export function getThisMonday (now: Date) {
+export function getThisMonday (now: Date): Date {
     const day = now.getDay()
 
     if (day === 1) return now
@@ -26,33 +29,28 @@ export function getThisMonday (now: Date) {
     return new Date(year, month, date - (day - 1))
 }
 
-function getNodeIndex (element: Element, nodes: NodeList): number | null {
-    let order
+export function getMonthName (date: Date): string {
+    const month = date.toLocaleString('ru', { month: 'long' })
 
-    nodes.forEach((node, index) => {
-        if (node === element) {
-            order = index
-            return
-        }
-    })
-
-    return order ?? null
+    return `${month.charAt(0).toUpperCase()}${month.slice(1)}`
 }
 
-export function getDraggedTaskOrder (event: DragEvent & { target: Element }): number {
-    const tasksEl = event.target.closest('[data-tasks]')
-    const taskEl = event.target.closest('[data-task]')
+export function getMonth (date: Date): string {
+    return `${date.getFullYear()}-${date.getMonth() + 1}`
+}
 
-    if (tasksEl && taskEl) {
-        const { y, height } = taskEl.getBoundingClientRect()
-        const order = getNodeIndex(taskEl, tasksEl.childNodes) ?? 0
+export function getDateWithOffset (date: Date, period: CalendarPeriod, offset: number): Date {
+    let month = date.getMonth()
+    let dateOfMonth = date.getDate()
 
-        return (
-            event.clientY < y + height / 2
-                ? order
-                : order + 1
-        )
+    switch (period) {
+        case CALENDAR_PERIODS.month:
+            month = month + offset
+            break
+        case CALENDAR_PERIODS.week:
+            dateOfMonth = dateOfMonth + offset * 7
+            break
     }
 
-    return tasksEl?.childElementCount ?? 0
+    return new Date(date.getFullYear(), month, dateOfMonth)
 }

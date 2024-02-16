@@ -1,10 +1,10 @@
 import { Calendar } from './component'
-import { CalendarProvider } from './context'
+import { useCalendar } from './hooks'
 
-export function CalendarContainer ({ date, className }: { date: Date, className?: string }) {
+export function CalendarContainer ({ className }: { className?: string }) {
+    const { date, period } = useCalendar()
+
     return (
-        <CalendarProvider defaultDate={date}>
-            <Calendar className={className} />
-        </CalendarProvider>
+        <Calendar date={date} period={period} className={className} />
     )
 }

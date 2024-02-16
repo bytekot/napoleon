@@ -3,7 +3,7 @@ import { selectTaskIds, selectTaskIdsByDueDate, selectTaskLoadingStatus, selectU
 import { Tasks } from './component'
 import { REQUEST_STATUSES } from '../../constants/request-statuses'
 import { TASK_STATUSES } from '../../constants/task-statuses'
-import { getDraggedTaskOrder } from '../../utils/calendar'
+import { getDraggedTaskOrder } from '../../utils/tasks'
 import { useState } from 'react'
 import { editTask } from '../../store/entities/task/thunks/edit-task'
 import { AppDispatch, RootState } from '../../store'

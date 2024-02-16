@@ -1,3 +1,5 @@
+import { CALENDAR_PERIODS } from './constants/calendar'
+
 export interface Task {
     id: string
     name: string
@@ -6,3 +8,5 @@ export interface Task {
     order: number | null
     status: string
 }
+
+export type CalendarPeriod = (typeof CALENDAR_PERIODS)[keyof typeof CALENDAR_PERIODS]

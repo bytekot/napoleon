@@ -1,6 +1,4 @@
-export const DAY_NAMES = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
-
-export const CALENDAR_VIEWS = {
+export const CALENDAR_PERIODS = {
     week: 'week',
     month: 'month',
 }

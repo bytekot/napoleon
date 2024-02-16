@@ -5,7 +5,7 @@ import styles from './styles.module.scss'
 
 import classNames from 'classnames'
 
-export function CalendarWeekDay({ date, className }: { date: Date, className?: string }) {
+export function CalendarDay ({ date, className }: { date: Date, className?: string }) {
     return (
         <time
             className={classNames(styles.calendarWeekDay, className, {

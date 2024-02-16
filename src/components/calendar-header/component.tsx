@@ -1,4 +1,5 @@
-import { CalendarPeriodControls } from '../calendar-period-controls/component'
+import { CalendarDateControlsContainer } from '../calendar-date-controls/container'
+import { CalendarPeriodControlsContainer } from '../calendar-period-controls/container'
 
 import styles from './styles.module.scss'
 
@@ -8,7 +9,8 @@ export function CalendarHeader ({ className, text }: { className?: string, text?
     return (
         <div className={classNames(styles.calendarHeader, className)}>
             <h1>{text}</h1>
-            <CalendarPeriodControls className={styles.controls} />
+            <CalendarPeriodControlsContainer className={styles.controls} />
+            <CalendarDateControlsContainer className={styles.controls} />
         </div>
     )
 }

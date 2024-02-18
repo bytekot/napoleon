@@ -56,7 +56,16 @@ export function TaskDraggableContainer({ taskId, className }: { taskId: string, 
                 SET_COMPLETED_TIMEOUT
             ))
     }
-    const onMouseUp = () => clearTimer()
+    const onMouseUp = () => {
+        dispatch(editTask(
+            {
+                id: taskId,
+                status: task.status !== TASK_STATUSES.completed
+                    ? TASK_STATUSES.completed
+                    : TASK_STATUSES.planned,
+            }
+        ))
+    }
 
     return (
         <div data-task ref={myRef}>
@@ -69,8 +78,7 @@ export function TaskDraggableContainer({ taskId, className }: { taskId: string, 
                 })}
                 draggable={!timerId}
                 onDragStart={onDragStart}
-                // onMouseDown={onMouseDown}
-                // onMouseUp={onMouseUp}
+                onMouseUp={onMouseUp}
             />
         </div>
     )

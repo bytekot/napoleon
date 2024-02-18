@@ -10,13 +10,10 @@ interface TaskProps {
     className?: string
     draggable?: boolean
     onDragStart?: (event: React.DragEvent) => void
-    onDragEnd?: (event: React.DragEvent) => void
-    onMouseDown?: (event: React.MouseEvent) => void
     onMouseUp?: (event: React.MouseEvent) => void
-    onDoubleClick?: (event: React.MouseEvent) => void
 }
 
-export function Task({ task, className, draggable = false, onDragStart, onDragEnd, onMouseDown, onMouseUp, onDoubleClick }: TaskProps) {
+export function Task({ task, className, draggable = false, onDragStart,  onMouseUp }: TaskProps) {
     // todo: move to container
     const now = new Date()
     now.setHours(0, 0, 0, 0)
@@ -30,18 +27,17 @@ export function Task({ task, className, draggable = false, onDragStart, onDragEn
                 [styles.completed]: isCompleted,
                 [styles.overdue]: isOverdue,
             })}
-            draggable={draggable}
+            draggable={draggable && !isCompleted}
             onDragStart={onDragStart}
-            onDragEnd={onDragEnd}
-            onMouseDown={onMouseDown}
             onMouseUp={onMouseUp}
-            onDoubleClick={onDoubleClick}
         >
-            <div className={styles.progressBar} />
             <span className={styles.style}></span>
             <span>
-                {isCompleted ? <span className={styles.checked}>✓</span> : ''}
-                {task?.name || '—'}
+                <label>
+                    <input type='checkbox' checked={isCompleted} />
+                    <span className={styles.checkmark}></span>
+                    <span className={styles.text}>{task.name}</span>
+                </label>
             </span>
         </div>
     )

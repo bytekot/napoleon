@@ -8,6 +8,75 @@
     overflow: hidden;
     cursor: pointer;
 
+    label {
+        display: block;
+        position: relative;
+        cursor: pointer;
+
+        input {
+            position: absolute;
+            opacity: 0;
+            height: 0;
+            width: 0;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 20px;
+            width: 20px;
+            padding: 0;
+            background-color: #fff;
+            box-shadow: inset 0 0 0 1px #ccc;
+            border-radius: 30px;
+        }
+
+        .text {
+            margin-left: 30px;
+        }
+
+        &:hover {
+            input {
+                ~ .checkmark {
+                    background-color: #f9f9f9;
+                }
+            }
+        }
+    }
+
+    label input:checked ~ .checkmark {
+        background-color: #eee;
+        box-shadow: inset 0 0 0 1px #ccc;
+        opacity: 0.5;
+
+        ~ .text {
+            opacity: 0.5;
+        }
+    }
+
+    .checkmark:after {
+        content: "";
+        position: absolute;
+        display: none;
+    }
+
+    label input:checked ~ .checkmark:after {
+        display: block;
+    }
+
+    label .checkmark:after {
+        left: 8px;
+        top: 4px;
+        width: 5px;
+        height: 10px;
+        border: solid #ccc;
+        border-width: 0 2px 2px 0;
+        -webkit-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        transform: rotate(45deg);
+    }
+
     .style {
         width: 10px; 
         position: absolute;
@@ -45,8 +114,8 @@
         cursor: default;
         transition: 0.1s all ease-in;
 
-        .checked {
-            padding-right: 5px;
+        label {
+            cursor: default;
         }
     }
 
@@ -58,11 +127,15 @@
         .warning {
             padding-right: 5px;
         }
+
+        label input:checked ~ .text {
+            opacity: 0.1;
+        }
     }
 
     &.mini {
-        padding: 0px 15px;
-        max-height: 20px;
+        padding: 3px 15px 5px;
+        max-height: 30px;
         // todo
         max-width: 170px;
         overflow: hidden;

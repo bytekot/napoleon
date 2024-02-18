@@ -29,14 +29,27 @@
         .header {
             span {
                 display: none;
-                opacity: 0.3;
             }
         }
     }
 
-    &.notCurrentMonth {
+    &:not(.currentMonth) {
         .header {
             opacity: 0.3;
         }
+
+        // &:first-child,
+        // &:last-child {
+        //     .header {
+        //         position: relative;
+
+        //         span {
+        //             display: inline;
+        //             position: absolute;
+        //             top: 15px;
+        //             right: 15px;
+        //         }
+        //     }
+        // }
     }
 }

@@ -14,7 +14,7 @@ export function CalendarDayTasksContainer ({ date, className }: { date: Date, cl
     return (
         <CalendarDay date={date} className={classNames(className, {
             [styles.mini]: period === CALENDAR_PERIODS.month,
-            [styles.notCurrentMonth]: new Date().getMonth() !== new Date(date).getMonth(),
+            [styles.currentMonth]: new Date().getMonth() === new Date(date).getMonth(),
         })}>
             <TasksContainer
                 status={TASK_STATUSES.planned}

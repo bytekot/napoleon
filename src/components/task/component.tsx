@@ -26,7 +26,6 @@ export function Task({ task, className, draggable = false, onDragStart, onDragEn
 
     return (
         <div
-            data-task
             className={classNames(styles.task, className, {
                 [styles.completed]: isCompleted,
                 [styles.overdue]: isOverdue,

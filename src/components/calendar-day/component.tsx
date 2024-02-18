@@ -14,7 +14,7 @@ export function CalendarDay ({ children, date, className }: { children?: React.R
                 <span>
                     {date.toLocaleDateString('ru', { weekday: 'short' })}
                     {/* {
-                        period === CALENDAR_PERIODS.week
+                        isPeriodWeek
                             ? date.toLocaleDateString('ru', { weekday: 'short' })
                             : getMonthName(date)
                     } */}

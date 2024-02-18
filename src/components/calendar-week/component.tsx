@@ -1,5 +1,5 @@
 import { getWeekDayDates } from '../../utils/calendar'
-import { CalendarDay } from '../calendar-day/component'
+import { CalendarDayTasksContainer } from '../calendar-day/tasks-container'
 
 import styles from './styles.module.scss'
 
@@ -11,7 +11,7 @@ export function CalendarWeek ({ date, className }: { date: Date, className?: str
         <time className={classNames(styles.calendarWeek, className)}>
             {
                 getWeekDayDates(date).map((date, index) =>
-                    <CalendarDay key={index} className={styles.day} date={date} />
+                    <CalendarDayTasksContainer key={index} className={styles.day} date={date} />
                 )
             }
         </time>

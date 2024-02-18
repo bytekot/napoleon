@@ -17,12 +17,11 @@ export function CalendarDateControls ({
     onTodayBtnClick,
     onNextBtnClick,
 }: CalendarPeriodControlsProps) {
-    console.log('render')
     return (
         <div className={classNames(styles.calendarDateControls, className)}>
-            <Button onClick={onPreviousBtnClick}>{'<'}</Button>
+            <Button onClick={onPreviousBtnClick}>{'‹'}</Button>
             <Button onClick={onTodayBtnClick}>{'Сегодня'}</Button>
-            <Button onClick={onNextBtnClick}>{'>'}</Button>
+            <Button onClick={onNextBtnClick}>{'›'}</Button>
         </div>
     )
 }

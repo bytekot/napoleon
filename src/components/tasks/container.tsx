@@ -3,10 +3,9 @@ import { selectTaskIds, selectTaskIdsByDueDate, selectTaskLoadingStatus, selectU
 import { Tasks } from './component'
 import { REQUEST_STATUSES } from '../../constants/request-statuses'
 import { TASK_STATUSES } from '../../constants/task-statuses'
-import { getDraggedTaskOrder } from '../../utils/tasks'
-import { useState } from 'react'
 import { editTask } from '../../store/entities/task/thunks/edit-task'
 import { AppDispatch, RootState } from '../../store'
+import { useDraggableTask } from './hooks'
 
 interface TasksContainerProps {
     status?: string
@@ -16,10 +15,12 @@ interface TasksContainerProps {
     className?: string
 }
 
-// todo: decompose
-export function TasksContainer({ status, dueDate, emptyText, allowReordering = true, className }: TasksContainerProps) {
-    const [draggedTaskOrder, setDraggedTaskOrder] = useState<number | null>(null)
+export function TasksContainer ({ status, dueDate, emptyText, allowReordering = true, className }: TasksContainerProps) {
     const dispatch = useDispatch<AppDispatch>()
+    const onDropHandler = (id, order) => {
+        dispatch(editTask({id, dueDate, order}))
+    }
+    const { draggedTaskOrder, onDragOver, onDragLeave, onDrop } = useDraggableTask(onDropHandler)
     let selector
 
     switch (status) {
@@ -38,30 +39,6 @@ export function TasksContainer({ status, dueDate, emptyText, allowReordering = t
 
     const taskIds = useSelector(selector)
     const isLoading = useSelector(selectTaskLoadingStatus) === REQUEST_STATUSES.pending
-
-    const onDragOver = (event: React.DragEvent) => {
-        event.preventDefault()
-
-        const newDraggedTaskOrder = getDraggedTaskOrder(event)
-
-        if (newDraggedTaskOrder !== draggedTaskOrder) {
-            setDraggedTaskOrder(newDraggedTaskOrder)
-        }
-    }
-    const onDragLeave = () => setDraggedTaskOrder(null)
-    const onDrop = (event: React.DragEvent) => {
-        const taskId = event.dataTransfer.getData('text/plain')
-
-        if (taskId && draggedTaskOrder !== null) {
-            dispatch(editTask({
-                id: taskId,
-                dueDate: dueDate,
-                order: draggedTaskOrder,
-            }))
-            event.dataTransfer.setData('text/plain', '')
-            setDraggedTaskOrder(null)
-        }
-    }
 
     return (
         isLoading

@@ -1,8 +1,9 @@
 .calendarMonth {
-    display: flex;
-    flex-direction: column;
+    // display: grid;
+    // grid-template-columns: repeat(3, 20px [col-start]);
 
     .week {
-        flex: 1;
+        // todo
+        height: 19.9%;
     }
 }

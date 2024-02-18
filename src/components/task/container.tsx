@@ -6,6 +6,8 @@ import { useState } from 'react'
 import { TASK_STATUSES } from '../../constants/task-statuses'
 import { editTask } from '../../store/entities/task/thunks/edit-task'
 import { AppDispatch, RootState } from '../../store'
+import { useCalendar } from '../calendar/hooks'
+import { CALENDAR_PERIODS } from '../../constants/calendar'
 
 import styles from './styles.module.scss'
 
@@ -16,6 +18,7 @@ const SET_COMPLETED_TIMEOUT = 1100
 
 export function TaskDraggableContainer({ taskId, className }: { taskId: string, className?: string }) {
     const task: TaskType = useSelector((state: RootState) => selectTaskById(state, taskId))
+    const { period } = useCalendar()
     const [isDragged, setIsDragged] = useState(false)
     const [timerId, setTimerId] = useState<number | null>(null)
     const dispatch = useDispatch<AppDispatch>()
@@ -59,6 +62,7 @@ export function TaskDraggableContainer({ taskId, className }: { taskId: string, 
             className={classNames(className, {
                 [styles.dragged]: isDragged,
                 [styles.showProgress]: !!timerId,
+                [styles.mini]: period === CALENDAR_PERIODS.month,
             })}
             draggable={!timerId}
             onDragStart={onDragStart}

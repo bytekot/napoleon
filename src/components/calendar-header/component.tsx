@@ -9,8 +9,8 @@ export function CalendarHeader ({ className, text }: { className?: string, text?
     return (
         <div className={classNames(styles.calendarHeader, className)}>
             <h1>{text}</h1>
-            <CalendarPeriodControlsContainer className={styles.controls} />
-            <CalendarDateControlsContainer className={styles.controls} />
+            <CalendarPeriodControlsContainer className={styles.periodControls} />
+            <CalendarDateControlsContainer className={styles.dateControls} />
         </div>
     )
 }

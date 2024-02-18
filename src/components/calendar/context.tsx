@@ -1,7 +1,7 @@
 import { createContext, useCallback, useState } from 'react'
 import { CALENDAR_PERIODS } from '../../constants/calendar'
-import { CalendarPeriod } from '../../types'
 import { getDateWithOffset } from '../../utils/calendar'
+import { CalendarPeriod } from '../../types'
 
 const DEFAULT_DATE = new Date()
 const DEFAULT_PERIOD = CALENDAR_PERIODS.week

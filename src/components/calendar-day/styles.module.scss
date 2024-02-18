@@ -24,4 +24,19 @@
     &.today {
         background-color: #e5e5e5;
     }
+
+    &.mini {
+        .header {
+            span {
+                display: none;
+                opacity: 0.3;
+            }
+        }
+    }
+
+    &.notCurrentMonth {
+        .header {
+            opacity: 0.3;
+        }
+    }
 }

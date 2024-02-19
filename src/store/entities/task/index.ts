@@ -4,6 +4,7 @@ import { REQUEST_STATUSES } from '../../../constants/request-statuses'
 import { createTask } from './thunks/create-task'
 import { Task } from '../../../types'
 import { editTask } from './thunks/edit-task'
+import { deleteTask } from './thunks/delete-task'
 
 type TaskEntities = {
     [key: string]: Task
@@ -82,6 +83,16 @@ export const taskSlice = createSlice({
                     }
                 } else {
                     state.entities[params.id] = { ...state.entities[params.id], ...params }
+                }
+            })
+
+            .addCase(deleteTask.pending, (state, action) => {
+                const id = action.meta.arg
+                const index = state.ids.indexOf(id)
+
+                if (index !== -1) {
+                    delete state.entities[id]
+                    state.ids = [...state.ids.slice(0, index), ...state.ids.slice(index + 1)]
                 }
             })
     },

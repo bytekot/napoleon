@@ -27,7 +27,7 @@ export function Tasks ({ taskIds, emptyText, onDragOver, onDrop, onDragLeave, dr
                 : false
             }
             {draggedTaskOrder !== null && !taskIds.length
-                ? <div className={styles.addTask}>ツ</div>
+                ? <div className={styles.addTask}>┉</div>
                 : false
             }
             <div data-tasks className={styles.container}>

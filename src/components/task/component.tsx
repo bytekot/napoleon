@@ -13,8 +13,7 @@ interface TaskProps {
     onMouseUp?: (event: React.MouseEvent) => void
 }
 
-export function Task({ task, className, draggable = false, onDragStart,  onMouseUp }: TaskProps) {
-    // todo: move to container
+export function Task({ task, className, draggable = false, onDragStart, onMouseUp }: TaskProps) {
     const now = new Date()
     now.setHours(0, 0, 0, 0)
 
@@ -29,13 +28,17 @@ export function Task({ task, className, draggable = false, onDragStart,  onMouse
             })}
             draggable={draggable && !isCompleted}
             onDragStart={onDragStart}
-            onMouseUp={onMouseUp}
+            // onDoubleClick={onMouseUp}
         >
-            <span className={styles.style}></span>
+            <span className={styles.style} />
             <span>
                 <label>
-                    <input type='checkbox' checked={isCompleted} />
-                    <span className={styles.checkmark}></span>
+                    <input
+                        type='checkbox'
+                        checked={isCompleted}
+                        onChange={onMouseUp}
+                    />
+                    <span className={styles.checkmark} />
                     <span className={styles.text}>{task.name}</span>
                 </label>
             </span>

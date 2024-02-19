@@ -16,6 +16,14 @@ const updateById = (entities) => (id, data) => {
   return entities[index]
 }
 
+const removeById = (entities) => (id) => {
+  const index = entities.findIndex((entity) => entity.id === id)
+
+  entities = [...entities.slice(0, index), ...entities.slice(index + 1)]
+
+  return id
+}
+
 const updateTask = (id, data) => {
   const index = tasks.findIndex((task) => task.id === id)
 
@@ -78,5 +86,6 @@ module.exports = {
   reply,
   getById,
   updateById,
+  removeById,
   updateTask,
 }

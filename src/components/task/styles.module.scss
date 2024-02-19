@@ -85,20 +85,6 @@
         height: 100%;
     }
 
-    .progressBar {
-        position: absolute;
-        top: 0;
-        left: 0;
-        margin: 0;
-        height: 100%;
-        width: 0;
-        background-color: rgba(0, 128, 0, 0.2);
-    }
-    &.showProgress .progressBar {
-        width: 100%;
-        transition: 1s;
-    }
-
     &:hover {
         background-color: rgba(255, 255, 255, 0.93);
         box-shadow: 0 2px 1px 0px rgba(black, 0.2);

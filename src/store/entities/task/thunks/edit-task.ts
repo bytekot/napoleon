@@ -2,14 +2,14 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import { Task } from '../../../../types'
 
 interface TaskParams {
-    id: string,
-    dueDate?: string,
-    order?: number
+    id: string
+    dueDate?: string | null
+    order?: number | null
     status?: string
 }
 
 export const editTask = createAsyncThunk('task/editTask',
-    async (params: TaskParams, { rejectWithValue }) => {
+    async (params: TaskParams) => {
         const response = await fetch(`http://localhost:3001/api/task${params.id}`, {
             method: 'PATCH',
 

@@ -17,7 +17,7 @@ interface CalendarContextValue {
     setPreviousDate: () => void
     setToday: () => void
     movingItem: string | null
-    setMovingItem: (id: string | null) => void
+    setMovingItem?: (id: string | null) => void
 }
 
 export const CalendarContext = createContext<CalendarContextValue>(

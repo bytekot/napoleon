@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const { nanoid } = require('nanoid')
 const { tasks } = require('./mock')
-const { reply, updateTask } = require('./utils')
+const { reply, updateTask, removeById } = require('./utils')
 
 router.get('/tasks', (request, response) => {
   reply(response, tasks)
@@ -39,6 +39,14 @@ router.patch('/task:taskId', (request, response) => {
   }
 
   reply(response, updatedTask)
+})
+
+router.delete('/task:taskId', (request, response) => {
+  const taskId = request.params?.taskId
+
+  removeById(tasks)(taskId)
+
+  reply(response, taskId)
 })
 
 module.exports = router

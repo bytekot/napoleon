@@ -26,7 +26,7 @@ export function MainPage () {
                     <TaskForm />
                     <TasksContainer
                         status={TASK_STATUSES.unplanned}
-                        allowReordering={false}
+                        // allowReordering={false}
                         emptyText='А ничего.'
                     />
                 </div>

@@ -63,7 +63,11 @@ export const taskSlice = createSlice({
                 state.ids.push(id)
             })
 
-            .addCase(editTask.fulfilled, (state, { payload }) => {
+            .addCase(editTask.fulfilled, (state, { meta, payload }) => {
+                if (meta.arg.status) {
+                    return
+                }
+
                 if (Array.isArray(payload)) {
                     payload.forEach(entity => {
                         state.entities[entity.id] = entity

@@ -1,4 +1,4 @@
-import { TaskDraggableContainer } from '../task/container'
+import { TaskContainer } from '../task/container'
 
 import styles from './styles.module.scss'
 
@@ -10,11 +10,23 @@ interface TasksProps {
     onDragOver?: (event: React.DragEvent) => void
     onDrop?: (event: React.DragEvent) => void
     onDragLeave?: (event: React.DragEvent) => void
-    draggedTaskOrder: number | null
+    draggedTaskOrder?: number | null
     className?: string
+    onTaskCheckChange?: (id: string, event: React.ChangeEvent<HTMLInputElement>) => void
+    onTaskDragStart?: (id: string, event: React.DragEvent) => void
 }
 
-export function Tasks ({ taskIds, emptyText, onDragOver, onDrop, onDragLeave, draggedTaskOrder, className }: TasksProps) {
+export function Tasks ({
+    taskIds,
+    emptyText,
+    onDragOver,
+    onDrop,
+    onDragLeave,
+    draggedTaskOrder,
+    className,
+    onTaskCheckChange,
+    onTaskDragStart,
+}: TasksProps) {
     return (
         <div
             className={classNames(styles.tasks, className)}
@@ -22,13 +34,13 @@ export function Tasks ({ taskIds, emptyText, onDragOver, onDrop, onDragLeave, dr
             onDragLeave={onDragLeave}
             onDrop={onDrop}
         >
-            {emptyText && !taskIds.length
-                ? <div className={styles.emptyText}>{emptyText}</div>
-                : false
+            {
+                emptyText && !taskIds.length &&
+                <div className={styles.emptyText}>{emptyText}</div>
             }
-            {draggedTaskOrder !== null && !taskIds.length
-                ? <div className={styles.addTask}>┉</div>
-                : false
+            {
+                draggedTaskOrder !== null && !taskIds.length &&
+                <div className={styles.addTask}>┉</div>
             }
             <div data-tasks className={styles.container}>
                 {
@@ -42,10 +54,12 @@ export function Tasks ({ taskIds, emptyText, onDragOver, onDrop, onDragLeave, dr
                         }
 
                         return (
-                            <TaskDraggableContainer
+                            <TaskContainer
                                 key={index}
                                 taskId={taskId}
                                 className={className}
+                                onCheckChange={onTaskCheckChange}
+                                onDragStart={onTaskDragStart}
                             />
                         )
                     })

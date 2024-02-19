@@ -2,7 +2,13 @@ import styles from './styles.module.scss'
 
 import classNames from 'classnames'
 
-export function CalendarDay ({ children, date, className }: { children?: React.ReactNode, date: Date, className?: string }) {
+export interface CalendarDayProps {
+    children?: React.ReactNode
+    date: Date
+    className?: string
+}
+
+export function CalendarDay ({ children, date, className }: CalendarDayProps) {
     return (
         <time
             className={classNames(styles.calendarWeekDay, className, {

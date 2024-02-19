@@ -9,16 +9,24 @@ interface TaskProps {
     task: TaskType
     className?: string
     draggable?: boolean
-    onDragStart?: (event: React.DragEvent) => void
-    onMouseUp?: (event: React.MouseEvent) => void
+    // onDragStart?: (event: React.DragEvent) => void
+    onDragStart?: (taskId: string, event: React.DragEvent) => void
+    onCheckChange?: (taskId: string, event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-export function Task({ task, className, draggable = false, onDragStart, onMouseUp }: TaskProps) {
-    const now = new Date()
-    now.setHours(0, 0, 0, 0)
-
-    const isCompleted = task?.status === TASK_STATUSES.completed
-    const isOverdue = !isCompleted && task?.dueDate && new Date(task.dueDate) < now
+export function Task ({
+    task,
+    className,
+    draggable = false,
+    onDragStart,
+    onCheckChange,
+}: TaskProps
+) {
+    const { id, status, dueDate, name } = task
+    const isCompleted = status === TASK_STATUSES.completed
+    // todo: move from view or create new status
+    const now = new Date(); now.setHours(0, 0, 0, 0)
+    const isOverdue = !isCompleted && dueDate && new Date(dueDate) < now
 
     return (
         <div
@@ -27,8 +35,8 @@ export function Task({ task, className, draggable = false, onDragStart, onMouseU
                 [styles.overdue]: isOverdue,
             })}
             draggable={draggable && !isCompleted}
-            onDragStart={onDragStart}
-            // onDoubleClick={onMouseUp}
+            onDragStart={event => onDragStart && onDragStart(id, event)}
+            // onDragStart={onDragStart}
         >
             <span className={styles.style} />
             <span>
@@ -36,10 +44,10 @@ export function Task({ task, className, draggable = false, onDragStart, onMouseU
                     <input
                         type='checkbox'
                         checked={isCompleted}
-                        onChange={onMouseUp}
+                        onChange={event => onCheckChange && onCheckChange(id, event)}
                     />
                     <span className={styles.checkmark} />
-                    <span className={styles.text}>{task.name}</span>
+                    <span className={styles.text}>{name}</span>
                 </label>
             </span>
         </div>

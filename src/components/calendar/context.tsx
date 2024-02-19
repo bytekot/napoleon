@@ -16,8 +16,8 @@ interface CalendarContextValue {
     setNextDate: () => void
     setPreviousDate: () => void
     setToday: () => void
-    movingItem: string | null
-    setMovingItem?: (id: string | null) => void
+    movingItem: Element | null
+    setMovingItem?: (el: Element | null) => void
 }
 
 export const CalendarContext = createContext<CalendarContextValue>(
@@ -35,7 +35,7 @@ export function CalendarProvider({
 }) {
     const [date, setDate] = useState<Date>(defaultDate)
     const [period, setPeriod] = useState<CalendarPeriod>(defaultPeriod)
-    const [movingItem, setMovingItem] = useState<string | null>(null)
+    const [movingItem, setMovingItem] = useState<Element | null>(null)
 
     const isPeriodWeek = period === CALENDAR_PERIODS.week
     const isPeriodMonth = period === CALENDAR_PERIODS.month

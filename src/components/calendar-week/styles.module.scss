@@ -1,9 +1,13 @@
 .calendarWeek {
-  display: flex;
+    display: flex;
 
-  border-top: 1px solid #ddd;
+    border-top: 1px solid #ddd;
 
-  .day {
-    flex: 1;
-  }
+    .day {
+        flex: 1;
+
+        .tasks {
+            flex: 1;
+        }
+    }
 }

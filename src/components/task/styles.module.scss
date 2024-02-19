@@ -49,10 +49,10 @@
     label input:checked ~ .checkmark {
         background-color: #eee;
         box-shadow: inset 0 0 0 1px #ccc;
-        opacity: 0.5;
+        opacity: 0.8;
 
         ~ .text {
-            opacity: 0.5;
+            opacity: 0.3;
         }
     }
 
@@ -72,7 +72,7 @@
         width: 5px;
         height: 10px;
         border: solid #ccc;
-        border-width: 0 2px 2px 0;
+        border-width: 0 1px 1px 0;
         -webkit-transform: rotate(45deg);
         -ms-transform: rotate(45deg);
         transform: rotate(45deg);

@@ -1,5 +1,6 @@
 import { getWeekDayDates } from '../../utils/calendar'
-import { CalendarDayTasksContainer } from '../calendar-day/tasks-container'
+import { CalendarDayContainer } from '../calendar-day/container'
+import { TasksContainer } from '../tasks/container'
 
 import styles from './styles.module.scss'
 
@@ -11,7 +12,16 @@ export function CalendarWeek ({ date, className }: { date: Date, className?: str
         <time className={classNames(styles.calendarWeek, className)}>
             {
                 getWeekDayDates(date).map((date, index) =>
-                    <CalendarDayTasksContainer key={index} className={styles.day} date={date} />
+                    <CalendarDayContainer
+                        key={index}
+                        date={date}
+                        className={styles.day}
+                    >
+                        <TasksContainer
+                            dueDate={`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`}
+                            className={styles.tasks}
+                        />
+                    </CalendarDayContainer>
                 )
             }
         </time>

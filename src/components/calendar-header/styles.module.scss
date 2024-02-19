@@ -3,58 +3,29 @@
     flex-direction: row;
     background: #eee;
 
-    opacity: 1;
-    transition: 0.2s all ease;
-
     h1 {
-        background: #eee;
-        border-radius: 0 30px 30px 0;
         color: #999;
         padding-right: 10px;
     }
 
-    .dateControls, .periodControls {
-        background: #eee;
-        padding: 10px;
+    .actionTogglePeriod, .actionDelete {
+        opacity: 0;
     }
-
     .actionTogglePeriod {
         flex: 1;
-        display: block;
-        opacity: 0;
-        background: #eee;
-        color: #eee;
-        font-size: 32px;
-        text-align: center;
-        padding: 5px 20px;
     }
-
     .actionDelete {
         display: none;
-        opacity: 0;
-        background: rgba(255, 0, 0, 0.2);
-        color: #eee;
-        font-size: 32px;
-        text-align: center;
         width: 250px;
-        padding: 4px 20px;
     }
 
     &.dndMode {
-        background: #e5e5e5;
-        opacity: 1;
-        transition: 0.2s all ease;
-
-        .actionTogglePeriod {
+        .actionTogglePeriod, .actionDelete {
             opacity: 1;
-            background: #e5e5e5;
-            color: #f5f5f5;
             transition: 0.2s all ease;
         }
-
         .actionDelete {
             display: block;
-            opacity: 1;
         }
     }
 }

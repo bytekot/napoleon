@@ -19,7 +19,7 @@ const updateById = (entities) => (id, data) => {
 const removeById = (entities) => (id) => {
   const index = entities.findIndex((entity) => entity.id === id)
 
-  entities = [...entities.slice(0, index), ...entities.slice(index + 1)]
+  entities.splice(index, 1)
 
   return id
 }

@@ -1,1 +1,20 @@
-.actionArea {}
+.actionArea {
+    background: #e1e1e1;
+    color: #f5f5f5;
+    font-size: 32px;
+    text-align: center;
+    padding: 5px 20px;
+
+    &.dangerous {
+        background: rgba(255, 0, 0, 0.2);
+    }
+
+    &.active {
+        background-color: #d5d5d5;
+        transition: 0.1s all ease;
+
+        &.dangerous {
+            background: rgba(255, 0, 0, 0.4);
+        }
+    }
+}

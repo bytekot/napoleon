@@ -1,4 +1,4 @@
-import { ActionArea } from '../action-area/component'
+import { ActionAreaContainer } from '../action-area/container'
 import { CalendarDateControlsContainer } from '../calendar-date-controls/container'
 import { CalendarPeriodControlsContainer } from '../calendar-period-controls/container'
 
@@ -17,18 +17,19 @@ export function CalendarHeader ({ className, text, onTogglePeriodEnter, onDelete
     return (
         <div className={classNames(styles.calendarHeader, className)}>
             <h1>{text}</h1>
-            <ActionArea
+            <ActionAreaContainer
                 className={styles.actionTogglePeriod}
-                onDragEnter={onTogglePeriodEnter}
+                onEnter={onTogglePeriodEnter}
             >
-                {'⇧'}
-            </ActionArea>
-            <ActionArea
+                {'↑'}
+            </ActionAreaContainer>
+            <ActionAreaContainer
                 className={styles.actionDelete}
                 onDrop={onDeleteDrop}
+                dangerous={true}
             >
                 {'☒'}
-            </ActionArea>
+            </ActionAreaContainer>
             <CalendarPeriodControlsContainer className={styles.periodControls} />
             <CalendarDateControlsContainer className={styles.dateControls} />
         </div>

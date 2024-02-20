@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { getTasks } from './thunks/get-tasks'
 import { REQUEST_STATUSES } from '../../../constants/request-statuses'
 import { createTask } from './thunks/create-task'
-import { Task } from '../../../types'
+import { Task } from '../../../types/tasks'
 import { editTask } from './thunks/edit-task'
 import { deleteTask } from './thunks/delete-task'
 

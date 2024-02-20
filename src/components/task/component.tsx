@@ -1,5 +1,5 @@
 import { TASK_STATUSES } from '../../constants/task-statuses'
-import { Task as TaskType } from '../../types'
+import { Task as TaskType } from '../../types/tasks'
 
 import styles from './styles.module.scss'
 

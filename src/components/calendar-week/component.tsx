@@ -6,7 +6,13 @@ import styles from './styles.module.scss'
 
 import classNames from 'classnames'
 
-export function CalendarWeek ({ date, className }: { date: Date, className?: string }) {
+interface CalendarWeekProps {
+    date: Date
+    className?: string
+    onItemDragStart?: (id: string, event: React.DragEvent) => void
+}
+
+export function CalendarWeek ({ date, className, onItemDragStart }: CalendarWeekProps) {
     return (
         // todo add datetime attr
         <time className={classNames(styles.calendarWeek, className)}>
@@ -20,6 +26,7 @@ export function CalendarWeek ({ date, className }: { date: Date, className?: str
                         <TasksContainer
                             dueDate={`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`}
                             className={styles.tasks}
+                            onTaskDragStart={onItemDragStart}
                         />
                     </CalendarDayContainer>
                 )

@@ -1,59 +1,114 @@
-import { createContext, useCallback, useState } from 'react'
-import { CALENDAR_PERIODS } from '../../constants/calendar'
+import { createContext, useReducer, useRef } from 'react'
+import { CALENDAR_PERIODS, CALENDAR_REDUCER_ACTIONS as ACTIONS } from '../../constants/calendar'
 import { getDateWithOffset } from '../../utils/calendar'
-import { CalendarPeriod } from '../../types'
+import {
+    CalendarContextValue,
+    CalendarPeriod,
+    CalendarReducerAction,
+    CalendarState,
+    SetDateAction,
+    SetMovingItemAction,
+    SetPeriodAction,
+} from '../../types/calendar'
 
-const DEFAULT_DATE = new Date()
-const DEFAULT_PERIOD = CALENDAR_PERIODS.week
-
-interface CalendarContextValue {
-    date: Date
-    period: CalendarPeriod
-    setDate: (date: Date) => void
-    setPeriod: (view: CalendarPeriod) => void
-    isPeriodWeek: boolean
-    isPeriodMonth: boolean
-    setNextDate: () => void
-    setPreviousDate: () => void
-    setToday: () => void
-    movingItem: Element | null
-    setMovingItem?: (el: Element | null) => void
+const DEFAULT_STATE: CalendarState = {
+    date: new Date(),
+    period: CALENDAR_PERIODS.week,
+    movingItem: null
 }
 
 export const CalendarContext = createContext<CalendarContextValue>(
-    { date: DEFAULT_DATE, period: DEFAULT_PERIOD } as CalendarContextValue
+    DEFAULT_STATE as CalendarContextValue
 )
 
-export function CalendarProvider({
+function CalendarReducer (state: CalendarState, action: CalendarReducerAction): CalendarState {
+    switch (action.type) {
+        case ACTIONS.setDate:
+            return {
+                ...state,
+                date: (action as SetDateAction).payload,
+            }
+        case ACTIONS.setPeriod:
+            return {
+                ...state,
+                period: (action as SetPeriodAction).payload,
+            }
+        case ACTIONS.setMovingItem:
+            state.movingItemRef.current =
+                (action as SetMovingItemAction).payload?.element ?? null
+
+            return {
+                ...state,
+                movingItem: (action as SetMovingItemAction).payload?.id ?? null
+            }
+        case ACTIONS.setNextDate:
+            return {
+                ...state,
+                date: getDateWithOffset(state.date, state.period, 1),
+            }
+        case ACTIONS.setPreviousDate:
+            return {
+                ...state,
+                date: getDateWithOffset(state.date, state.period, -1),
+            }
+        default:
+            throw new Error('Wrong calendar reducer action type.')
+    }
+}
+
+export function CalendarProvider ({
     children,
-    defaultDate = DEFAULT_DATE,
-    defaultPeriod = DEFAULT_PERIOD,
+    date,
+    period,
 }: {
     children: React.ReactNode
-    defaultDate: Date
-    defaultPeriod: CalendarPeriod
+    date: Date
+    period: CalendarPeriod
 }) {
-    const [date, setDate] = useState<Date>(defaultDate)
-    const [period, setPeriod] = useState<CalendarPeriod>(defaultPeriod)
-    const [movingItem, setMovingItem] = useState<Element | null>(null)
-
-    const isPeriodWeek = period === CALENDAR_PERIODS.week
-    const isPeriodMonth = period === CALENDAR_PERIODS.month
-
-    const setNextDate = useCallback(() =>
-        setDate(currentDate => getDateWithOffset(currentDate, period, 1)),
-        [period]
+    const [state, dispatch] = useReducer(CalendarReducer,
+        { 
+            ...DEFAULT_STATE,
+            date,
+            period,
+            movingItemRef: useRef<Element>(),
+        }
     )
-    const setPreviousDate = useCallback(() =>
-        setDate(currentDate => getDateWithOffset(currentDate, period, -1)),
-        [period]
-    )
-    const setToday = () => setDate(new Date())
+
+    const isPeriodWeek = state.period === CALENDAR_PERIODS.week
+    const isPeriodMonth = state.period === CALENDAR_PERIODS.month
+
+    function setDate (date: Date) {
+        dispatch({ type: ACTIONS.setDate, payload: date })
+    }
+
+    function setPeriod (period: CalendarPeriod) {
+        dispatch({ type: ACTIONS.setPeriod, payload: period })
+    }
+
+    function setMovingItem (item: { id: string, element: Element } | null) {
+        item && item.element.addEventListener('dragend', () => {
+            dispatch({ type: ACTIONS.setMovingItem, payload: null })
+        })
+        dispatch({ type: ACTIONS.setMovingItem, payload: item })
+    }
+
+    function setNextDate () {
+        dispatch({ type: ACTIONS.setNextDate })
+    }
+
+    function setPreviousDate () {
+        dispatch({ type: ACTIONS.setPreviousDate })
+    }
+
+    function setToday () {
+        setDate(new Date())
+    }
 
     return (
         <CalendarContext.Provider value={{
-            date,
-            period,
+            date: state.date,
+            period: state.period,
+            movingItem: state.movingItem,
             setDate,
             setPeriod,
             isPeriodWeek,
@@ -61,7 +116,6 @@ export function CalendarProvider({
             setNextDate,
             setPreviousDate,
             setToday,
-            movingItem,
             setMovingItem,
         }}>
             {children}

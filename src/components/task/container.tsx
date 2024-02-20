@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
 import { selectTaskById } from '../../store/entities/task/selectors'
 import { Task } from './component'
-import { Task as TaskType } from '../../types'
+import { Task as TaskType } from '../../types/tasks'
 import { RootState } from '../../store'
 import { useCalendar } from '../calendar/hooks'
 

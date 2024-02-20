@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import { Task } from '../../../../types'
+import { Task } from '../../../../types/tasks'
 
 interface TaskParams {
     id: string

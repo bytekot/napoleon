@@ -30,7 +30,7 @@ export function MainPage () {
                         emptyText='А ничего.'
                     />
                 </div>
-                <CalendarProvider defaultDate={new Date()} defaultPeriod={CALENDAR_PERIODS.week}>
+                <CalendarProvider date={new Date()} period={CALENDAR_PERIODS.week}>
                     <CalendarContainer className={styles.calendar}
                 />
                 </CalendarProvider>

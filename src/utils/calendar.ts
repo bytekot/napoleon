@@ -1,5 +1,5 @@
-import { CALENDAR_PERIODS } from "../constants/calendar"
-import { CalendarPeriod } from "../types"
+import { CALENDAR_PERIODS } from '../constants/calendar'
+import { CalendarPeriod } from '../types/calendar'
 
 export function getWeekDayDates (date: Date): Date[] {
     const monday = getThisMonday(date)

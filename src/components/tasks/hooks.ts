@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { getDraggedTaskOrder } from '../../utils/tasks'
 
-export function useDraggableTask (onDropHandler: (text: string, order: number) => void) {
+export function useTrackTaskOrder (onDropHandler: (text: string, order: number) => void) {
     const [draggedTaskOrder, setDraggedTaskOrder] = useState<number | null>(null)
 
     const onDragOver = (event: React.DragEvent) => {
@@ -23,11 +23,16 @@ export function useDraggableTask (onDropHandler: (text: string, order: number) =
             setDraggedTaskOrder(null)
         }
     }
+    function onDragStart (id: string, { dataTransfer }: React.DragEvent) {
+        dataTransfer.effectAllowed = 'move'
+        dataTransfer.setData('text/plain', id)
+    }
 
     return {
         draggedTaskOrder,
         onDragOver,
         onDragLeave,
         onDrop,
+        onDragStart,
     }
 }

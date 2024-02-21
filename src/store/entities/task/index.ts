@@ -64,7 +64,7 @@ export const taskSlice = createSlice({
             })
 
             .addCase(editTask.fulfilled, (state, { meta, payload }) => {
-                if (meta.arg.status) {
+                if (meta.arg.completed) {
                     return
                 }
 

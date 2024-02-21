@@ -5,7 +5,7 @@ interface TaskParams {
     id: string
     dueDate?: string | null
     order?: number | null
-    status?: string
+    completed?: boolean
 }
 
 export const editTask = createAsyncThunk('task/editTask',

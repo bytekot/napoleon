@@ -3,7 +3,6 @@ import { CalendarProvider } from '../../components/calendar/context'
 import { CalendarContainer } from '../../components/calendar/container'
 import { TaskForm } from '../../components/task-form/component'
 import { TasksContainer } from '../../components/tasks/container'
-import { TASK_STATUSES } from '../../constants/task-statuses'
 import { useEffect } from 'react'
 import { getTasks } from '../../store/entities/task/thunks/get-tasks'
 import { Layout } from '../../components/layout/component'
@@ -24,11 +23,7 @@ export function MainPage () {
             <div className={styles.mainPage}>
                 <div className={styles.tasks}>
                     <TaskForm />
-                    <TasksContainer
-                        status={TASK_STATUSES.unplanned}
-                        // allowReordering={false}
-                        emptyText='А ничего.'
-                    />
+                    <TasksContainer emptyText='Список дел пуст.' />
                 </div>
                 <CalendarProvider date={new Date()} period={CALENDAR_PERIODS.week}>
                     <CalendarContainer className={styles.calendar}

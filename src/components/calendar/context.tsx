@@ -6,6 +6,7 @@ import {
     CalendarPeriod,
     CalendarReducerAction,
     CalendarState,
+    MovingItem,
     SetDateAction,
     SetMovingItemAction,
     SetPeriodAction,
@@ -14,7 +15,6 @@ import {
 const DEFAULT_STATE: CalendarState = {
     date: new Date(),
     period: CALENDAR_PERIODS.week,
-    movingItem: null
 }
 
 export const CalendarContext = createContext<CalendarContextValue>(
@@ -34,12 +34,12 @@ function CalendarReducer (state: CalendarState, action: CalendarReducerAction): 
                 period: (action as SetPeriodAction).payload,
             }
         case ACTIONS.setMovingItem:
-            state.movingItemRef.current =
+            state.movingItemElement.current =
                 (action as SetMovingItemAction).payload?.element ?? null
 
             return {
                 ...state,
-                movingItem: (action as SetMovingItemAction).payload?.id ?? null
+                movingItemId: (action as SetMovingItemAction).payload?.id ?? null
             }
         case ACTIONS.setNextDate:
             return {
@@ -70,11 +70,12 @@ export function CalendarProvider ({
             ...DEFAULT_STATE,
             date,
             period,
-            movingItemRef: useRef<Element>(),
+            movingItemElement: useRef<Element | null>(null),
         }
     )
 
     const isPeriodWeek = state.period === CALENDAR_PERIODS.week
+
     const isPeriodMonth = state.period === CALENDAR_PERIODS.month
 
     function setDate (date: Date) {
@@ -85,8 +86,8 @@ export function CalendarProvider ({
         dispatch({ type: ACTIONS.setPeriod, payload: period })
     }
 
-    function setMovingItem (item: { id: string, element: Element } | null) {
-        item && item.element.addEventListener('dragend', () => {
+    function setMovingItem (item: MovingItem | null) {
+        item?.element?.addEventListener('dragend', () => {
             dispatch({ type: ACTIONS.setMovingItem, payload: null })
         })
         dispatch({ type: ACTIONS.setMovingItem, payload: item })
@@ -108,7 +109,7 @@ export function CalendarProvider ({
         <CalendarContext.Provider value={{
             date: state.date,
             period: state.period,
-            movingItem: state.movingItem,
+            movingItemId: state.movingItemId,
             setDate,
             setPeriod,
             isPeriodWeek,

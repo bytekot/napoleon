@@ -4,5 +4,20 @@ export interface Task {
     creationDate: string
     dueDate: string | null
     order: number | null
-    status: string
+    completed: boolean
+}
+
+export interface TaskProps {
+    task: Task
+    className?: string
+    draggable?: boolean
+    onCheckChange?: (taskId: string, event: React.ChangeEvent<HTMLInputElement>) => void
+    onDragStart?: (taskId: string, event: React.DragEvent) => void
+}
+
+export interface TaskContainerProps {
+    taskId: string
+    className?: string
+    onCheckChange?: (taskId: string, event: React.ChangeEvent<HTMLInputElement>) => void
+    onDragStart?: (taskId: string, event: React.DragEvent) => void
 }

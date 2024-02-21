@@ -10,7 +10,7 @@ import styles from './styles.module.scss'
 import classNames from 'classnames'
 
 export function CalendarHeaderContainer ({ className, text }: { className?: string, text?: string }) {
-    const { isPeriodMonth, setPeriod, movingItem } = useCalendar()
+    const { isPeriodMonth, setPeriod, movingItemId } = useCalendar()
     const dispatch = useDispatch<AppDispatch>()
 
     const togglePeriod = () => {
@@ -30,7 +30,7 @@ export function CalendarHeaderContainer ({ className, text }: { className?: stri
     return (
         <CalendarHeader
             className={classNames(className, {
-                [styles.dndMode]: !!movingItem,
+                [styles.dndMode]: !!movingItemId,
             })}
             text={text}
             onTogglePeriodEnter={togglePeriod}

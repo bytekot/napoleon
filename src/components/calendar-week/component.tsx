@@ -26,7 +26,7 @@ export function CalendarWeek ({ date, className, onItemDragStart }: CalendarWeek
                         <TasksContainer
                             dueDate={`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`}
                             className={styles.tasks}
-                            onTaskDragStart={onItemDragStart}
+                            onItemDragStart={onItemDragStart}
                         />
                     </CalendarDayContainer>
                 )

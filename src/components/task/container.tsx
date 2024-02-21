@@ -1,33 +1,15 @@
-import { useSelector } from 'react-redux'
-import { selectTaskById } from '../../store/entities/task/selectors'
 import { Task } from './component'
-import { Task as TaskType } from '../../types/tasks'
-import { RootState } from '../../store'
-import { useCalendar } from '../calendar/hooks'
-
-import styles from './styles.module.scss'
-
-import classNames from 'classnames'
-
-interface TaskContainerProps {
-    taskId: string
-    className?: string
-    onCheckChange?: (taskId: string, event: React.ChangeEvent<HTMLInputElement>) => void
-    onDragStart?: (taskId: string, event: React.DragEvent) => void
-}
+import { TaskContainerProps } from '../../types/tasks'
+import { useTask } from '../../hooks/tasks'
 
 export function TaskContainer ({ taskId, className, onCheckChange, onDragStart }: TaskContainerProps) {
-    const task: TaskType = useSelector((state: RootState) => selectTaskById(state, taskId))
-    const { isPeriodMonth, movingItem } = useCalendar()
+    const { task } = useTask(taskId)
 
     return (
         <div data-task>
             <Task
                 task={task}
-                className={classNames(className, {
-                    // [styles.dragged]: movingItem === taskId,
-                    [styles.mini]: isPeriodMonth,
-                })}
+                className={className}
                 draggable={true}
                 onDragStart={onDragStart}
                 onCheckChange={onCheckChange}

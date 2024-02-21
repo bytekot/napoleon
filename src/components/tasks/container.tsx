@@ -1,47 +1,54 @@
-import { useDispatch, useSelector } from 'react-redux'
-import { selectTaskIdsByDueDate, selectTaskLoadingStatus, selectUnplannedTaskIds } from '../../store/entities/task/selectors'
+import { useDispatch } from 'react-redux'
 import { Tasks } from './component'
-import { REQUEST_STATUSES } from '../../constants/request-statuses'
 import { editTask } from '../../store/entities/task/thunks/edit-task'
-import { AppDispatch, RootState } from '../../store'
-import { useTrackTaskOrder } from './hooks'
-import { TASK_STATUSES } from '../../constants/task-statuses'
+import { AppDispatch } from '../../store'
+import { useTasks, useTrackTask } from '../../hooks/tasks'
 
 interface TasksContainerProps {
-    status?: string
     dueDate?: string
     emptyText?: string
     allowReordering?: boolean
     className?: string
-    onTaskDragStart?: (id: string, event: React.DragEvent) => void
+    onItemDragStart?: (id: string, event: React.DragEvent) => void
 }
 
-export function TasksContainer ({ dueDate, className, emptyText, onTaskDragStart }: TasksContainerProps) {
-    const selector = !dueDate
-        ? selectUnplannedTaskIds
-        : (state: RootState) => selectTaskIdsByDueDate(state, dueDate)
-
-    const taskIds = useSelector(selector)
-    const isLoading = useSelector(selectTaskLoadingStatus) === REQUEST_STATUSES.pending
-
+export function TasksContainer ({ dueDate, className, emptyText, onItemDragStart }: TasksContainerProps) {
+    const { taskIds, isLoading } = useTasks(dueDate)
+    const { position, track } = useTrackTask()
     const dispatch = useDispatch<AppDispatch>()
-    const {
-        draggedTaskOrder,
-        onDragOver,
-        onDragLeave,
-        onDrop,
-        onDragStart,
-    } = useTrackTaskOrder((id, order) => {
-        dispatch(editTask(
-            { id, dueDate, order }
-        ))
-    })
+
+    function onDragOver (event: React.DragEvent) {
+        event.preventDefault()
+        track(event.target as Element, event.clientY)
+    }
+
+    function onDragLeave () {
+        track(null)
+    }
+
+    function onDrop (event: React.DragEvent) {
+        const id = event.dataTransfer.getData('text/plain')
+
+        if (id  && position !== null) {
+            dispatch(editTask(
+                { id, dueDate, order: position }
+            ))
+            event.dataTransfer.setData('text/plain', '')
+            track(null)
+        }
+    }
+
+    function onTaskDragStart (id: string, event: React.DragEvent) {
+        event.dataTransfer.effectAllowed = 'move'
+        event.dataTransfer.setData('text/plain', id)
+        onItemDragStart?.(id, event)
+    }
 
     function onTaskCheckChange (id: string, event: React.ChangeEvent<HTMLInputElement>) {
         dispatch(editTask(
             {
                 id,
-                status: event.target.checked ? TASK_STATUSES.completed : TASK_STATUSES.planned,
+                completed: event.target.checked,
             }
         ))
     }
@@ -53,17 +60,12 @@ export function TasksContainer ({ dueDate, className, emptyText, onTaskDragStart
                 taskIds={taskIds}
                 className={className}
                 emptyText={emptyText}
-
-                draggedTaskOrder={draggedTaskOrder}
+                movingItemOrder={position}
                 onDragOver={onDragOver}
                 onDragLeave={onDragLeave}
                 onDrop={onDrop}
-
-                onTaskCheckChange={onTaskCheckChange}
-                onTaskDragStart={(taskId, event) => {
-                    onDragStart(taskId, event)
-                    onTaskDragStart?.(taskId, event)
-                }}
+                onItemDragStart={onTaskDragStart}
+                onItemCheckChange={onTaskCheckChange}
             />
     )
 }

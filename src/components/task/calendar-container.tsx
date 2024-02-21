@@ -9,7 +9,12 @@ import classNames from 'classnames'
 
 export function TaskCalendarContainer ({ taskId, className, onCheckChange, onDragStart }: TaskContainerProps) {
     const { task } = useTask(taskId)
-    const { isPeriodMonth, movingItemId } = useCalendar()
+    const { isPeriodMonth, movingItemId, setMovingItem } = useCalendar()
+
+    function onDragStartHandler (id: string, event: React.DragEvent) {
+        onDragStart && onDragStart(id, event)
+        setMovingItem && setMovingItem({ id, element: event.target })
+    }
 
     return (
         <div data-task>
@@ -20,7 +25,7 @@ export function TaskCalendarContainer ({ taskId, className, onCheckChange, onDra
                     [styles.mini]: isPeriodMonth,
                 })}
                 draggable={true}
-                onDragStart={onDragStart}
+                onDragStart={onDragStartHandler}
                 onCheckChange={onCheckChange}
             />
         </div>

@@ -18,7 +18,7 @@ router.post('/task', (request, response) => {
       creationDate: null,
       dueDate: null,
       order: null,
-      status: 'unplanned',
+      completed: false,
       ...body,
     }
 

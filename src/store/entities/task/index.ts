@@ -59,7 +59,7 @@ export const taskSlice = createSlice({
                 const { name, creationDate } = meta.arg
                 const id = meta.requestId
 
-                state.entities[id] = { id, name, creationDate } as Task
+                state.entities[id] = { id, name, creationDate, completed: false } as Task
                 state.ids.push(id)
             })
 

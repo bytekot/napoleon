@@ -1,3 +1,4 @@
+import { PlusIcon } from '../../assets/icons/plus-icon/component'
 import { TaskCalendarContainer } from '../task/calendar-container'
 
 import styles from './styles.module.scss'
@@ -41,7 +42,7 @@ export function Tasks ({
                 emptyTextVisible && <div className={styles.emptyText}>{emptyText}</div>
             }
             {
-                addIconVisible && <div className={styles.addTask}>┉</div>
+                addIconVisible && <PlusIcon className={styles.addTask} />
             }
             <div data-tasks className={styles.container}>
                 {

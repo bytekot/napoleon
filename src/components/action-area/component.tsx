@@ -11,7 +11,14 @@ export interface ActionAreaProps {
     dangerous?: boolean
 }
 
-export function ActionArea ({ children, className, onEnter, onLeave, onDrop, dangerous = false }: ActionAreaProps) {
+export function ActionArea ({
+    children,
+    className,
+    onEnter,
+    onLeave,
+    onDrop,
+    dangerous = false
+}: ActionAreaProps) {
     return (
         <div
             className={classNames(styles.actionArea, className, {

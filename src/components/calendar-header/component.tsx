@@ -1,6 +1,8 @@
 import { ActionAreaContainer } from '../action-area/container'
+import { CaretUpIcon } from '../../assets/icons/caret-up/component'
 import { CalendarDateControlsContainer } from '../calendar-date-controls/container'
 import { CalendarPeriodControlsContainer } from '../calendar-period-controls/container'
+import { TrashIcon } from '../../assets/icons/trash-icon/component'
 
 import styles from './styles.module.scss'
 
@@ -21,14 +23,14 @@ export function CalendarHeader ({ className, text, onTogglePeriodEnter, onDelete
                 className={styles.actionTogglePeriod}
                 onEnter={onTogglePeriodEnter}
             >
-                {'↑'}
+                <CaretUpIcon />
             </ActionAreaContainer>
             <ActionAreaContainer
                 className={styles.actionDelete}
                 onDrop={onDeleteDrop}
                 dangerous={true}
             >
-                {'☒'}
+                <TrashIcon />
             </ActionAreaContainer>
             <CalendarPeriodControlsContainer className={styles.periodControls} />
             <CalendarDateControlsContainer className={styles.dateControls} />

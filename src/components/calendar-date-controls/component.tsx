@@ -1,3 +1,5 @@
+import { CaretLeftIcon } from '../../assets/icons/caret-left/component'
+import { CaretRightIcon } from '../../assets/icons/caret-right/component'
 import { Button } from '../button/component'
 
 import styles from './styles.module.scss'
@@ -19,9 +21,13 @@ export function CalendarDateControls ({
 }: CalendarPeriodControlsProps) {
     return (
         <div className={classNames(styles.calendarDateControls, className)}>
-            <Button onClick={onPreviousBtnClick}>{'‹'}</Button>
+            <Button onClick={onPreviousBtnClick}>
+                <CaretLeftIcon />
+            </Button>
             <Button onClick={onTodayBtnClick}>{'Сегодня'}</Button>
-            <Button onClick={onNextBtnClick}>{'›'}</Button>
+            <Button onClick={onNextBtnClick}>
+                <CaretRightIcon />
+            </Button>
         </div>
     )
 }

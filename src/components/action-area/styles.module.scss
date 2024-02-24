@@ -5,6 +5,10 @@
     text-align: center;
     padding: 4px 20px;
 
+    img {
+        fill: #d5d5d5;
+    }
+
     &.dangerous {
         background: rgba(255, 0, 0, 0.2);
     }

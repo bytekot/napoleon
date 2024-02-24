@@ -22,6 +22,13 @@
     user-select: none;
     touch-action: manipulation;
     white-space: nowrap;
+
+    svg {
+        fill: #0f1111;
+        height: 14px;
+        width: 14px;
+        vertical-align: middle;
+    }
 }
 
 .button:active {

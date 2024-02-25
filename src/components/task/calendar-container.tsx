@@ -4,10 +4,15 @@ import { useTask } from '../../hooks/tasks'
 import { useCalendar } from '../calendar/hooks'
 
 import styles from './styles.module.scss'
-
 import classNames from 'classnames'
 
-export function TaskCalendarContainer ({ taskId, className, onCheckChange, onDragStart }: TaskContainerProps) {
+export function TaskCalendarContainer ({
+    taskId,
+    className,
+    onCheckChange,
+    onDragStart,
+}: TaskContainerProps
+) {
     const { task } = useTask(taskId)
     const { isPeriodMonth, movingItemId, setMovingItem } = useCalendar()
 

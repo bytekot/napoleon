@@ -6,14 +6,14 @@ export interface CalendarState {
     date: Date
     period: CalendarPeriod
     movingItemId: string | null
-    movingItemElement: React.MutableRefObject<Element | null>
+    movingItemElement: React.MutableRefObject<EventTarget | null>
 }
 
 export interface CalendarContextValue {
     date: Date
     period: CalendarPeriod
     movingItemId: string | null
-    movingItemElement?: React.MutableRefObject<Element | null >
+    movingItemElement?: React.MutableRefObject<EventTarget | null >
     setDate: (date: Date) => void
     setPeriod: (view: CalendarPeriod) => void
     isPeriodWeek: boolean
@@ -26,7 +26,7 @@ export interface CalendarContextValue {
 
 export interface MovingItem {
     id: string
-    element: Element | null
+    element: EventTarget | null
 }
 
 export interface SetDateAction {

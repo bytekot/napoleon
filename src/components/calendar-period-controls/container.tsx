@@ -10,6 +10,7 @@ export function CalendarPeriodControlsContainer ({ className }: { className?: st
             className={className}
             onWeekBtnClick={() => setPeriod(CALENDAR_PERIODS.week)}
             onMonthBtnClick={() => setPeriod(CALENDAR_PERIODS.month)}
+            onYearBtnClick={() => setPeriod(CALENDAR_PERIODS.year)}
         />
     )
 }

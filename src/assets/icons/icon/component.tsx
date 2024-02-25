@@ -11,7 +11,6 @@ export function Icon ({
 }: IconProps & {
     children: React.ReactNode
 }) {
-
     return (
         <svg
             className={classNames(styles.icon, className, {

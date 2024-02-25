@@ -7,9 +7,6 @@ import {
     CalendarReducerAction,
     CalendarState,
     MovingItem,
-    SetDateAction,
-    SetMovingItemAction,
-    SetPeriodAction,
 } from '../../types/calendar'
 
 const DEFAULT_STATE: CalendarState = {
@@ -26,20 +23,19 @@ function CalendarReducer (state: CalendarState, action: CalendarReducerAction): 
         case ACTIONS.setDate:
             return {
                 ...state,
-                date: (action as SetDateAction).payload,
+                date: action.payload,
             }
         case ACTIONS.setPeriod:
             return {
                 ...state,
-                period: (action as SetPeriodAction).payload,
+                period: action.payload,
             }
         case ACTIONS.setMovingItem:
-            state.movingItemElement.current =
-                (action as SetMovingItemAction).payload?.element ?? null
+            state.movingItemElement.current = action.payload?.element ?? null
 
             return {
                 ...state,
-                movingItemId: (action as SetMovingItemAction).payload?.id ?? null
+                movingItemId: action.payload?.id ?? null
             }
         case ACTIONS.setNextDate:
             return {

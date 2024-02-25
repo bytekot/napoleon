@@ -1,5 +1,4 @@
 .button {
-    opacity: 0.8;
     background-image: linear-gradient(#f7f8fa, #e7e9ec);
     border-color: #adb1b8 #a2a6ac #8d9096;
     border-style: solid;
@@ -10,12 +9,12 @@
     color: #0f1111;
     cursor: pointer;
     display: inline-block;
-    font-size: 14px;
     height: 29px;
     font-size: 13px;
     outline: 0;
     overflow: hidden;
-    padding: 0 11px;
+    // padding: 0 11px;
+    padding: 0 7px;
     text-align: center;
     text-decoration: none;
     text-overflow: ellipsis;
@@ -23,11 +22,12 @@
     touch-action: manipulation;
     white-space: nowrap;
 
-    svg {
-        fill: #0f1111;
-        height: 14px;
-        width: 14px;
-        vertical-align: middle;
+    span {
+        line-height: 16px;
+
+        svg {
+            fill: #0f1111;
+        }
     }
 }
 

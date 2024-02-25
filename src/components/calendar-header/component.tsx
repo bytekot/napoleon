@@ -1,3 +1,4 @@
+import { SIZES } from '../../constants/shared'
 import { ActionAreaContainer } from '../action-area/container'
 import { CaretUpIcon } from '../../assets/icons/caret-up/component'
 import { CalendarDateControlsContainer } from '../calendar-date-controls/container'
@@ -5,7 +6,6 @@ import { CalendarPeriodControlsContainer } from '../calendar-period-controls/con
 import { TrashIcon } from '../../assets/icons/trash-icon/component'
 
 import styles from './styles.module.scss'
-
 import classNames from 'classnames'
 
 interface CalendarHeaderProps {
@@ -23,14 +23,14 @@ export function CalendarHeader ({ className, text, onTogglePeriodEnter, onDelete
                 className={styles.actionTogglePeriod}
                 onEnter={onTogglePeriodEnter}
             >
-                <CaretUpIcon />
+                <CaretUpIcon size={SIZES.medium} />
             </ActionAreaContainer>
             <ActionAreaContainer
                 className={styles.actionDelete}
                 onDrop={onDeleteDrop}
                 dangerous={true}
             >
-                <TrashIcon />
+                <TrashIcon size={SIZES.medium} />
             </ActionAreaContainer>
             <CalendarPeriodControlsContainer className={styles.periodControls} />
             <CalendarDateControlsContainer className={styles.dateControls} />

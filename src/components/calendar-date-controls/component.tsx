@@ -1,5 +1,6 @@
 import { CaretLeftIcon } from '../../assets/icons/caret-left/component'
 import { CaretRightIcon } from '../../assets/icons/caret-right/component'
+import { SIZES } from '../../constants/shared'
 import { Button } from '../button/component'
 
 import styles from './styles.module.scss'
@@ -22,11 +23,11 @@ export function CalendarDateControls ({
     return (
         <div className={classNames(styles.calendarDateControls, className)}>
             <Button onClick={onPreviousBtnClick}>
-                <CaretLeftIcon />
+                <CaretLeftIcon size={SIZES.small} />
             </Button>
             <Button onClick={onTodayBtnClick}>{'Сегодня'}</Button>
             <Button onClick={onNextBtnClick}>
-                <CaretRightIcon />
+                <CaretRightIcon size={SIZES.small} />
             </Button>
         </div>
     )

@@ -52,4 +52,9 @@ export interface SetPreviousDateAction {
     type: typeof CALENDAR_REDUCER_ACTIONS.setPreviousDate
 }
 
-export type CalendarReducerAction = SetDateAction | SetPeriodAction | SetMovingItemAction | SetNextDateAction | SetPreviousDateAction
+export type CalendarReducerAction =
+    | SetDateAction
+    | SetPeriodAction
+    | SetMovingItemAction
+    | SetNextDateAction
+    | SetPreviousDateAction

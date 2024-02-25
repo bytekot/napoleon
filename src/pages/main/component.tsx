@@ -1,8 +1,7 @@
 import { useDispatch } from 'react-redux'
 import { CalendarProvider } from '../../components/calendar/context'
 import { CalendarContainer } from '../../components/calendar/container'
-import { TaskForm } from '../../components/task-form/component'
-import { TasksContainer } from '../../components/tasks/container'
+import { TasksFormContainer } from '../../components/tasks-form/container'
 import { useEffect } from 'react'
 import { getTasks } from '../../store/entities/task/thunks/get-tasks'
 import { Layout } from '../../components/layout/component'
@@ -21,11 +20,11 @@ export function MainPage () {
     return (
         <Layout>
             <div className={styles.mainPage}>
-                <div className={styles.tasks}>
-                    <TaskForm />
-                    <TasksContainer emptyText='Список дел пуст.' />
-                </div>
-                <CalendarProvider date={new Date()} period={CALENDAR_PERIODS.week}>
+                <TasksFormContainer className={styles.tasks} />
+                <CalendarProvider
+                    date={new Date()}
+                    period={CALENDAR_PERIODS.week}
+                >
                     <CalendarContainer className={styles.calendar}
                 />
                 </CalendarProvider>

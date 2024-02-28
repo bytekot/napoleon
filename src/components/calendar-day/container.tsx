@@ -1,20 +1,29 @@
+import { CALENDAR_PERIODS } from '../../constants/calendar'
+import { isCurrentMonth, isToday } from '../../utils/calendar'
 import { useCalendar } from '../calendar/hooks'
-import { CalendarDay, CalendarDayProps } from './component'
+import { CalendarDay } from './component'
 
 import styles from './styles.module.scss'
-
 import classNames from 'classnames'
 
-export function CalendarDayContainer ({ children, date, className }: CalendarDayProps) {
-    const { isPeriodMonth } = useCalendar()
+interface Props {
+    children?: React.ReactNode
+    date: Date
+    className?: string
+}
+
+export function CalendarDayContainer ({ children, date, className }: Props) {
+    const { period } = useCalendar()
 
     return (
         <CalendarDay
-            date={date}
+            date={date.getDate()}
             className={classNames(className, {
-                [styles.mini]: isPeriodMonth,
-                [styles.currentMonth]: new Date().getMonth() === new Date(date).getMonth(),
+                // [styles.mini]: period === CALENDAR_PERIODS.month,
+                [styles.currentMonth]: isCurrentMonth(date),
+                [styles.today]: isToday(date),
             })}
+            minimized={period === CALENDAR_PERIODS.year}
         >
             {children}
         </CalendarDay>

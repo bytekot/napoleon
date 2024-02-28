@@ -42,7 +42,7 @@ export function TasksForm ({
                         emptyText='Что нужно сделать?'
                         autoFocus
                     />
-                    <TasksContainer emptyText='Список дел пуст.' />
+                    <TasksContainer emptyText='Список пуст.' />
                 </>
             }
         </div>

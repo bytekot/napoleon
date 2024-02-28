@@ -1,9 +1,7 @@
 .calendarMonth {
-    // display: grid;
-    // grid-template-columns: repeat(3, 20px [col-start]);
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: 10px repeat(5, 1fr);
 
-    .week {
-        // todo
-        height: 19.9%;
-    }
+    .day {}
 }

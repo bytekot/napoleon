@@ -2,7 +2,6 @@ import { PlusIcon } from '../../assets/icons/plus-icon/component'
 import { TaskCalendarContainer } from '../task/calendar-container'
 
 import styles from './styles.module.scss'
-
 import classNames from 'classnames'
 
 interface TasksProps {

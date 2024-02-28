@@ -3,7 +3,6 @@ import { CalendarDayContainer } from '../calendar-day/container'
 import { TasksContainer } from '../tasks/container'
 
 import styles from './styles.module.scss'
-
 import classNames from 'classnames'
 
 interface CalendarWeekProps {

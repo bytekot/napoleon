@@ -1,16 +1,36 @@
-import { getMonth, getMonthWeekDates } from '../../utils/calendar'
-import { CalendarWeek } from '../calendar-week/component'
+import { DAYS_OF_WEEK } from '../../constants/calendar'
+import { CalendarDayContainer } from '../calendar-day/container'
+import { TasksContainer } from '../tasks/container'
 
 import styles from './styles.module.scss'
-
 import classNames from 'classnames'
 
-export function CalendarMonth ({ date, className }: { date: Date, className?: string }) {
+interface CalendarMonthProps {
+    dates: Date[]
+    className?: string
+    dateTime: string
+}
+
+export function CalendarMonth ({ dates, className, dateTime }: CalendarMonthProps) {
     return (
-        <time dateTime={`${getMonth(date)}`} className={classNames(styles.calendarMonth, className)}>
+        <time
+            dateTime={dateTime}
+            className={classNames(styles.calendarMonth, className)}
+        >
             {
-                getMonthWeekDates(date).map((date: Date, index: number) =>
-                    <CalendarWeek key={index} className={styles.week} date={date} />
+                DAYS_OF_WEEK.map((day, index) =>
+                    <div key={index}>{day}</div>
+                )
+            }
+            {
+                dates.map((date: Date, index: number) =>
+                    <CalendarDayContainer key={index} className={styles.day} date={date}>
+                        <TasksContainer
+                            dueDate={`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`}
+                            className={styles.tasks}
+                            // onItemDragStart={onItemDragStart}
+                        />
+                    </CalendarDayContainer>
                 )
             }
         </time>

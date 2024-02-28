@@ -1,32 +1,28 @@
 import styles from './styles.module.scss'
-
 import classNames from 'classnames'
 
 export interface CalendarDayProps {
     children?: React.ReactNode
-    date: Date
+    date: number
     className?: string
+    minimized?: boolean
 }
 
-export function CalendarDay ({ children, date, className }: CalendarDayProps) {
+// new Date().toISOString().substring(0, 10)
+
+export function CalendarDay ({
+    children,
+    date,
+    className,
+    minimized = false,
+}: CalendarDayProps
+) {
     return (
-        <time
-            className={classNames(styles.calendarWeekDay, className, {
-                [styles.today]: new Date().toDateString() === date.toDateString(),
-            })}
-        >
-            <div className={styles.header}>
-                <h2>{date.getDate()} </h2>
-                <span>
-                    {date.toLocaleDateString('ru', { weekday: 'short' })}
-                    {/* {
-                        isPeriodWeek
-                            ? date.toLocaleDateString('ru', { weekday: 'short' })
-                            : getMonthName(date)
-                    } */}
-                </span>
-            </div>
-            {children}
+        <time className={classNames(styles.calendarDay, className)}>
+            <span>{date}</span>
+            {
+                !minimized && <div>{children}</div>
+            }
         </time>
     )
 }

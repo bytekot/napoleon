@@ -1,3 +1,14 @@
+.calendarDay {
+    color: #00000081;
+    border: solid #ddd;
+    border-width: 0 1px 1px 0;
+    padding: 5px;
+
+    &:not(.currentMonth) {
+        opacity: 0.3;
+    }
+}
+
 .calendarWeekDay {
     display: flex;
     flex-direction: column;

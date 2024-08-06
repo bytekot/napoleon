@@ -1,11 +1,23 @@
 .calendarDay {
     color: #00000081;
-    border: solid #ddd;
-    border-width: 0 1px 1px 0;
     padding: 5px;
 
+    .date {
+        // font-size: 20px;
+    }
+
+    &.today {
+        background-color: #e5e5e5;
+    }
+
     &:not(.currentMonth) {
-        opacity: 0.3;
+        // opacity: 0.3;
+    }
+
+    &:not(.minimized) {
+        display: flex;
+        flex-direction: column;
+        // border-left: 1px solid #ddd;
     }
 }
 

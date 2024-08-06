@@ -1,7 +1,30 @@
 .calendarMonth {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    grid-template-rows: 10px repeat(5, 1fr);
+    grid-template-rows: 30px repeat(5, 1fr);
+    // grid-template-rows: repeat(6, 1fr);
 
-    .day {}
+    .dayOfWeek {
+        border-bottom: 1px solid #ddd;
+        margin: 5px 5px;
+    }
+
+    .day {
+        border: solid #ddd;
+        border-width: 0 1px 1px 0;
+        font-size: 20px;
+    }
+
+    &.minimized {
+        border: none;
+
+        .dayOfWeek {
+            border: none;
+        }
+
+        .day {
+            border: none;
+            font-size: 14px;
+        }
+    }
 }

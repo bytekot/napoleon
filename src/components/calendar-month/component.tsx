@@ -19,7 +19,7 @@ export function CalendarMonth ({ dates, className, dateTime }: CalendarMonthProp
         >
             {
                 DAYS_OF_WEEK.map((day, index) =>
-                    <div key={index}>{day}</div>
+                    <div key={index} className={styles.dayOfWeek}>{day}</div>
                 )
             }
             {

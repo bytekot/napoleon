@@ -18,8 +18,10 @@ export function CalendarDay ({
 }: CalendarDayProps
 ) {
     return (
-        <time className={classNames(styles.calendarDay, className)}>
-            <span>{date}</span>
+        <time className={classNames(styles.calendarDay, className, {
+            [styles.minimized]: minimized,
+        })}>
+            <span className={styles.date}>{date}</span>
             {
                 !minimized && <div>{children}</div>
             }

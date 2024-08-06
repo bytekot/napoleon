@@ -15,6 +15,8 @@ interface Props {
 export function CalendarDayContainer ({ children, date, className }: Props) {
     const { period } = useCalendar()
 
+    const minimized = period === CALENDAR_PERIODS.year
+
     return (
         <CalendarDay
             date={date.getDate()}
@@ -22,8 +24,9 @@ export function CalendarDayContainer ({ children, date, className }: Props) {
                 // [styles.mini]: period === CALENDAR_PERIODS.month,
                 [styles.currentMonth]: isCurrentMonth(date),
                 [styles.today]: isToday(date),
+                // [styles.minimized]: minimized,
             })}
-            minimized={period === CALENDAR_PERIODS.year}
+            minimized={minimized}
         >
             {children}
         </CalendarDay>

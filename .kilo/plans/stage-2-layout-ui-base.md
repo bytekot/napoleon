@@ -14,7 +14,7 @@
 
 Обёртка приложения: header, content slot, footer.
 
-Legacy-ориентир: `components/layout/component.tsx`. PrimeVue не нужен — простой контейнер со слотами.
+Legacy-ориентир: `components/layout/component.tsx`. Простой контейнер со слотами.
 
 ### 2.2 Header / Footer
 
@@ -22,13 +22,11 @@ Legacy: `components/header/component.tsx`, `components/footer/component.tsx`. П
 
 ### 2.3 Button — `src/components/button/AppButton.vue`
 
-База — PrimeVue `<Button>`. Props: `size`, `disabled`. Клик — через emit.
-
-Legacy использует собственный `components/button/component.tsx` с `SIZES`. Сравнить визуально; если PrimeVue-вариант расходится с дизайном — wrapper со своими стилями поверх.
+Перенос из legacy `components/button/component.tsx` как есть. Props: `size`, `disabled`. Клик — через emit. Стили переносятся из SCSS Modules.
 
 ### 2.4 TextArea — `src/components/text-area/AppTextArea.vue`
 
-База — PrimeVue `<Textarea>` или `<InputText>`. Обязательна поддержка `v-model`.
+Перенос из legacy как есть. Обязательна поддержка `v-model`.
 
 Legacy-поведение, которое нужно сохранить (`components/tasks-form/component.tsx`):
 - `emptyText='Что нужно сделать?'` → `placeholder`
@@ -42,23 +40,14 @@ Legacy-поведение, которое нужно сохранить (`compon
 Варианты реализации — выбрать при реализации, зафиксировать решение в этом файле:
 - отдельные SFC на каждую иконку
 - inline SVG в потребляющих компонентах
-- `primeicons`, если есть подходящая замена
 
 Тип `IconProps` уже создан на Этапе 0 (`src/types/shared.ts`).
 
 ---
 
-## PrimeVue vs custom
+## UI-стратегия этапа
 
-| Компонент | Решение | Причина |
-|-----------|---------|---------|
-| Button | PrimeVue | Стандартные состояния, темы |
-| Textarea / InputText | PrimeVue | Стилизация и поведение из коробки |
-| Checkbox | PrimeVue (создаётся на Этапе 3) | Для отметки выполнения |
-| Layout, Header, Footer | Custom | Простая разметка со слотами |
-| Иконки | Custom | Уникальная для проекта графика |
-
-Согласно `AGENTS.md`: PrimeVue первым, wrapper или кастом при нехватке. Контроль и читаемость приоритетнее покрытия библиотекой.
+Все компоненты переносятся из React как есть, без использования UI-библиотек. Стили переносятся из legacy SCSS Modules в `<style scoped lang="scss">`.
 
 ---
 
@@ -78,7 +67,7 @@ Legacy-стили в `styles.module.scss` переносятся в `<style scop
 
 **Accessibility:** нужна ли ARIA-поддержка в первой версии?
 
-Рекомендация: **нет**, отложить. Обоснование: legacy не содержит ARIA-атрибутов, добавление сейчас расширит объём этапа без видимого результата. PrimeVue даёт базовую доступность своих компонентов бесплатно. Вернуться отдельной задачей после Этапа 7.
+Рекомендация: **нет**, отложить. Обоснование: legacy не содержит ARIA-атрибутов, добавление сейчас расширит объём этапа без видимого результата. Вернуться отдельной задачей после Этапа 7.
 
 Исключение — `<time dateTime="...">` в календаре: это семантика, а не ARIA, и она затрагивается B9 на Этапе 5.
 

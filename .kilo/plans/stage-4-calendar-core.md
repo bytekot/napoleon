@@ -36,13 +36,13 @@
 
 ---
 
-## PrimeVue Calendar?
+## UI-библиотеки для календаря
 
-**НЕ использовать PrimeVue Calendar**, потому что:
+Календарь реализуется полностью как кастомный компонент. Готовые компоненты календаря из UI-библиотек не подходят, так как:
 
 - Нужен custom grid layout (week/month/year views)
 - DnD интеграция требует контроля над каждым днём
-- PrimeVue Calendar — это date picker, а не task board calendar
+- Календарь в этом проекте — это task board, а не date picker
 
 ---
 

@@ -18,7 +18,7 @@
    - SCSS modules или CSS variables
 4. Error handling
    - Global error boundary (Vue ErrorBoundary component)
-   - Toast notifications для API ошибок (PrimeVue Toast)
+    - Toast notifications для API ошибок (реализовать кастомно или подключить позже из Reka UI / shadcn-vue)
 
 ---
 

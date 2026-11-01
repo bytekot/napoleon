@@ -8,6 +8,11 @@ vi.mock('../../api/tasks')
 
 const mockApi = vi.mocked(api)
 
+function neverResolve(): Promise<never> {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function -- intentionally never-resolving promise for optimistic update tests
+  return new Promise(() => {})
+}
+
 function makeTask(overrides: Partial<Task> = {}): Task {
   return {
     id: '1',
@@ -72,7 +77,7 @@ describe('useTasksStore', () => {
 
   describe('createTask', () => {
     it('temp id появляется сразу', async () => {
-      mockApi.createTask.mockImplementation(() => new Promise(() => {}))
+      mockApi.createTask.mockImplementation(neverResolve)
       const store = useTasksStore()
 
       void store.createTask({ name: 'New', creationDate: '2026-11-01' })
@@ -122,7 +127,7 @@ describe('useTasksStore', () => {
 
     it('при order: 0 смещение -0.5 применяется', async () => {
       const task = makeTask({ order: 5 })
-      mockApi.editTask.mockImplementation(() => new Promise(() => {}))
+      mockApi.editTask.mockImplementation(neverResolve)
       const store = useTasksStore()
       store.entities[task.id] = task
       store.ids = [task.id]

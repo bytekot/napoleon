@@ -15,9 +15,9 @@ app.use(PrimeVue, {
   theme: {
     preset: Aura,
     options: {
-      darkModeSelector: false
-    }
-  }
+      darkModeSelector: false,
+    },
+  },
 })
 
 app.mount('#app')

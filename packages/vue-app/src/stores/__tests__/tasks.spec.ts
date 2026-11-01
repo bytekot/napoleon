@@ -78,7 +78,7 @@ describe('useTasksStore', () => {
       void store.createTask({ name: 'New', creationDate: '2026-11-01' })
 
       await vi.waitFor(() => {
-        expect(store.ids.some(id => id.startsWith('temp-'))).toBe(true)
+        expect(store.ids.some((id) => id.startsWith('temp-'))).toBe(true)
       })
     })
 
@@ -91,7 +91,7 @@ describe('useTasksStore', () => {
 
       expect(store.ids).toEqual(['server-id'])
       expect(store.entities['server-id']).toEqual(serverTask)
-      expect(Object.keys(store.entities).some(k => k.startsWith('temp-'))).toBe(false)
+      expect(Object.keys(store.entities).some((k) => k.startsWith('temp-'))).toBe(false)
     })
 
     it('при ошибке temp id удаляется', async () => {
@@ -137,10 +137,7 @@ describe('useTasksStore', () => {
     it('ответ-массив обновляет все затронутые сущности', async () => {
       const task1 = makeTask({ id: '1', order: 1 })
       const task2 = makeTask({ id: '2', order: 2 })
-      const reordered = [
-        makeTask({ id: '1', order: 2 }),
-        makeTask({ id: '2', order: 1 }),
-      ]
+      const reordered = [makeTask({ id: '1', order: 2 }), makeTask({ id: '2', order: 1 })]
       mockApi.editTask.mockResolvedValue(reordered)
       const store = useTasksStore()
       store.entities = { '1': task1, '2': task2 }

@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest'
-import { getThisMonday, getWeekDayDates, getCalendarMonthDates, getDateWithOffset, isToday, getMonthName } from '../calendar'
+import {
+  getThisMonday,
+  getWeekDayDates,
+  getCalendarMonthDates,
+  getDateWithOffset,
+  isToday,
+  getMonthName,
+} from '../calendar'
 import { CALENDAR_PERIODS } from '../../constants/calendar'
 
 describe('getThisMonday', () => {

@@ -19,8 +19,7 @@ export interface EditTaskParams {
 
 export type EditTaskResponse = Task | Task[]
 
-export const getTasks = () =>
-  request<Task[]>('/tasks')
+export const getTasks = () => request<Task[]>('/tasks')
 
 export const createTask = (params: CreateTaskParams) =>
   request<Task>('/task', { method: 'POST', body: JSON.stringify(params) })
@@ -28,5 +27,4 @@ export const createTask = (params: CreateTaskParams) =>
 export const editTask = ({ id, ...body }: EditTaskParams) =>
   request<EditTaskResponse>(`/task${id}`, { method: 'PATCH', body: JSON.stringify(body) })
 
-export const deleteTask = (id: string) =>
-  request<string>(`/task${id}`, { method: 'DELETE' })
+export const deleteTask = (id: string) => request<string>(`/task${id}`, { method: 'DELETE' })

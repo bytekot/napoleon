@@ -21,23 +21,27 @@ export const useTasksStore = defineStore('tasks', {
   }),
 
   getters: {
-    taskById: (state) => (id: string): Task | undefined => state.entities[id],
+    taskById:
+      (state) =>
+      (id: string): Task | undefined =>
+        state.entities[id],
 
     unplannedTaskIds(state): string[] {
       return state.ids
-        .filter(id => !state.entities[id]?.dueDate)
-        .sort((a, b) =>
-          new Date(state.entities[a]!.creationDate).getTime() -
-          new Date(state.entities[b]!.creationDate).getTime()
+        .filter((id) => !state.entities[id]?.dueDate)
+        .sort(
+          (a, b) =>
+            new Date(state.entities[a]!.creationDate).getTime() -
+            new Date(state.entities[b]!.creationDate).getTime(),
         )
     },
 
-    taskIdsByDueDate: (state) => (dueDate: string): string[] =>
-      state.ids
-        .filter(id => state.entities[id]?.dueDate === dueDate)
-        .sort((a, b) =>
-          (state.entities[a]!.order ?? 0) - (state.entities[b]!.order ?? 0)
-        ),
+    taskIdsByDueDate:
+      (state) =>
+      (dueDate: string): string[] =>
+        state.ids
+          .filter((id) => state.entities[id]?.dueDate === dueDate)
+          .sort((a, b) => (state.entities[a]!.order ?? 0) - (state.entities[b]!.order ?? 0)),
   },
 
   actions: {
@@ -49,8 +53,8 @@ export const useTasksStore = defineStore('tasks', {
       try {
         const tasks = await api.getTasks()
 
-        this.entities = Object.fromEntries(tasks.map(task => [task.id, task]))
-        this.ids = tasks.map(task => task.id)
+        this.entities = Object.fromEntries(tasks.map((task) => [task.id, task]))
+        this.ids = tasks.map((task) => task.id)
         this.request = { status: 'success' }
       } catch (error) {
         this.request = { status: 'error', error: toMessage(error) }
@@ -74,11 +78,11 @@ export const useTasksStore = defineStore('tasks', {
         const task = await api.createTask(params)
 
         delete this.entities[tempId]
-        this.ids = this.ids.map(id => id === tempId ? task.id : id)
+        this.ids = this.ids.map((id) => (id === tempId ? task.id : id))
         this.entities[task.id] = task
       } catch (error) {
         delete this.entities[tempId]
-        this.ids = this.ids.filter(id => id !== tempId)
+        this.ids = this.ids.filter((id) => id !== tempId)
         this.request = { status: 'error', error: toMessage(error) }
       }
     },
@@ -98,7 +102,9 @@ export const useTasksStore = defineStore('tasks', {
         const response = await api.editTask(params)
 
         if (Array.isArray(response)) {
-          response.forEach(task => { this.entities[task.id] = task })
+          response.forEach((task) => {
+            this.entities[task.id] = task
+          })
         } else {
           this.entities[response.id] = response
         }

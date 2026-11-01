@@ -5,9 +5,9 @@
       "*": "allow"
     },
     "edit": {
-      "*": "ask",
       "packages/vue-app": "allow",
-      "packages/react-app": "deny"
+      "packages/react-app": "deny",
+      ".kilo": "allow"
     }
   },
   "indexing": {

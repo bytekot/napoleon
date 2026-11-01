@@ -49,14 +49,9 @@ export function getCalendarMonthDates (date: Date): Date[] {
 
 export function getThisMonday (now: Date): Date {
     const day = now.getDay()
+    const diff = day === 0 ? -6 : 1 - day
 
-    if (day === 1) return now
-
-    const date = now.getDate()
-    const month = now.getMonth()
-    const year = now.getFullYear()
-
-    return new Date(year, month, date - (day - 1))
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate() + diff)
 }
 
 export function getMonthName (date: Date): string {

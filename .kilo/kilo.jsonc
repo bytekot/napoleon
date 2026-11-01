@@ -1,0 +1,19 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "permission": {
+    "read": {
+      "*": "allow"
+    },
+    "edit": {
+      "*": "ask",
+      "packages/vue-app": "allow",
+      "packages/react-app": "deny"
+    }
+  },
+  "indexing": {
+    "provider": "ollama",
+    "model": "qwen3-embedding:0.6b",
+    "dimension": 1024,
+    "enabled": true
+  }
+}

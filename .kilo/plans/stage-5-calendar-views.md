@@ -12,7 +12,7 @@
 |---|---------|-------------|
 | 1 | **Единый SFC на каждую view** | Не используем container/component паттерн. Логика через computed props. Соответствует стилю предыдущих этапов. |
 | 2 | **dueDate как строка с zero-padding** | TasksList уже принимает `string \| null`. Формат `"YYYY-MM-DD"` формируется через `formatDateISO()` во view-компонентах. Фикс бага B9. |
-| 3 | **DnD emit готовится на этом этапе** | Компоненты принимают `@item-drag-start` emit. На Этапе 6 он будет подключён к `store.setMovingItem`. |
+| 3 | **DnD emit готовился на этом этапе, но отменён в Этапе 6** | Первоначально планировалась emit-цепочка `itemDragStart`. В Этапе 6 принято решение удалить цепочку и использовать прямой вызов Pinia store (решение #3 этапа 6). Задачи 5.6/5.7 по добавлению emit были выполнены, но результат откатывается на Этапе 6. |
 | 4 | **Calendar.vue динамически рендерит views** | В зависимости от `store.period` рендерится CalendarWeek, CalendarMonth или CalendarYear. |
 
 ---
@@ -208,13 +208,11 @@ interface Props {
       v-if="store.isPeriodWeek"
       :date="store.date"
       class="view"
-      @item-drag-start="onItemDragStart"
     />
     <CalendarMonth
       v-else-if="store.isPeriodMonth"
       :date="store.date"
       class="view"
-      @item-drag-start="onItemDragStart"
     />
     <CalendarYear
       v-else-if="store.isPeriodYear"
@@ -225,12 +223,7 @@ interface Props {
 </template>
 ```
 
-**Handler (заглушка для Этапа 6):**
-```ts
-function onItemDragStart(id: string, event: DragEvent) {
-  // Будет реализовано на Этапе 6: store.setMovingItem({ id, element: event.target })
-}
-```
+> ⚠️ **Отменено в Этапе 6:** handler `onItemDragStart` и bindings `@item-drag-start` удалены (решение #3 этапа 6). Компоненты вызывают store напрямую.
 
 **Getter:** добавить `isPeriodYear` в calendar store (аналогично существующим `isPeriodWeek`, `isPeriodMonth`).
 
@@ -238,16 +231,9 @@ function onItemDragStart(id: string, event: DragEvent) {
 
 ---
 
-### 5.7 Обновление TasksList для поддержки DnD emit
+### 5.7 ~~Обновление TasksList для поддержки DnD emit~~ (отменено)
 
-Добавить emit объявление в TasksList.vue. На этом этапе только декларация интерфейса; реальная эмиссия от TaskItem начнётся на Этапе 6.
-
-**Emits:**
-```ts
-defineEmits<{
-  itemDragStart: [id: string, event: DragEvent]
-}>()
-```
+> ⚠️ **Отменено в Этапе 6:** emit `itemDragStart` удалён из TasksList, CalendarWeek, CalendarMonth (решение #3 этапа 6). Задача была выполнена на этом этапе, но результат откатывается.
 
 ---
 
@@ -267,7 +253,7 @@ defineEmits<{
 - [x] CalendarMonth показывает сетку 35 дней с заголовками дней недели
 - [x] CalendarYear показывает 12 месяцев в minimized режиме
 - [x] Calendar.vue динамически переключает views по period
-- [x] DnD emit объявлен в компонентах (готов к использованию на Этапе 6)
+- [x] ~~DnD emit объявлен в компонентах (готов к использованию на Этапе 6)~~ — отменено в Этапе 6, решение #3: emit-цепочка удалена, компоненты вызывают store напрямую
 - [x] `isPeriodYear` getter добавлен в calendar store
 - [ ] Визуальное соответствие React версии при переключении period
 - [x] Test-after для компонентов: рендер без ошибок, корректные CSS-классы (today, current-month, minimized), вычисляемые даты

@@ -12,6 +12,7 @@ export const useCalendarStore = defineStore('calendar', {
   getters: {
     isPeriodWeek: (state) => state.period === CALENDAR_PERIODS.week,
     isPeriodMonth: (state) => state.period === CALENDAR_PERIODS.month,
+    isPeriodYear: (state) => state.period === CALENDAR_PERIODS.year,
   },
 
   actions: {

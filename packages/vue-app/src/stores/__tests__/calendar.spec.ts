@@ -44,6 +44,16 @@ describe('useCalendarStore', () => {
       expect(store.isPeriodMonth).toBe(true)
       expect(store.isPeriodWeek).toBe(false)
     })
+
+    it('setPeriod(year) → isPeriodYear === true, остальные === false', () => {
+      const store = useCalendarStore()
+
+      store.setPeriod(CALENDAR_PERIODS.year)
+
+      expect(store.isPeriodYear).toBe(true)
+      expect(store.isPeriodWeek).toBe(false)
+      expect(store.isPeriodMonth).toBe(false)
+    })
   })
 
   describe('setNextDate', () => {

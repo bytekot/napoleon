@@ -14,7 +14,8 @@
       "pnpm lint": "allow",
       "pnpm format:check": "allow",
       "pnpm type-check": "allow",
-      "pnpm vitest": "allow"
+      "pnpm vitest": "allow",
+      "node --version": "allow"
     }
   },
   "indexing": {

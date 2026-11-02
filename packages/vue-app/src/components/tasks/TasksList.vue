@@ -13,6 +13,10 @@ const props = withDefaults(
   },
 )
 
+defineEmits<{
+  itemDragStart: [id: string, event: DragEvent]
+}>()
+
 const store = useTasksStore()
 
 const taskIds = computed(() => {

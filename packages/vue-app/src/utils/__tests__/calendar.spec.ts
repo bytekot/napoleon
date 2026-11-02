@@ -6,6 +6,7 @@ import {
   getDateWithOffset,
   isToday,
   getMonthName,
+  formatDateISO,
 } from '../calendar'
 import { CALENDAR_PERIODS } from '../../constants/calendar'
 
@@ -96,5 +97,15 @@ describe('getMonthName', () => {
   it('возвращает название месяца с заглавной буквы', () => {
     const name = getMonthName(new Date(2026, 0, 1))
     expect(name.charAt(0)).toBe(name.charAt(0).toUpperCase())
+  })
+})
+
+describe('formatDateISO', () => {
+  it('форматирует дату с zero-padding для месяца и дня < 10', () => {
+    expect(formatDateISO(new Date(2026, 0, 5))).toBe('2026-01-05')
+  })
+
+  it('форматирует дату с двузначными месяцем и днём', () => {
+    expect(formatDateISO(new Date(2026, 10, 15))).toBe('2026-11-15')
   })
 })

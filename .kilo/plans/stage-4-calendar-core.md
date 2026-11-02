@@ -213,18 +213,18 @@ interface Props {
 
 ## Критерии завершения
 
-- [ ] `useCalendarStore` создан, все actions/getters работают
-- [ ] TDD-тесты store написаны и проходят
-- [ ] ActionArea.vue создан (presentational, стили + slot)
-- [ ] CalendarPeriodControls переключает period
-- [ ] CalendarDateControls: prev/next/today работают
-- [ ] CalendarHeader показывает корректный текст периода
-- [ ] Calendar.vue рендерится с header и пустым view-area
-- [ ] Calendar смонтирован в MainPage рядом с TasksForm
-- [ ] Визуальное соответствие React версии (header layout, controls)
-- [ ] Test-after минимум для компонентов (header рендерит текст, controls вызывают actions)
-- [ ] `pnpm check` проходит (lint + format + type-check)
-- [ ] `pnpm build` проходит
+- [x] `useCalendarStore` создан, все actions/getters работают
+- [x] TDD-тесты store написаны и проходят
+- [x] ActionArea.vue создан (presentational, стили + slot)
+- [x] CalendarPeriodControls переключает period
+- [x] CalendarDateControls: prev/next/today работают
+- [x] CalendarHeader показывает корректный текст периода
+- [x] Calendar.vue рендерится с header и пустым view-area
+- [x] Calendar смонтирован в MainPage рядом с TasksForm
+- [x] Визуальное соответствие React версии (header layout, controls)
+- [x] Test-after минимум для компонентов (header рендерит текст, controls вызывают actions)
+- [x] `pnpm check` проходит (lint + format + type-check)
+- [x] `pnpm build` проходит
 
 ## Проверка
 

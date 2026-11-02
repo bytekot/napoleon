@@ -5,16 +5,11 @@ import { useTrackTask } from '../../composables/useTrackTask'
 import TaskItem from '../task/TaskItem.vue'
 import Plus from '../icon/Plus.vue'
 
-const props = withDefaults(
-  defineProps<{
-    dueDate: string | null
-    emptyText?: string
-    mini?: boolean
-  }>(),
-  {
-    emptyText: 'Список пуст.',
-  },
-)
+const props = defineProps<{
+  dueDate: string | null
+  emptyText?: string
+  mini?: boolean
+}>()
 
 const store = useTasksStore()
 const { position, track } = useTrackTask()
@@ -56,7 +51,7 @@ function onDrop(event: DragEvent) {
   <div class="tasks" @dragover="onDragOver" @dragleave="onDragLeave" @drop="onDrop">
     <div v-if="isLoading" class="loading">Загрузка...</div>
     <div v-else-if="showAddIcon" class="add-task"><Plus size="medium" /></div>
-    <div v-else-if="taskIds.length === 0" class="empty-text">{{ emptyText }}</div>
+    <div v-else-if="taskIds.length === 0 && emptyText" class="empty-text">{{ emptyText }}</div>
     <div data-tasks class="container">
       <TaskItem
         v-for="(taskId, index) in taskIds"

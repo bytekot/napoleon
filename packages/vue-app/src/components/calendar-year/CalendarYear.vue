@@ -26,6 +26,8 @@ const yearMonths = computed(() => getYearMonthDates(props.date))
   grid-template-rows: repeat(3, 1fr);
   grid-gap: 10px 60px;
   padding: 10px 15px;
+  height: 100%;
+  overflow: auto;
 
   .container {
     display: flex;

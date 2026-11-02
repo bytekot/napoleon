@@ -50,7 +50,7 @@ defineSlots<{
   span {
     line-height: 16px;
 
-    svg {
+    :deep(svg) {
       fill: #0f1111;
     }
   }

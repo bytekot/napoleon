@@ -24,7 +24,13 @@ const dateTime = computed(() => getMonth(props.date))
     <div v-for="(day, index) in DAYS_OF_WEEK" :key="index" class="day-of-week">
       {{ day }}
     </div>
-    <CalendarDay v-for="(dayDate, index) in monthDates" :key="index" :date="dayDate" class="day">
+    <CalendarDay
+      v-for="(dayDate, index) in monthDates"
+      :key="index"
+      :date="dayDate"
+      :minimized="minimized"
+      class="day"
+    >
       <TasksList :due-date="formatDateISO(dayDate)" :mini="true" class="tasks" />
     </CalendarDay>
   </time>
@@ -49,6 +55,8 @@ const dateTime = computed(() => getMonth(props.date))
 
   &.minimized {
     border: none;
+    height: 100%;
+    overflow: hidden;
 
     .day-of-week {
       border: none;
@@ -57,6 +65,7 @@ const dateTime = computed(() => getMonth(props.date))
     .day {
       border: none;
       font-size: 14px;
+      overflow: hidden;
     }
   }
 }

@@ -8,8 +8,8 @@
 ## Задачи
 
 1. MainPage (`src/views/MainPage.vue`)
-   - Composition: TasksForm + Calendar
-   - Load tasks on mount (`store.fetchTasks`)
+   - Composition: TasksForm + Calendar (TasksForm уже смонтирован на Этапе 3)
+   - Load tasks on mount (`store.fetchTasks`) (реализовано на Этапе 3)
 2. Роутинг
    - `/` → MainPage
    - Удалить ненужные routes
@@ -28,7 +28,7 @@
 
 | Баг | Что относится к этапу |
 |-----|----------------------|
-| B4 | Загрузка задач на маунте: не повторять legacy-паттерн `useEffect` без массива зависимостей |
+| B4 | Загрузка задач на маунте: не повторять legacy-паттерн `useEffect` без массива зависимостей. Адресовано на Этапе 3: `onMounted` + guard в store (`request.status !== 'idle'`) |
 
 ---
 

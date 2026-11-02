@@ -70,7 +70,7 @@
 | B3 | `store/entities/task/index.ts` | `editTask.fulfilled` делает ранний `return` при `meta.arg.completed` — ответ сервера отбрасывается | **1** | — |
 | B4 | `pages/main/component.tsx` | `useEffect` без массива зависимостей — dispatch на каждом рендере | **7** | — |
 | B5 | `components/tasks/container.tsx` | При drop в unplanned передаётся `dueDate: undefined`; `JSON.stringify` его отбрасывает → дата не очищается | сигнатура: **1**, prop: **3**, хендлер: **6** | Этап 6 |
-| B6 | `hooks/tasks.ts` | `useTask` типизирует возможный `undefined` как `Task` — ложь типов, при промахе crash на деструктуризации | getter: **1**, компонент: **3** | Этап 3 |
+| B6 | `hooks/tasks.ts` | `useTask` типизирует возможный `undefined` как `Task` — ложь типов, при промахе crash на деструктуризации | getter: **1**, компонент: бэклог | Бэклог |
 | B7 | `utils/tasks.ts` | `getNodeIndex` обходит `childNodes` (включая текстовые узлы) и использует `return` внутри `forEach` (не прерывает обход) | **1** (файл уже перенесён на Этапе 0) | Этап 6 |
 | B8 | `store/entities/task/index.ts` | `if (params.order)` — при `order === 0` условие ложно, optimistic-смещение пропускается | **1** | — |
 | B9 | `components/calendar-week/component.tsx`, `calendar-month/component.tsx`, `utils/calendar.ts` | `dueDate` формируется без zero-padding (`"2026-11-1"`); `getMonth()` возвращает `"2026-1"` для января | **5** | Этап 5 |

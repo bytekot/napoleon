@@ -8,21 +8,13 @@ const props = defineProps<{
   date: Date
 }>()
 
-const emit = defineEmits<{
-  itemDragStart: [id: string, event: DragEvent]
-}>()
-
 const weekDates = computed(() => getWeekDayDates(props.date))
 </script>
 
 <template>
   <time class="calendar-week">
     <CalendarDay v-for="(dayDate, index) in weekDates" :key="index" :date="dayDate" class="day">
-      <TasksList
-        :due-date="formatDateISO(dayDate)"
-        class="tasks"
-        @item-drag-start="(id, event) => emit('itemDragStart', id, event)"
-      />
+      <TasksList :due-date="formatDateISO(dayDate)" class="tasks" />
     </CalendarDay>
   </time>
 </template>

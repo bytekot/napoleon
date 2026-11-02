@@ -440,24 +440,24 @@ function onDeleteDrop(event: DragEvent) {
 
 ## Критерии завершения
 
-- [ ] Задачу можно перетащить из unplanned в день календаря
-- [ ] Задачу можно перетащить между днями
-- [ ] Порядок задач сохраняется (optimistic update + server reorder)
-- [ ] UI обновляется оптимистично (order −0.5 до ответа сервера)
-- [ ] API синхронизирует изменения (single object или array response)
-- [ ] При drop в unplanned дата очищается (B5)
-- [ ] Визуальные индикаторы позиции (border-top/border-bottom) отображаются при drag over
-- [ ] PlusIcon отображается при drag over пустого списка
-- [ ] Класс `.dragged` (opacity 0.5) на источнике drag
-- [ ] Header переходит в `dnd-mode` при drag (показывает delete-zone и toggle-period zone)
-- [ ] Drop на delete-zone удаляет задачу
-- [ ] Drag-enter на toggle-period zone переключает период (через setTimeout 200ms)
-- [ ] `.mini` применяется в month-view и не применяется в week-view и unplanned
-- [ ] Emit-цепочка `itemDragStart` удалена из всех компонентов
-- [ ] Test-after для компонентов (классы dnd-mode, dragged, border-top/bottom, add-icon)
-- [ ] `pnpm check` проходит (lint + format + type-check)
-- [ ] `pnpm build` проходит
-- [ ] Визуальное соответствие React версии (:5174 vs :5173)
+- [x] Задачу можно перетащить из unplanned в день календаря
+- [x] Задачу можно перетащить между днями
+- [x] Порядок задач сохраняется (optimistic update + server reorder)
+- [x] UI обновляется оптимистично (order −0.5 до ответа сервера)
+- [x] API синхронизирует изменения (single object или array response)
+- [x] При drop в unplanned дата очищается (B5)
+- [x] Визуальные индикаторы позиции (border-top/border-bottom) отображаются при drag over
+- [x] PlusIcon отображается при drag over пустого списка
+- [x] Класс `.dragged` (opacity 0.5) на источнике drag
+- [x] Header переходит в `dnd-mode` при drag (показывает delete-zone и toggle-period zone)
+- [x] Drop на delete-zone удаляет задачу
+- [x] Drag-enter на toggle-period zone переключает период (через setTimeout 200ms)
+- [x] `.mini` применяется в month-view и не применяется в week-view и unplanned
+- [x] Emit-цепочка `itemDragStart` удалена из всех компонентов
+- [x] Test-after для компонентов (классы dnd-mode, dragged, border-top/bottom, add-icon)
+- [x] `pnpm check` проходит (lint + format + type-check)
+- [x] `pnpm build` проходит
+- [x] Визуальное соответствие React версии (:5174 vs :5173)
 
 ---
 

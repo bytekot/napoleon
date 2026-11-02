@@ -15,10 +15,6 @@ const props = withDefaults(
   },
 )
 
-const emit = defineEmits<{
-  itemDragStart: [id: string, event: DragEvent]
-}>()
-
 const monthDates = computed(() => getCalendarMonthDates(props.date))
 const dateTime = computed(() => getMonth(props.date))
 </script>
@@ -29,11 +25,7 @@ const dateTime = computed(() => getMonth(props.date))
       {{ day }}
     </div>
     <CalendarDay v-for="(dayDate, index) in monthDates" :key="index" :date="dayDate" class="day">
-      <TasksList
-        :due-date="formatDateISO(dayDate)"
-        class="tasks"
-        @item-drag-start="(id, event) => emit('itemDragStart', id, event)"
-      />
+      <TasksList :due-date="formatDateISO(dayDate)" :mini="true" class="tasks" />
     </CalendarDay>
   </time>
 </template>

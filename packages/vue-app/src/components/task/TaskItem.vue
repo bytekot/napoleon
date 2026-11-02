@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onBeforeUnmount } from 'vue'
 import { useTasksStore } from '../../stores/tasks'
+import { useCalendarStore } from '../../stores/calendar'
 
 const props = defineProps<{
   taskId: string
+  mini?: boolean
 }>()
 
 const store = useTasksStore()
+const calendarStore = useCalendarStore()
 
 const task = computed(() => store.taskById(props.taskId))
 
@@ -18,20 +21,40 @@ const isOverdue = computed(() => {
   return !task.value.completed && task.value.dueDate !== null && new Date(task.value.dueDate) < now
 })
 
+const isDragged = computed(() => calendarStore.movingItemId === props.taskId)
+
 function onCheckChange(event: Event) {
   if (!task.value) return
   const target = event.target as HTMLInputElement
   void store.editTask({ id: props.taskId, completed: target.checked })
 }
+
+function onDragStart(event: DragEvent) {
+  if (!task.value) return
+  calendarStore.setMovingItemId(null)
+  const target = event.currentTarget as HTMLElement
+  event.dataTransfer!.effectAllowed = 'move'
+  event.dataTransfer!.setData('text/plain', props.taskId)
+  calendarStore.setMovingItemId(props.taskId)
+  target.addEventListener('dragend', () => calendarStore.setMovingItemId(null), { once: true })
+}
+
+onBeforeUnmount(() => {
+  if (calendarStore.movingItemId === props.taskId) {
+    calendarStore.setMovingItemId(null)
+  }
+})
 </script>
 
 <template>
+  <!-- data-task: точка приложения внешних классов (border-top, border-bottom) из TasksList -->
   <div data-task>
     <div
       v-if="task"
       class="task"
-      :class="{ completed: task.completed, overdue: isOverdue }"
+      :class="{ completed: task.completed, overdue: isOverdue, dragged: isDragged, mini }"
       :draggable="!task.completed"
+      @dragstart="onDragStart"
     >
       <span class="style" />
       <span>

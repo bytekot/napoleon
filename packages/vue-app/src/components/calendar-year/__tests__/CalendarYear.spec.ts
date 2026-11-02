@@ -28,6 +28,7 @@ describe('CalendarYear', () => {
     const wrapper = mountYear()
 
     const headers = wrapper.findAll(':scope > .container > .header')
+
     expect(headers).toHaveLength(12)
     expect(headers[0]!.text()).toBe('Январь')
   })

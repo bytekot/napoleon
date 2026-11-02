@@ -18,6 +18,7 @@ describe('CalendarDateControls', () => {
 
   it('кнопка ← вызывает setPreviousDate', async () => {
     const store = useCalendarStore()
+
     store.setDate(new Date(2026, 0, 15))
 
     const wrapper = mountControls()
@@ -30,6 +31,7 @@ describe('CalendarDateControls', () => {
 
   it('кнопка Сегодня вызывает setToday', async () => {
     const store = useCalendarStore()
+
     store.setDate(new Date(2020, 5, 1))
 
     const wrapper = mountControls()
@@ -42,6 +44,7 @@ describe('CalendarDateControls', () => {
 
   it('кнопка → вызывает setNextDate', async () => {
     const store = useCalendarStore()
+
     store.setDate(new Date(2026, 0, 15))
 
     const wrapper = mountControls()

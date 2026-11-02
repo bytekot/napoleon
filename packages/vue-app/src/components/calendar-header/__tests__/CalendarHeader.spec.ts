@@ -18,6 +18,7 @@ describe('CalendarHeader', () => {
 
   it('рендерит текст периода (месяц + год)', () => {
     const store = useCalendarStore()
+
     store.setDate(new Date(2026, 0, 15))
 
     const wrapper = mountHeader()
@@ -27,6 +28,7 @@ describe('CalendarHeader', () => {
 
   it('рендерит корректный текст для другого месяца', () => {
     const store = useCalendarStore()
+
     store.setDate(new Date(2026, 5, 20))
 
     const wrapper = mountHeader()

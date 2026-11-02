@@ -26,6 +26,7 @@ describe('TaskItem', () => {
   it('рендерит задачу с правильным текстом', () => {
     const store = useTasksStore()
     const task = makeTask({ name: 'My task' })
+
     store.entities[task.id] = task
     store.ids = [task.id]
 
@@ -39,6 +40,7 @@ describe('TaskItem', () => {
   it('добавляет класс completed для завершённой задачи', () => {
     const store = useTasksStore()
     const task = makeTask({ completed: true })
+
     store.entities[task.id] = task
     store.ids = [task.id]
 
@@ -52,6 +54,7 @@ describe('TaskItem', () => {
   it('не добавляет класс completed для незавершённой задачи', () => {
     const store = useTasksStore()
     const task = makeTask({ completed: false })
+
     store.entities[task.id] = task
     store.ids = [task.id]
 
@@ -65,11 +68,13 @@ describe('TaskItem', () => {
   it('добавляет класс overdue для просроченной задачи', () => {
     const store = useTasksStore()
     const yesterday = new Date()
+
     yesterday.setDate(yesterday.getDate() - 1)
     const task = makeTask({
       completed: false,
       dueDate: yesterday.toISOString().split('T')[0],
     })
+
     store.entities[task.id] = task
     store.ids = [task.id]
 
@@ -83,11 +88,13 @@ describe('TaskItem', () => {
   it('не добавляет класс overdue для завершённой просроченной задачи', () => {
     const store = useTasksStore()
     const yesterday = new Date()
+
     yesterday.setDate(yesterday.getDate() - 1)
     const task = makeTask({
       completed: true,
       dueDate: yesterday.toISOString().split('T')[0],
     })
+
     store.entities[task.id] = task
     store.ids = [task.id]
 
@@ -107,6 +114,7 @@ describe('TaskItem', () => {
       completed: false,
       dueDate: today,
     })
+
     store.entities[task.id] = task
     store.ids = [task.id]
 
@@ -120,6 +128,7 @@ describe('TaskItem', () => {
   it('draggable=false для завершённой задачи', () => {
     const store = useTasksStore()
     const task = makeTask({ completed: true })
+
     store.entities[task.id] = task
     store.ids = [task.id]
 
@@ -133,6 +142,7 @@ describe('TaskItem', () => {
   it('draggable=true для незавершённой задачи', () => {
     const store = useTasksStore()
     const task = makeTask({ completed: false })
+
     store.entities[task.id] = task
     store.ids = [task.id]
 

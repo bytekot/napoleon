@@ -19,6 +19,7 @@ describe('CalendarPeriodControls', () => {
 
   it('переключает period на week', async () => {
     const store = useCalendarStore()
+
     store.setPeriod(CALENDAR_PERIODS.month)
 
     const wrapper = mountControls()

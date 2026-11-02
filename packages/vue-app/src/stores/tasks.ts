@@ -89,9 +89,11 @@ export const useTasksStore = defineStore('tasks', {
 
     async editTask(params: api.EditTaskParams) {
       const previous = this.entities[params.id]
+
       if (!previous) return
 
       const updated = { ...previous }
+
       if (params.completed !== undefined) updated.completed = params.completed
       if (params.dueDate !== undefined) updated.dueDate = params.dueDate
       if (typeof params.order === 'number') updated.order = params.order - 0.5

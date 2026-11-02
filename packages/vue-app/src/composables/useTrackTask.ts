@@ -11,8 +11,10 @@ export function useTrackTask() {
   function track(target: Element | null, clientY?: number) {
     if (!target || clientY === undefined) {
       position.value = null
+
       return
     }
+
     position.value = getDraggedTaskOrder(target, clientY)
   }
 

@@ -110,6 +110,7 @@ pnpm check           # lint + format:check + type-check параллельно
 - Stores: `use[Name]Store`
 - Composables: `use[Name]` prefix
 - Форматирование: Prettier
+- Вертикальная группировка внутри функций: разделяй логические блоки пустыми строками (контролируется ESLint `padding-line-between-statements`)
 
 ### Обязательные проверки после задачи
 

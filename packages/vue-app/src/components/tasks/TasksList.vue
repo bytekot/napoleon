@@ -23,6 +23,7 @@ const taskIds = computed(() => {
   if (props.dueDate === null) {
     return store.unplannedTaskIds
   }
+
   return store.taskIdsByDueDate(props.dueDate)
 })
 
@@ -37,12 +38,14 @@ function onDragOver(event: DragEvent) {
 
 function onDragLeave(event: DragEvent) {
   const root = event.currentTarget as HTMLElement
+
   if (event.relatedTarget instanceof Node && root.contains(event.relatedTarget)) return
   track(null)
 }
 
 function onDrop(event: DragEvent) {
   const id = event.dataTransfer?.getData('text/plain')
+
   if (!id || position.value === null) return
   void store.editTask({ id, dueDate: props.dueDate, order: position.value })
   track(null)

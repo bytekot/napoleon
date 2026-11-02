@@ -35,6 +35,7 @@ describe('getThisMonday', () => {
 describe('getWeekDayDates', () => {
   it('для воскресенья возвращает неделю, начавшуюся 6 дней назад', () => {
     const dates = getWeekDayDates(new Date(2026, 10, 1))
+
     expect(dates).toHaveLength(7)
     expect(dates[0]).toEqual(new Date(2026, 9, 26))
     expect(dates[6]).toEqual(new Date(2026, 10, 1))
@@ -42,6 +43,7 @@ describe('getWeekDayDates', () => {
 
   it('для понедельника возвращает неделю с этого дня', () => {
     const dates = getWeekDayDates(new Date(2026, 10, 2))
+
     expect(dates).toHaveLength(7)
     expect(dates[0]).toEqual(new Date(2026, 10, 2))
     expect(dates[6]).toEqual(new Date(2026, 10, 8))
@@ -51,11 +53,13 @@ describe('getWeekDayDates', () => {
 describe('getCalendarMonthDates', () => {
   it('возвращает 35 дат для сетки месяца', () => {
     const dates = getCalendarMonthDates(new Date(2026, 10, 1))
+
     expect(dates).toHaveLength(35)
   })
 
   it('начинается с понедельника недели первого числа', () => {
     const dates = getCalendarMonthDates(new Date(2026, 10, 1))
+
     expect(dates[0]).toEqual(new Date(2026, 9, 26))
   })
 })
@@ -63,21 +67,25 @@ describe('getCalendarMonthDates', () => {
 describe('getDateWithOffset', () => {
   it('добавляет месяцы', () => {
     const result = getDateWithOffset(new Date(2026, 0, 15), CALENDAR_PERIODS.month, 2)
+
     expect(result.getMonth()).toBe(2)
   })
 
   it('добавляет недели', () => {
     const result = getDateWithOffset(new Date(2026, 0, 1), CALENDAR_PERIODS.week, 2)
+
     expect(result.getDate()).toBe(15)
   })
 
   it('добавляет годы', () => {
     const result = getDateWithOffset(new Date(2026, 5, 15), CALENDAR_PERIODS.year, 1)
+
     expect(result.getFullYear()).toBe(2027)
   })
 
   it('переход через границу года', () => {
     const result = getDateWithOffset(new Date(2026, 11, 15), CALENDAR_PERIODS.month, 1)
+
     expect(result.getFullYear()).toBe(2027)
     expect(result.getMonth()).toBe(0)
   })
@@ -96,6 +104,7 @@ describe('isToday', () => {
 describe('getMonthName', () => {
   it('возвращает название месяца с заглавной буквы', () => {
     const name = getMonthName(new Date(2026, 0, 1))
+
     expect(name.charAt(0)).toBe(name.charAt(0).toUpperCase())
   })
 })

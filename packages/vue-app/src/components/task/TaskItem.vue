@@ -14,10 +14,12 @@ const calendarStore = useCalendarStore()
 const task = computed(() => store.taskById(props.taskId))
 
 const now = new Date()
+
 now.setHours(0, 0, 0, 0)
 
 const isOverdue = computed(() => {
   if (!task.value) return false
+
   return !task.value.completed && task.value.dueDate !== null && new Date(task.value.dueDate) < now
 })
 
@@ -26,6 +28,7 @@ const isDragged = computed(() => calendarStore.movingItemId === props.taskId)
 function onCheckChange(event: Event) {
   if (!task.value) return
   const target = event.target as HTMLInputElement
+
   void store.editTask({ id: props.taskId, completed: target.checked })
 }
 
@@ -33,6 +36,7 @@ function onDragStart(event: DragEvent) {
   if (!task.value) return
   calendarStore.setMovingItemId(null)
   const target = event.currentTarget as HTMLElement
+
   event.dataTransfer!.effectAllowed = 'move'
   event.dataTransfer!.setData('text/plain', props.taskId)
   calendarStore.setMovingItemId(props.taskId)

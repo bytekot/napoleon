@@ -19,11 +19,13 @@ const isDndMode = computed(() => store.isDndMode)
 
 function onTogglePeriodEnter() {
   const target = store.isPeriodMonth ? CALENDAR_PERIODS.week : CALENDAR_PERIODS.month
+
   setTimeout(() => store.setPeriod(target), 200)
 }
 
 function onDeleteDrop(event: DragEvent) {
   const id = event.dataTransfer?.getData('text/plain')
+
   if (!id) return
   void tasksStore.deleteTask(id)
 }

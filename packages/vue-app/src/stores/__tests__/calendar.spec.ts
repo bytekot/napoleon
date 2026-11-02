@@ -60,6 +60,7 @@ describe('useCalendarStore', () => {
     it('при period=week: date += 7 дней', () => {
       const store = useCalendarStore()
       const startDate = new Date(2026, 0, 10)
+
       store.setDate(startDate)
       store.setPeriod(CALENDAR_PERIODS.week)
 
@@ -71,6 +72,7 @@ describe('useCalendarStore', () => {
     it('при period=month: month += 1', () => {
       const store = useCalendarStore()
       const startDate = new Date(2026, 0, 15)
+
       store.setDate(startDate)
       store.setPeriod(CALENDAR_PERIODS.month)
 
@@ -82,6 +84,7 @@ describe('useCalendarStore', () => {
     it('при period=year: year += 1', () => {
       const store = useCalendarStore()
       const startDate = new Date(2026, 5, 15)
+
       store.setDate(startDate)
       store.setPeriod(CALENDAR_PERIODS.year)
 
@@ -95,6 +98,7 @@ describe('useCalendarStore', () => {
     it('при period=week: date -= 7 дней', () => {
       const store = useCalendarStore()
       const startDate = new Date(2026, 0, 17)
+
       store.setDate(startDate)
       store.setPeriod(CALENDAR_PERIODS.week)
 
@@ -106,6 +110,7 @@ describe('useCalendarStore', () => {
     it('через границу месяца (31 янв → 24 янв при week)', () => {
       const store = useCalendarStore()
       const startDate = new Date(2026, 0, 31)
+
       store.setDate(startDate)
       store.setPeriod(CALENDAR_PERIODS.week)
 
@@ -119,6 +124,7 @@ describe('useCalendarStore', () => {
   describe('setToday', () => {
     it('date.toDateString() === new Date().toDateString()', () => {
       const store = useCalendarStore()
+
       store.setDate(new Date(2020, 5, 1))
 
       store.setToday()
@@ -146,6 +152,7 @@ describe('useCalendarStore', () => {
 
     it('setMovingItemId(null) → сброс в null и isDndMode === false', () => {
       const store = useCalendarStore()
+
       store.setMovingItemId('task-1')
 
       store.setMovingItemId(null)

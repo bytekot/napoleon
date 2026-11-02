@@ -13,7 +13,8 @@
       "pnpm format": "allow",
       "pnpm lint": "allow",
       "pnpm format:check": "allow",
-      "pnpm type-check": "allow"
+      "pnpm type-check": "allow",
+      "pnpm vitest": "allow"
     }
   },
   "indexing": {

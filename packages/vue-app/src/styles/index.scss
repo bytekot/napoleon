@@ -1,0 +1,23 @@
+// Сброс
+html,
+body {
+  margin: 0;
+}
+
+// Типографика
+h1,
+h2 {
+  margin: auto;
+  font-weight: 100;
+}
+
+h1 {
+  font-size: 20px;
+  letter-spacing: 1px;
+}
+
+// Шрифт
+body {
+  font-family: Roboto, sans-serif;
+  letter-spacing: 0.01em;
+}

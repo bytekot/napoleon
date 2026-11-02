@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount } from 'vue'
+import { computed } from 'vue'
 import { useTasksStore } from '../../stores/tasks'
 import { useCalendarStore } from '../../stores/calendar'
 
@@ -42,12 +42,6 @@ function onDragStart(event: DragEvent) {
   calendarStore.setMovingItemId(props.taskId)
   target.addEventListener('dragend', () => calendarStore.setMovingItemId(null), { once: true })
 }
-
-onBeforeUnmount(() => {
-  if (calendarStore.movingItemId === props.taskId) {
-    calendarStore.setMovingItemId(null)
-  }
-})
 </script>
 
 <template>

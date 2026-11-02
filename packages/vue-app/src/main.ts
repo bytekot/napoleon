@@ -3,6 +3,7 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
+import './styles/index.scss'
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- Vue SFC type not resolved by typescript-eslint parser
 const app = createApp(App)

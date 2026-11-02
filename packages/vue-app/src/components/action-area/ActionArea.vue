@@ -23,11 +23,17 @@ const emit = defineEmits<{
 const hovered = ref(false)
 
 function onDragEnter(event: DragEvent) {
+  if (hovered.value) return
+
   hovered.value = true
   emit('enter', event)
 }
 
 function onDragLeave(event: DragEvent) {
+  const root = event.currentTarget as HTMLElement
+
+  if (event.relatedTarget instanceof Node && root.contains(event.relatedTarget)) return
+
   hovered.value = false
   emit('leave', event)
 }

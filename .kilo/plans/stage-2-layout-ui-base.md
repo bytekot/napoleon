@@ -1,6 +1,6 @@
 # Этап 2: Layout и базовые UI-компоненты
 
-**Статус:** к реализации
+**Статус:** реализован
 **Сложность:** Низкая
 **Зависит от:** Этап 0 (готов)
 **Блокирует:** Этапы 3, 4
@@ -18,13 +18,15 @@ Legacy-ориентир: `components/layout/component.tsx`. Простой ко�
 
 ### 2.2 Header / Footer
 
-Legacy: `components/header/component.tsx`, `components/footer/component.tsx`. Проверить при реализации, содержат ли они логику. Если только разметка — оставить статикой внутри `Layout.vue`, отдельные компоненты не создавать.
+Legacy: `components/header/component.tsx`, `components/footer/component.tsx`. Оба — пустые div'ы без логики. Оставить статикой внутри `Layout.vue`, отдельные компоненты не создавать.
 
-### 2.3 Button — `src/components/button/AppButton.vue`
+### 2.3 Button — `src/components/button/Button.vue`
 
-Перенос из legacy `components/button/component.tsx` как есть. Props: `size`, `disabled`. Клик — через emit. Стили переносятся из SCSS Modules.
+Перенос из legacy `components/button/component.tsx` **как есть**. Props: `disabled`. Клик — через emit. Children — через default slot. Стили переносятся из SCSS Modules.
 
-### 2.4 TextArea — `src/components/text-area/AppTextArea.vue`
+> Примечание: prop `size` отсутствует в legacy, не добавляется.
+
+### 2.4 TextArea — `src/components/text-area/TextArea.vue`
 
 Перенос из legacy как есть. Обязательна поддержка `v-model`.
 
@@ -35,13 +37,28 @@ Legacy-поведение, которое нужно сохранить (`compon
 
 ### 2.5 Иконки
 
-Перенести SVG из `packages/react-app/src/assets/icons/`. В legacy это компоненты с props `size: Size`.
+Перенести SVG из `packages/react-app/src/assets/icons/`. Тип `IconProps` уже создан на Этапе 0 (`src/types/shared.ts`).
 
-Варианты реализации — выбрать при реализации, зафиксировать решение в этом файле:
-- отдельные SFC на каждую иконку
-- inline SVG в потребляющих компонентах
+#### Стратегия реализации (зафиксировано)
 
-Тип `IconProps` уже создан на Этапе 0 (`src/types/shared.ts`).
+**BaseIcon SFC со слотом для path** — прямой перенос паттерна из legacy:
+- Базовый компонент `src/components/icon/BaseIcon.vue` принимает `size?: Size`, `className?: string`, рендерит `<svg>` с viewBox и default slot для `<path>`
+- Каждая конкретная иконка — отдельный SFC, использующий `<BaseIcon>` и передающий `<path>` через slot
+
+#### Список иконок к переносу (6 штук)
+
+| Legacy | Vue SFC | Путь в legacy |
+|--------|---------|---------------|
+| `CaretLeftIcon` | `CaretLeft.vue` | `assets/icons/caret-left/component.tsx` |
+| `CaretRightIcon` | `CaretRight.vue` | `assets/icons/caret-right/component.tsx` |
+| `CaretUpIcon` | `CaretUp.vue` | `assets/icons/caret-up/component.tsx` |
+| `TasksIcon` | `Tasks.vue` | `assets/icons/tasks/component.tsx` |
+| `PlusIcon` | `Plus.vue` | `assets/icons/plus-icon/component.tsx` |
+| `TrashIcon` | `Trash.vue` | `assets/icons/trash-icon/component.tsx` |
+
+Базовый wrapper: `BaseIcon.vue` ← legacy `assets/icons/icon/component.tsx`
+
+Все иконки размещаются в `src/components/icon/`.
 
 ---
 
@@ -63,22 +80,22 @@ Legacy-стили в `styles.module.scss` переносятся в `<style scop
 
 ---
 
-## Открытый вопрос этапа
+## Открытые вопросы этапа
 
-**Accessibility:** нужна ли ARIA-поддержка в первой версии?
-
-Рекомендация: **нет**, отложить. Обоснование: legacy не содержит ARIA-атрибутов, добавление сейчас расширит объём этапа без видимого результата. Вернуться отдельной задачей после Этапа 7.
-
-Исключение — `<time dateTime="...">` в календаре: это семантика, а не ARIA, и она затрагивается B9 на Этапе 5.
+Нет. Все решения зафиксированы:
+- Accessibility (ARIA): **отложено** до завершения Этапа 7. Legacy не содержит ARIA, добавление расширяет объём без видимого результата. Исключение — `<time dateTime="...">` в календаре (семантика, не ARIA; затрагивается B9 на Этапе 5).
+- Иконки: **BaseIcon SFC со слотом для path** (см. п. 2.5).
+- Button `size`: **не добавляется**, отсутствует в legacy.
 
 ---
 
 ## Критерии завершения
 
-- [ ] `Layout.vue` рендерит slot-контент
-- [ ] `AppButton.vue` работает, размер и disabled применяются
-- [ ] `AppTextArea.vue` поддерживает `v-model`, placeholder и autofocus
-- [ ] Иконки перенесены, решение о формате зафиксировано в этом файле
+- [ ] `Layout.vue` рендерит slot-контент, Header/Footer как статика внутри (без отдельных компонентов)
+- [ ] `Button.vue` работает: `disabled` применяется, клик через emit, children через slot
+- [ ] `TextArea.vue` поддерживает `v-model`, placeholder (`emptyText`) и `autoFocus`
+- [ ] `BaseIcon.vue` создан, принимает `size` и слот для path
+- [ ] Все 6 иконок перенесены: CaretLeft, CaretRight, CaretUp, Tasks, Plus, Trash
 - [ ] Стили в `<style scoped lang="scss">`, соответствуют legacy визуально
 - [ ] `pnpm type-check` проходит
 - [ ] `pnpm build` проходит

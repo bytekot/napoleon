@@ -7,6 +7,13 @@
     "edit": {
       "*": "allow",
       "packages/react-app": "deny"
+    },
+    "bash": {
+      "pnpm check": "allow",
+      "pnpm format": "allow",
+      "pnpm lint": "allow",
+      "pnpm format:check": "allow",
+      "pnpm type-check": "allow"
     }
   },
   "indexing": {

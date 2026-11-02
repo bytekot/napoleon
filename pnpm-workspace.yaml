@@ -1,6 +1,0 @@
-packages:
-  - 'packages/*'
-  - 'api'
-allowBuilds:
-  '@swc/core': true
-  esbuild: true

@@ -6,7 +6,7 @@
     },
     "edit": {
       "*": "allow",
-      "packages/react-app": "deny"
+      "legacy-react": "deny"
     },
     "bash": {
       "pnpm check": "allow",

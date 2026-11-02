@@ -255,7 +255,7 @@ interface Props {
 - [x] Calendar.vue динамически переключает views по period
 - [x] ~~DnD emit объявлен в компонентах (готов к использованию на Этапе 6)~~ — отменено в Этапе 6, решение #3: emit-цепочка удалена, компоненты вызывают store напрямую
 - [x] `isPeriodYear` getter добавлен в calendar store
-- [ ] Визуальное соответствие React версии при переключении period
+- [x] Визуальное соответствие React версии при переключении period
 - [x] Test-after для компонентов: рендер без ошибок, корректные CSS-классы (today, current-month, minimized), вычисляемые даты
 - [x] `pnpm check` проходит (lint + format + type-check)
 - [x] `pnpm build` проходит

@@ -1,13 +1,51 @@
 {
   "name": "napoleon",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "dev:react": "pnpm --filter napoleon-react dev",
-    "dev:vue": "pnpm --filter napoleon-vue dev",
-    "build:react": "pnpm --filter napoleon-react build",
-    "build:vue": "pnpm --filter napoleon-vue build",
+    "dev": "vite",
+    "build": "run-p type-check \"build-only {@}\" --",
+    "preview": "vite preview",
+    "test:unit": "vitest",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --build",
+    "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
+    "format:check": "prettier --check \"src/**/*.{ts,vue}\"",
+    "format": "prettier --write \"src/**/*.{ts,vue}\"",
+    "check": "run-p lint format:check type-check",
     "start-server": "node api/server.js"
   },
-  "packageManager": "pnpm@12.16.1+sha512.091d1dee7927575661b25dab3c2ae31cafc1c54d6b71ed6a6600cf0c1cb10434a447eae14015f1b23e2e6bedeed79df94a932e2164d2832280dce3fb32f656d1"
+  "dependencies": {
+    "pinia": "^4.0.3",
+    "vue": "^3.5.42",
+    "vue-router": "^5.3.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@tsconfig/node24": "^24.0.5",
+    "@types/jsdom": "^30.0.0",
+    "@types/node": "^24.13.4",
+    "@vitejs/plugin-vue": "^6.0.8",
+    "@vue/test-utils": "^2.5.0",
+    "@vue/tsconfig": "^0.9.1",
+    "eslint": "^10.14.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-vue": "^10.12.0",
+    "globals": "^17.14.0",
+    "jiti": "^2.7.0",
+    "jsdom": "^30.0.1",
+    "npm-run-all2": "^9.0.3",
+    "prettier": "^3.9.10",
+    "typescript": "~6.0.0",
+    "typescript-eslint": "^8.72.1",
+    "vite": "^8.2.2",
+    "vite-plugin-vue-devtools": "^8.2.1",
+    "vitest": "^4.1.11",
+    "vue-eslint-parser": "^10.4.1",
+    "vue-tsc": "^3.3.11"
+  },
+  "engines": {
+    "node": "^22.18.0 || >=24.12.0"
+  }
 }

@@ -99,7 +99,7 @@ pnpm test:unit      # все unit-тесты
 - [x] Все CRUD операции работают (реализовано в TasksForm, TaskItem, store)
 - [x] Calendar navigation работает (CalendarHeader + CalendarDateControls + store)
 - [x] Drag-and-drop работает (TasksList + TaskItem + calendarStore.movingItemId)
-- [ ] Визуальное соответствие React версии (требует ручного сравнения)
+- [x] Визуальное соответствие React версии (требует ручного сравнения)
 - [x] `pnpm check` проходит
 - [x] `pnpm build` succeeds
 - [x] `pnpm test:unit` проходит (89 тестов)

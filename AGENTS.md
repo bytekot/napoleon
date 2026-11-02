@@ -7,35 +7,31 @@ Task board с календарём. Миграция с React на Vue (in progr
 - **Frontend (target):** Vue 3, TypeScript, Pinia, Vue Router, PrimeVue
 - **Frontend (legacy):** React 18, Redux Toolkit, SCSS Modules
 - **Backend:** Express.js REST API, in-memory storage (стабильный, не меняется)
-- **Build:** Vite, pnpm workspaces
+- **Build:** Vite, pnpm
 - **Runtime:** Node v24 LTS (через nvm), pnpm 12.x
 
 ## Repository Structure
 
 ```
 napoleon/
-├── api/                 # backend (shared)
-├── packages/
-│   ├── react-app/       # legacy, read-only reference
-│   └── vue-app/         # active development
-├── package.json         # workspace root scripts
-└── pnpm-workspace.yaml
+├── api/                 # backend
+├── legacy-react/        # legacy React app (read-only reference)
+├── src/                 # Vue app (основной проект)
+├── public/              # статические ресурсы Vue app
+├── package.json         # корневой package.json
+└── index.html           # точка входа Vue app
 ```
 
 ## Development Commands
 
 ```bash
-pnpm dev:react       # localhost:5173
-pnpm dev:vue         # localhost:5174
+pnpm dev             # Vue app на localhost:5173
 pnpm start-server    # API :3001
 ```
 
-Оба фронтенда запускаются параллельно для визуального сравнения.
-
-### Vue-app: проверки и форматирование
+### Проверки и форматирование
 
 ```bash
-# Из packages/vue-app или с --filter napoleon-vue из корня
 pnpm lint            # ESLint (качество кода)
 pnpm format          # Prettier: автоформатирование
 pnpm format:check    # Prettier: проверка без изменений
@@ -114,5 +110,5 @@ pnpm check           # lint + format:check + type-check параллельно
 
 ### Обязательные проверки после задачи
 
-После изменений в `packages/vue-app`: `pnpm check`. Падает → исправить до завершения.
+После изменений: `pnpm check`. Падает → исправить до завершения.
 Исключение: задача без изменения кода (исследование, обсуждение).

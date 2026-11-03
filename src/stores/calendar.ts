@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia'
-import { CALENDAR_PERIODS } from '../constants/calendar'
+import { CALENDAR_PERIODS, DEFAULT_CALENDAR_PERIOD } from '../constants/calendar'
 import type { CalendarPeriod } from '../types/calendar'
 import { getDateWithOffset } from '../utils/calendar'
 
 export const useCalendarStore = defineStore('calendar', {
   state: (): { date: Date; period: CalendarPeriod; movingItemId: string | null } => ({
     date: new Date(),
-    period: CALENDAR_PERIODS.week,
+    period: DEFAULT_CALENDAR_PERIOD,
     movingItemId: null,
   }),
 

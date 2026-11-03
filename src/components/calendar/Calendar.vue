@@ -4,6 +4,9 @@ import CalendarWeek from '../calendar-week/CalendarWeek.vue'
 import CalendarMonth from '../calendar-month/CalendarMonth.vue'
 import CalendarYear from '../calendar-year/CalendarYear.vue'
 import { useCalendarStore } from '../../stores/calendar'
+import { useCalendarRoute } from '../../composables/useCalendarRoute'
+
+useCalendarRoute()
 
 const store = useCalendarStore()
 </script>

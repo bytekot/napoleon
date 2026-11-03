@@ -64,7 +64,7 @@ React-специфичные типы **не переносились**: `Calend
 | **B1** | `src/utils/calendar.ts` — `getThisMonday` | [Этап 1](./stage-1-task-store.md) |
 | **B7** | `src/utils/tasks.ts` — `getNodeIndex` | [Этап 1](./stage-1-task-store.md) |
 
-Полное описание и код фиксов — в файле Этапа 1. Реестр всех багов — в [индексе](./1793484623270-react-to-vue-migration.md).
+Полное описание и код фиксов — в файле Этапа 1. Реестр всех багов — в [индексе](./index.md).
 
 ---
 

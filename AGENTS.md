@@ -1,11 +1,10 @@
 # Napoleon
 
-Task board с календарём. Миграция с React на Vue (in progress).
+Task board с календарём.
 
 ## Tech Stack
 
-- **Frontend (target):** Vue 3, TypeScript, Pinia, Vue Router, PrimeVue
-- **Frontend (legacy):** React 18, Redux Toolkit, SCSS Modules
+- **Frontend:** Vue 3, TypeScript, Pinia, Vue Router
 - **Backend:** Express.js REST API, in-memory storage (стабильный, не меняется)
 - **Build:** Vite, pnpm
 - **Runtime:** Node v24 LTS (через nvm), pnpm 12.x
@@ -14,12 +13,21 @@ Task board с календарём. Миграция с React на Vue (in progr
 
 ```
 napoleon/
-├── api/                 # backend
+├── api/                 # backend (Express.js)
 ├── legacy-react/        # legacy React app (read-only reference)
 ├── src/                 # Vue app (основной проект)
-├── public/              # статические ресурсы Vue app
-├── package.json         # корневой package.json
-└── index.html           # точка входа Vue app
+│   ├── api/             # API client
+│   ├── components/      # Vue компоненты
+│   ├── composables/     # Composition API хуки
+│   ├── constants/       # Константы
+│   ├── router/          # Vue Router конфигурация
+│   ├── stores/          # Pinia stores
+│   ├── styles/          # Глобальные стили
+│   ├── types/           # TypeScript типы
+│   ├── utils/           # Утилиты
+│   └── views/           # Страницы
+├── public/              # статические ресурсы
+└── index.html           # точка входа
 ```
 
 ## Development Commands
@@ -42,23 +50,13 @@ pnpm check           # lint + format:check + type-check параллельно
 ## Architecture Decisions
 
 - **State Management:** Pinia (не Vuex)
-- **UI Library:** PrimeVue (выбран за Calendar/DnD компоненты)
 - **Store structure:** entity-based для задач (обосновано CRUD + ID lookup; не догма для всех сущностей)
 - **Composition API** + `<script setup>`
 
-## UI Library Strategy
+## Legacy Reference
 
-1. Сначала пробуем PrimeVue компонент
-2. Не хватает функциональности → кастомный компонент или wrapper
-3. PrimeVue решает ~80% задачи → используем его + слоты/props для кастомизации
-4. С полностью уникальные компоненты (calendar-day, task с DnD) разбираемся в частном порядке
-5. Контроль и читаемость приоритетнее покрытия библиотекой
-
-## Migration Guidelines
-
-- Legacy React — только reference, не модифицировать
-- Бизнес-логика → composables/stores
-- Типы адаптируются под Vue; предложения по улучшению TS приветствуются и обсуждаются перед применением
+- `/legacy-react` — архивный React-код, read-only. Не модифицировать.
+- При необходимости и **только по запросу** можно обращаться как к справочнику по бизнес-логике.
 
 ## Агент: границы самостоятельности
 
@@ -86,11 +84,6 @@ pnpm check           # lint + format:check + type-check параллельно
 «зафиксировано» — только с подтверждения; ссылки на собственные прежние выводы как на источник
 полномочий; расширение реестров и критериев завершения сверх согласованного.
 
-### Перенос текста
-
-- Переносить **дословно**. Дополнения — только явно запрошенные
-- Не ломать существующие ссылки и имена файлов
-
 ### Перед началом работы
 
 Уточнить понимание (что делаю, в каком объёме, чего **не** буду), если:
@@ -111,4 +104,4 @@ pnpm check           # lint + format:check + type-check параллельно
 ### Обязательные проверки после задачи
 
 После изменений: `pnpm check`. Падает → исправить до завершения.
-Исключение: задача без изменения кода (исследование, обсуждение).
+Исключение: задача без изменения кода (исследование, обсуждение, работа с документацией).

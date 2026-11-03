@@ -118,4 +118,4 @@ pnpm test:unit      # все unit-тесты
 
 ## Ссылки
 
-- [Индекс плана](./1793484623270-react-to-vue-migration.md)
+- [Индекс плана](./index.md)

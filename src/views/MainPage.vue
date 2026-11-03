@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import Layout from '../components/layout/Layout.vue'
-import TasksForm from '../components/tasks-form/TasksForm.vue'
+import TaskForm from '../components/task-form/TaskForm.vue'
 import Calendar from '../components/calendar/Calendar.vue'
-import { useTasksStore } from '../stores/tasks'
+import { useTaskStore } from '../stores/task'
 
-const store = useTasksStore()
+const store = useTaskStore()
 
 onMounted(() => {
   void store.fetchTasks()
@@ -15,7 +15,7 @@ onMounted(() => {
 <template>
   <Layout>
     <div class="main-page">
-      <TasksForm class="tasks" />
+      <TaskForm class="task-form" />
       <Calendar class="calendar" />
     </div>
   </Layout>
@@ -26,7 +26,7 @@ onMounted(() => {
   height: 100%;
   display: flex;
 
-  .tasks {
+  .task-form {
     max-width: 250px;
   }
 

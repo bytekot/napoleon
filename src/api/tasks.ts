@@ -8,7 +8,7 @@ export interface CreateTaskParams {
 
 /**
  * ВАЖНО: при добавлении нового поля необходимо обновить optimistic update
- * в `src/stores/tasks.ts` → action `editTask`.
+ * в `src/stores/task.ts` → action `editTask`.
  */
 export interface EditTaskParams {
   id: string

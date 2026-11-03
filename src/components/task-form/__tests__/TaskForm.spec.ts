@@ -1,15 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { setActivePinia, createPinia, type Pinia } from 'pinia'
-import TasksForm from '../TasksForm.vue'
-import { useTasksStore } from '../../../stores/tasks'
+import TaskForm from '../TaskForm.vue'
+import { useTaskStore } from '../../../stores/task'
 import * as api from '../../../api/tasks'
 
 vi.mock('../../../api/tasks')
 
 const mockApi = vi.mocked(api)
 
-describe('TasksForm', () => {
+describe('TaskForm', () => {
   let pinia: Pinia
 
   beforeEach(() => {
@@ -19,7 +19,7 @@ describe('TasksForm', () => {
   })
 
   function mountForm() {
-    return mount(TasksForm, { global: { plugins: [pinia] } })
+    return mount(TaskForm, { global: { plugins: [pinia] } })
   }
 
   it('очищает input после создания задачи', async () => {
@@ -51,7 +51,7 @@ describe('TasksForm', () => {
       completed: false,
     })
 
-    const store = useTasksStore()
+    const store = useTaskStore()
     const spy = vi.spyOn(store, 'createTask')
 
     const wrapper = mountForm()
@@ -68,7 +68,7 @@ describe('TasksForm', () => {
   })
 
   it('не создаёт задачу при пустом input', async () => {
-    const store = useTasksStore()
+    const store = useTaskStore()
     const spy = vi.spyOn(store, 'createTask')
 
     const wrapper = mountForm()

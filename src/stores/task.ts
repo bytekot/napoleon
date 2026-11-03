@@ -3,7 +3,7 @@ import * as api from '../api/tasks'
 import type { Task } from '../types/tasks'
 import type { RequestState } from '../types/request'
 
-interface TasksState {
+interface TaskState {
   entities: Record<string, Task>
   ids: string[]
   request: RequestState
@@ -13,8 +13,8 @@ function toMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'Unknown error'
 }
 
-export const useTasksStore = defineStore('tasks', {
-  state: (): TasksState => ({
+export const useTaskStore = defineStore('task', {
+  state: (): TaskState => ({
     entities: {},
     ids: [],
     request: { status: 'idle' },

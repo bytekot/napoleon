@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useTasksStore } from '../../stores/tasks'
+import { useTaskStore } from '../../stores/task'
 import { useCalendarStore } from '../../stores/calendar'
 
 const props = defineProps<{
@@ -8,7 +8,7 @@ const props = defineProps<{
   mini?: boolean
 }>()
 
-const store = useTasksStore()
+const store = useTaskStore()
 const calendarStore = useCalendarStore()
 
 const task = computed(() => store.taskById(props.taskId))
@@ -45,7 +45,7 @@ function onDragStart(event: DragEvent) {
 </script>
 
 <template>
-  <!-- data-task: точка приложения внешних классов (border-top, border-bottom) из TasksList -->
+  <!-- data-task: точка приложения внешних классов (border-top, border-bottom) из TaskList -->
   <div data-task>
     <div
       v-if="task"

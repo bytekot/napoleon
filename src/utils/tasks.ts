@@ -1,5 +1,5 @@
 export function getDraggedTaskOrder(element: Element, clientY: number): number {
-  const tasksEl = element.closest('[data-tasks]')
+  const tasksEl = element.closest('[data-task-list]')
 
   if (!tasksEl) return 0
 

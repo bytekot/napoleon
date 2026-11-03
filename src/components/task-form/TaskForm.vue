@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useTasksStore } from '../../stores/tasks'
-import TasksList from '../tasks/TasksList.vue'
+import { useTaskStore } from '../../stores/task'
+import TaskList from '../tasks/TaskList.vue'
 import Button from '../button/Button.vue'
 import TextArea from '../text-area/TextArea.vue'
 import TasksIcon from '../icon/Tasks.vue'
 
-const store = useTasksStore()
+const store = useTaskStore()
 
 const taskName = ref('')
 const minimized = ref(false)
@@ -27,7 +27,7 @@ function toggleMinimized() {
 </script>
 
 <template>
-  <div class="tasks-form" :class="{ minimized }">
+  <div class="task-form" :class="{ minimized }">
     <div class="header">
       <Button @click="toggleMinimized">
         <TasksIcon size="small" />
@@ -41,13 +41,13 @@ function toggleMinimized() {
         auto-focus
         @keydown="onInputKeydown"
       />
-      <TasksList :due-date="null" empty-text="Список пуст." />
+      <TaskList :due-date="null" empty-text="Список пуст." />
     </template>
   </div>
 </template>
 
 <style scoped lang="scss">
-.tasks-form {
+.task-form {
   background: #e5e5e5;
   box-shadow: 0 2px 1px -1px rgba(black, 0.2);
   width: 300px;

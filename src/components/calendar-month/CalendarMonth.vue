@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import CalendarDay from '../calendar-day/CalendarDay.vue'
-import TasksList from '../tasks/TasksList.vue'
+import TaskList from '../tasks/TaskList.vue'
 import { getCalendarMonthDates, getMonth, formatDateISO } from '../../utils/calendar'
 import { DAYS_OF_WEEK } from '../../constants/calendar'
 
@@ -31,7 +31,7 @@ const dateTime = computed(() => getMonth(props.date))
       :minimized="minimized"
       class="day"
     >
-      <TasksList :due-date="formatDateISO(dayDate)" :mini="true" class="tasks" />
+      <TaskList :due-date="formatDateISO(dayDate)" :mini="true" class="tasks" />
     </CalendarDay>
   </time>
 </template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import CalendarDay from '../calendar-day/CalendarDay.vue'
-import TasksList from '../tasks/TasksList.vue'
+import TaskList from '../tasks/TaskList.vue'
 import { getWeekDayDates, formatDateISO } from '../../utils/calendar'
 
 const props = defineProps<{
@@ -14,7 +14,7 @@ const weekDates = computed(() => getWeekDayDates(props.date))
 <template>
   <time class="calendar-week">
     <CalendarDay v-for="(dayDate, index) in weekDates" :key="index" :date="dayDate" class="day">
-      <TasksList :due-date="formatDateISO(dayDate)" class="tasks" />
+      <TaskList :due-date="formatDateISO(dayDate)" class="tasks" />
     </CalendarDay>
   </time>
 </template>

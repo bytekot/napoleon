@@ -2,7 +2,8 @@
   "$schema": "https://app.kilo.ai/config.json",
   "permission": {
     "read": {
-      "*": "allow"
+      "*": "allow",
+      "legacy-react": "deny"
     },
     "edit": {
       "*": "allow",

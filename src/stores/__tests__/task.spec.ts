@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
-import { useTasksStore } from '../tasks'
+import { useTaskStore } from '../task'
 import * as api from '../../api/tasks'
 import type { Task } from '../../types/tasks'
 
@@ -25,7 +25,7 @@ function makeTask(overrides: Partial<Task> = {}): Task {
   }
 }
 
-describe('useTasksStore', () => {
+describe('useTaskStore', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
     vi.clearAllMocks()
@@ -34,7 +34,7 @@ describe('useTasksStore', () => {
   describe('fetchTasks', () => {
     it('пустой ответ → status: success, ids: []', async () => {
       mockApi.getTasks.mockResolvedValue([])
-      const store = useTasksStore()
+      const store = useTaskStore()
 
       await store.fetchTasks()
 
@@ -45,7 +45,7 @@ describe('useTasksStore', () => {
 
     it('повторный вызов не делает запрос', async () => {
       mockApi.getTasks.mockResolvedValue([])
-      const store = useTasksStore()
+      const store = useTaskStore()
 
       await store.fetchTasks()
       await store.fetchTasks()
@@ -55,7 +55,7 @@ describe('useTasksStore', () => {
 
     it('ошибка → status: error с сообщением', async () => {
       mockApi.getTasks.mockRejectedValue(new Error('Network error'))
-      const store = useTasksStore()
+      const store = useTaskStore()
 
       await store.fetchTasks()
 
@@ -66,7 +66,7 @@ describe('useTasksStore', () => {
       const tasks = [makeTask({ id: 'a' }), makeTask({ id: 'b' })]
 
       mockApi.getTasks.mockResolvedValue(tasks)
-      const store = useTasksStore()
+      const store = useTaskStore()
 
       await store.fetchTasks()
 
@@ -79,7 +79,7 @@ describe('useTasksStore', () => {
   describe('createTask', () => {
     it('temp id появляется сразу', async () => {
       mockApi.createTask.mockImplementation(neverResolve)
-      const store = useTasksStore()
+      const store = useTaskStore()
 
       void store.createTask({ name: 'New', creationDate: '2026-11-01' })
 
@@ -92,7 +92,7 @@ describe('useTasksStore', () => {
       const serverTask = makeTask({ id: 'server-id', name: 'New' })
 
       mockApi.createTask.mockResolvedValue(serverTask)
-      const store = useTasksStore()
+      const store = useTaskStore()
 
       await store.createTask({ name: 'New', creationDate: '2026-11-01' })
 
@@ -103,7 +103,7 @@ describe('useTasksStore', () => {
 
     it('при ошибке temp id удаляется', async () => {
       mockApi.createTask.mockRejectedValue(new Error('Fail'))
-      const store = useTasksStore()
+      const store = useTaskStore()
 
       await store.createTask({ name: 'New', creationDate: '2026-11-01' })
 
@@ -119,7 +119,7 @@ describe('useTasksStore', () => {
       const updated = makeTask({ completed: true })
 
       mockApi.editTask.mockResolvedValue(updated)
-      const store = useTasksStore()
+      const store = useTaskStore()
 
       store.entities[task.id] = task
       store.ids = [task.id]
@@ -133,7 +133,7 @@ describe('useTasksStore', () => {
       const task = makeTask({ order: 5 })
 
       mockApi.editTask.mockImplementation(neverResolve)
-      const store = useTasksStore()
+      const store = useTaskStore()
 
       store.entities[task.id] = task
       store.ids = [task.id]
@@ -151,7 +151,7 @@ describe('useTasksStore', () => {
       const reordered = [makeTask({ id: '1', order: 2 }), makeTask({ id: '2', order: 1 })]
 
       mockApi.editTask.mockResolvedValue(reordered)
-      const store = useTasksStore()
+      const store = useTaskStore()
 
       store.entities = { '1': task1, '2': task2 }
       store.ids = ['1', '2']
@@ -166,7 +166,7 @@ describe('useTasksStore', () => {
       const task = makeTask({ order: 5 })
 
       mockApi.editTask.mockRejectedValue(new Error('Fail'))
-      const store = useTasksStore()
+      const store = useTaskStore()
 
       store.entities[task.id] = task
       store.ids = [task.id]
@@ -183,7 +183,7 @@ describe('useTasksStore', () => {
       const task = makeTask()
 
       mockApi.deleteTask.mockRejectedValue(new Error('Fail'))
-      const store = useTasksStore()
+      const store = useTaskStore()
 
       store.entities[task.id] = task
       store.ids = [task.id]
@@ -199,7 +199,7 @@ describe('useTasksStore', () => {
       const task = makeTask()
 
       mockApi.deleteTask.mockResolvedValue(task.id)
-      const store = useTasksStore()
+      const store = useTaskStore()
 
       store.entities[task.id] = task
       store.ids = [task.id]
@@ -213,13 +213,13 @@ describe('useTasksStore', () => {
 
   describe('getters', () => {
     it('taskById: несуществующий id → undefined', () => {
-      const store = useTasksStore()
+      const store = useTaskStore()
 
       expect(store.taskById('nonexistent')).toBeUndefined()
     })
 
     it('unplannedTaskIds: сортировка по creationDate, только без dueDate', () => {
-      const store = useTasksStore()
+      const store = useTaskStore()
 
       store.entities = {
         a: makeTask({ id: 'a', creationDate: '2026-11-03', dueDate: null }),
@@ -232,7 +232,7 @@ describe('useTasksStore', () => {
     })
 
     it('taskIdsByDueDate: сортировка по order, null трактуется как 0', () => {
-      const store = useTasksStore()
+      const store = useTaskStore()
 
       store.entities = {
         a: makeTask({ id: 'a', dueDate: '2026-11-05', order: 2 }),

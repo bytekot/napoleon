@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useCalendarStore } from '../../stores/calendar'
-import { useTasksStore } from '../../stores/tasks'
+import { useTaskStore } from '../../stores/task'
 import { CALENDAR_PERIODS } from '../../constants/calendar'
 import { getMonthName } from '../../utils/calendar'
 import ActionArea from '../action-area/ActionArea.vue'
@@ -11,7 +11,7 @@ import CalendarPeriodControls from '../calendar-period-controls/CalendarPeriodCo
 import CalendarDateControls from '../calendar-date-controls/CalendarDateControls.vue'
 
 const store = useCalendarStore()
-const tasksStore = useTasksStore()
+const taskStore = useTaskStore()
 
 const headerText = computed(() => `${getMonthName(store.date)} ${store.date.getFullYear()}`)
 
@@ -27,7 +27,7 @@ function onDeleteDrop(event: DragEvent) {
   const id = event.dataTransfer?.getData('text/plain')
 
   if (!id) return
-  void tasksStore.deleteTask(id)
+  void taskStore.deleteTask(id)
 }
 </script>
 

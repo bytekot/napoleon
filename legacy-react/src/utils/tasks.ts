@@ -12,12 +12,12 @@ function getNodeIndex (element: Element, nodes: NodeList): number | null {
 }
 
 export function getDraggedTaskOrder (element: Element, clientY: number): number {
-    const tasksEl = element.closest('[data-tasks]')
+    const taskListEl = element.closest('[data-task-list]')
     const taskEl = element.closest('[data-task]')
 
-    if (tasksEl && taskEl) {
+    if (taskListEl && taskEl) {
         const { y, height } = taskEl.getBoundingClientRect()
-        const order = getNodeIndex(taskEl, tasksEl.childNodes) ?? 0
+        const order = getNodeIndex(taskEl, taskListEl.childNodes) ?? 0
 
         return (
             clientY < y + height / 2
@@ -26,5 +26,5 @@ export function getDraggedTaskOrder (element: Element, clientY: number): number 
         )
     }
 
-    return tasksEl?.childElementCount ?? 0
+    return taskListEl?.childElementCount ?? 0
 }

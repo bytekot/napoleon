@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useTasksStore } from '../../stores/tasks'
+import { useTaskStore } from '../../stores/task'
 import { useTrackTask } from '../../composables/useTrackTask'
 import TaskItem from '../task/TaskItem.vue'
 import Plus from '../icon/Plus.vue'
@@ -11,7 +11,7 @@ const props = defineProps<{
   mini?: boolean
 }>()
 
-const store = useTasksStore()
+const store = useTaskStore()
 const { position, track } = useTrackTask()
 
 const taskIds = computed(() => {
@@ -48,11 +48,11 @@ function onDrop(event: DragEvent) {
 </script>
 
 <template>
-  <div class="tasks" @dragover="onDragOver" @dragleave="onDragLeave" @drop="onDrop">
+  <div class="task-list" @dragover="onDragOver" @dragleave="onDragLeave" @drop="onDrop">
     <div v-if="isLoading" class="loading">Загрузка...</div>
     <div v-else-if="showAddIcon" class="add-task"><Plus size="medium" /></div>
     <div v-else-if="taskIds.length === 0 && emptyText" class="empty-text">{{ emptyText }}</div>
-    <div data-tasks class="container">
+    <div data-task-list class="container">
       <TaskItem
         v-for="(taskId, index) in taskIds"
         :key="taskId"
@@ -65,7 +65,7 @@ function onDrop(event: DragEvent) {
 </template>
 
 <style scoped lang="scss">
-.tasks {
+.task-list {
   display: flex;
   flex-direction: column;
   padding: 10px;

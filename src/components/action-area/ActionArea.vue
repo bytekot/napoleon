@@ -59,26 +59,26 @@ function onDrop(event: DragEvent) {
 
 <style scoped lang="scss">
 .action-area {
-  background: #e1e1e1;
-  color: #f5f5f5;
-  font-size: 32px;
+  background: var(--color-bg-action-area);
+  color: var(--color-text-action-area);
+  font-size: var(--font-size-action-area);
   text-align: center;
-  padding: 4px 20px;
+  padding: var(--space-action-area);
 
   :deep(svg) {
-    fill: #d5d5d5;
+    fill: var(--color-icon-muted);
   }
 
   &.dangerous {
-    background: rgba(255, 0, 0, 0.2);
+    background: var(--color-bg-danger);
   }
 
   &.active {
-    background-color: #d5d5d5;
-    transition: 0.1s all ease;
+    background-color: var(--color-bg-action-area-active);
+    transition: var(--transition-action-area);
 
     &.dangerous {
-      background: rgba(255, 0, 0, 0.4);
+      background: var(--color-bg-danger-active);
     }
   }
 }

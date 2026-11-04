@@ -48,54 +48,52 @@ function toggleMinimized() {
 
 <style scoped lang="scss">
 .task-form {
-  background: #e5e5e5;
-  box-shadow: 0 2px 1px -1px rgba(black, 0.2);
-  width: 300px;
+  background: var(--color-bg-sidebar);
+  box-shadow: var(--shadow-card);
+  width: var(--size-sidebar);
 
   .header {
-    border: 1px solid rgb(221, 221, 221);
+    border: 1px solid var(--color-border-default);
 
     h1 {
       display: inline-block;
-      padding: 12.5px 8px;
-      color: #999;
+      padding: var(--space-form-header);
+      color: var(--color-text-secondary);
     }
 
     button {
-      margin: 0px 0px 0px 10px;
-      line-height: 35px;
-      padding: 0 5px;
-      border-radius: 30px;
-      box-shadow:
-        rgba(255, 255, 255, 0.6) 0 1px 0 inset,
-        0 2px 1px -1px rgba(black, 0.2);
+      margin: 0px 0px 0px var(--space-10);
+      line-height: var(--line-height-form-toggle);
+      padding: 0 var(--space-5);
+      border-radius: var(--radius-form-toggle);
+      box-shadow: var(--button-shadow), var(--shadow-card);
       opacity: 0.99;
 
       svg {
-        height: 20px;
-        width: 20px;
-        padding-bottom: 10px;
+        height: var(--size-form-toggle-icon);
+        width: var(--size-form-toggle-icon);
+        padding-bottom: var(--space-form-icon-offset);
       }
     }
   }
 
   &.minimized {
-    width: 30px;
-    transition: 0.2s all ease-in;
+    width: var(--size-sidebar-minimized);
+    transition: var(--transition-sidebar);
 
     .header {
       border-color: transparent;
 
       button {
-        margin-top: 8px;
+        margin-top: var(--space-form-toggle-minimized);
       }
     }
   }
 
   input {
-    height: 15px;
-    width: 210px;
-    margin: 10px;
+    height: var(--size-input-height);
+    width: var(--size-input-width);
+    margin: var(--space-form-input);
   }
 }
 </style>

@@ -49,11 +49,11 @@ function onDeleteDrop(event: DragEvent) {
 .calendar-header {
   display: flex;
   flex-direction: row;
-  background: #eee;
+  background: var(--color-bg-header);
 
   h1 {
-    color: #999;
-    padding-left: 20px;
+    color: var(--color-text-secondary);
+    padding-left: var(--space-header-title);
   }
 
   .action-toggle-period,
@@ -67,14 +67,14 @@ function onDeleteDrop(event: DragEvent) {
 
   .action-delete {
     display: none;
-    width: 200px;
+    width: var(--size-delete-area);
   }
 
   &.dnd-mode {
     .action-toggle-period,
     .action-delete {
       opacity: 1;
-      transition: 0.2s all ease;
+      transition: var(--transition-header-dnd);
     }
 
     .action-delete {

@@ -24,8 +24,8 @@ const yearMonths = computed(() => getYearMonthDates(props.date))
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  grid-gap: 10px 60px;
-  padding: 10px 15px;
+  grid-gap: var(--space-year-grid-gap);
+  padding: var(--space-year);
   height: 100%;
   overflow: auto;
 
@@ -36,18 +36,18 @@ const yearMonths = computed(() => getYearMonthDates(props.date))
     .header {
       text-align: right;
       margin: 0 auto 0 0;
-      color: #aaa;
-      padding: 10px 5px;
-      font-size: 20px;
+      color: var(--color-text-month-header);
+      padding: var(--space-year-header);
+      font-size: var(--font-size-heading);
     }
 
     .month {
       flex: 1;
-      background-color: #e9e9e9;
-      border: 1px solid #ddd;
-      border-radius: 10px;
+      background-color: var(--color-bg-month-cell);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-card);
       text-align: center;
-      margin-bottom: 10px;
+      margin-bottom: var(--space-10);
     }
   }
 }

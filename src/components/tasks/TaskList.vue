@@ -68,16 +68,16 @@ function onDrop(event: DragEvent) {
 .task-list {
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: var(--space-list);
   overflow: hidden;
 
   .empty-text,
   .loading {
-    color: #999;
+    color: var(--color-text-secondary);
   }
 
   .add-task {
-    fill: #d5d5d5;
+    fill: var(--color-icon-muted);
     margin: 0 auto;
   }
 
@@ -86,22 +86,20 @@ function onDrop(event: DragEvent) {
     overflow: hidden;
 
     div {
-      margin-bottom: 10px;
+      margin-bottom: var(--space-list-item-gap);
     }
 
     div.border-top,
     div.border-bottom {
-      transition: 0.2s all ease-in-out;
+      transition: var(--transition-drag-indicator);
     }
 
     div.border-top {
-      box-shadow:
-        0 -2px 1px 0 #b3d4ff,
-        0 2px 1px -1px rgba(black, 0.2);
+      box-shadow: var(--shadow-drag-top);
     }
 
     div.border-bottom {
-      box-shadow: 0 2px 1px 0 #b3d4ff;
+      box-shadow: var(--shadow-drag-bottom);
     }
   }
 }

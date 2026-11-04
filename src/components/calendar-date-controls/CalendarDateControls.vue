@@ -21,11 +21,11 @@ const store = useCalendarStore()
 
 <style scoped lang="scss">
 .calendar-date-controls {
-  background: #eee;
-  padding: 10px;
+  background: var(--color-bg-controls);
+  padding: var(--space-controls);
 
   button {
-    margin-right: 5px;
+    margin-right: var(--space-controls-gap);
   }
 }
 </style>

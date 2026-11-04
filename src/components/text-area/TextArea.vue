@@ -24,16 +24,14 @@ const emit = defineEmits<{
 
 <style scoped lang="scss">
 .text-area {
-  background: #eee;
+  background: var(--color-bg-input);
   border: none;
-  border-radius: 4px;
-  color: #555;
-  font-size: 14px;
+  border-radius: var(--radius-control);
+  color: var(--color-text-input);
+  font-size: var(--font-size-input);
   resize: none;
-  box-shadow:
-    inset 1px 1px 1px 0 rgba(0, 0, 0, 0.2),
-    inset -1px -1px 1px 0 rgba(255, 255, 255, 0.5);
-  padding: 10px;
+  box-shadow: var(--shadow-input-inset);
+  padding: var(--space-input);
 
   &:focus {
     outline: none;

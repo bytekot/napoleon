@@ -22,11 +22,11 @@ const weekDates = computed(() => getWeekDayDates(props.date))
 <style scoped lang="scss">
 .calendar-week {
   display: flex;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid var(--color-border-default);
 
   .day {
     flex: 1;
-    border-right: 1px solid #ddd;
+    border-right: 1px solid var(--color-border-default);
 
     .tasks {
       flex: 1;

@@ -25,21 +25,21 @@ defineSlots<{
 
 <style scoped lang="scss">
 .button {
-  background-image: linear-gradient(#f7f8fa, #e7e9ec);
-  border-color: #adb1b8 #a2a6ac #8d9096;
+  background-image: var(--button-bg);
+  border-color: var(--button-border-color);
   border-style: solid;
   border-width: 1px;
-  border-radius: 4px;
-  box-shadow: rgba(255, 255, 255, 0.6) 0 1px 0 inset;
+  border-radius: var(--radius-control);
+  box-shadow: var(--button-shadow);
   box-sizing: border-box;
-  color: #0f1111;
+  color: var(--color-text-primary);
   cursor: pointer;
   display: inline-block;
-  height: 29px;
-  font-size: 13px;
+  height: var(--size-button-height);
+  font-size: var(--font-size-button);
   outline: 0;
   overflow: hidden;
-  padding: 0 7px;
+  padding: var(--space-button);
   text-align: center;
   text-decoration: none;
   text-overflow: ellipsis;
@@ -48,28 +48,28 @@ defineSlots<{
   white-space: nowrap;
 
   span {
-    line-height: 16px;
+    line-height: var(--line-height-button);
 
     :deep(svg) {
-      fill: #0f1111;
+      fill: var(--color-text-primary);
     }
   }
 
   &:active {
-    border-bottom-color: #a2a6ac;
+    border-bottom-color: var(--button-border-color-active);
   }
 
   &:active:hover {
-    border-bottom-color: #a2a6ac;
+    border-bottom-color: var(--button-border-color-active);
   }
 
   &:hover {
-    border-color: #a2a6ac #979aa1 #82858a;
+    border-color: var(--button-border-color-hover);
   }
 
   &:focus {
-    border-color: #e77600;
-    box-shadow: rgba(228, 121, 17, 0.5) 0 0 3px 2px;
+    border-color: var(--button-color-focus-border);
+    box-shadow: var(--button-shadow-focus);
     outline: 0;
   }
 }

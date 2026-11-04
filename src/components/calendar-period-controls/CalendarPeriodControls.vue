@@ -16,21 +16,21 @@ const store = useCalendarStore()
 
 <style scoped lang="scss">
 .calendar-period-controls {
-  background: #eee;
-  padding: 10px;
+  background: var(--color-bg-controls);
+  padding: var(--space-controls);
 
   button {
     border-radius: 0;
-    width: 61px;
+    width: var(--size-period-button);
 
     &:first-child {
       border-width: 1px 0 1px 1px;
-      border-radius: 4px 0 0 4px;
+      border-radius: var(--radius-button-group-first);
     }
 
     &:last-child {
       border-width: 1px 1px 1px 0;
-      border-radius: 0 4px 4px 0;
+      border-radius: var(--radius-button-group-last);
     }
   }
 }

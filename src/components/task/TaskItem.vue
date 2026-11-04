@@ -68,12 +68,12 @@ function onDragStart(event: DragEvent) {
 
 <style scoped lang="scss">
 .task {
-  padding: 20px;
+  padding: var(--space-card);
   position: relative;
-  background: #fff;
-  color: #999;
-  box-shadow: 0 2px 1px -1px rgba(black, 0.2);
-  border-radius: 10px;
+  background: var(--color-bg-card);
+  color: var(--color-text-secondary);
+  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-card);
   overflow: hidden;
   cursor: pointer;
 
@@ -94,30 +94,30 @@ function onDragStart(event: DragEvent) {
       position: absolute;
       top: 0;
       left: 0;
-      height: 20px;
-      width: 20px;
+      height: var(--size-checkmark);
+      width: var(--size-checkmark);
       padding: 0;
-      background-color: #fff;
-      box-shadow: inset 0 0 0 1px #ccc;
-      border-radius: 30px;
+      background-color: var(--color-bg-checkmark);
+      box-shadow: var(--shadow-checkmark);
+      border-radius: var(--radius-checkmark);
     }
 
     .text {
-      margin-left: 30px;
+      margin-left: var(--space-checkmark-text);
     }
 
     &:hover {
       input {
         ~ .checkmark {
-          background-color: #f9f9f9;
+          background-color: var(--color-bg-checkmark-hover);
         }
       }
     }
   }
 
   label input:checked ~ .checkmark {
-    background-color: #eee;
-    box-shadow: inset 0 0 0 1px #ccc;
+    background-color: var(--color-bg-checkmark-checked);
+    box-shadow: var(--shadow-checkmark);
     opacity: 0.8;
 
     ~ .text {
@@ -138,15 +138,15 @@ function onDragStart(event: DragEvent) {
   label .checkmark:after {
     left: 8px;
     top: 4px;
-    width: 5px;
-    height: 10px;
-    border: solid #ccc;
+    width: var(--size-check-mark-width);
+    height: var(--size-check-mark-height);
+    border: solid var(--color-border-checkmark);
     border-width: 0 1px 1px 0;
     transform: rotate(45deg);
   }
 
   .style {
-    width: 10px;
+    width: var(--size-overdue-stripe);
     position: absolute;
     left: 0;
     top: 0;
@@ -154,8 +154,8 @@ function onDragStart(event: DragEvent) {
   }
 
   &:hover {
-    background-color: rgba(255, 255, 255, 0.93);
-    box-shadow: 0 2px 1px 0px rgba(black, 0.2);
+    background-color: var(--color-bg-card-hover);
+    box-shadow: var(--shadow-card-hover);
   }
 
   &.dragged {
@@ -164,11 +164,9 @@ function onDragStart(event: DragEvent) {
 
   &.completed {
     background: none;
-    box-shadow:
-      inset 1px 1px 0 0 #ddd,
-      inset -1px -1px 0 0 #ddd;
+    box-shadow: var(--shadow-card-completed);
     cursor: default;
-    transition: 0.1s all ease-in;
+    transition: var(--transition-card-completed);
 
     label {
       cursor: default;
@@ -177,11 +175,11 @@ function onDragStart(event: DragEvent) {
 
   &.overdue {
     .style {
-      background: rgba(255, 0, 0, 0.2);
+      background: var(--color-bg-danger);
     }
 
     .warning {
-      padding-right: 5px;
+      padding-right: var(--space-overdue-warning);
     }
 
     label input:checked ~ .text {
@@ -190,9 +188,9 @@ function onDragStart(event: DragEvent) {
   }
 
   &.mini {
-    padding: 3px 15px 5px;
-    max-height: 30px;
-    max-width: 170px;
+    padding: var(--space-card-mini);
+    max-height: var(--size-mini-task-height);
+    max-width: var(--size-mini-task-width);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;

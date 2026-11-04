@@ -33,11 +33,11 @@ const dayNumber = computed(() => props.date.getDate())
 
 <style scoped lang="scss">
 .calendar-day {
-  color: #00000081;
-  padding: 5px;
+  color: var(--color-text-day);
+  padding: var(--space-day);
 
   &.today {
-    background-color: #e5e5e5;
+    background-color: var(--color-bg-day-today);
   }
 
   &:not(.minimized) {

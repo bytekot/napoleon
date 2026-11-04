@@ -45,17 +45,17 @@ defineSlots<{
 
 <style scoped lang="scss">
 .icon {
-  fill: #f5f5f5;
+  fill: var(--color-icon-default);
   vertical-align: middle;
 
   &.small {
-    height: 16px;
-    width: 16px;
+    height: var(--size-icon-small);
+    width: var(--size-icon-small);
   }
 
   &.medium {
-    height: 32px;
-    width: 32px;
+    height: var(--size-icon-medium);
+    width: var(--size-icon-medium);
   }
 }
 </style>

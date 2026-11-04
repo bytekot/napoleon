@@ -40,17 +40,17 @@ const dateTime = computed(() => getMonth(props.date))
 .calendar-month {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: 30px repeat(5, 1fr);
+  grid-template-rows: var(--size-month-dow-row) repeat(5, 1fr);
 
   .day-of-week {
-    border-bottom: 1px solid #ddd;
-    margin: 5px 5px;
+    border-bottom: 1px solid var(--color-border-default);
+    margin: var(--space-month-dow);
   }
 
   .day {
-    border: solid #ddd;
+    border: solid var(--color-border-default);
     border-width: 0 1px 1px 0;
-    font-size: 20px;
+    font-size: var(--font-size-day);
   }
 
   &.minimized {
@@ -64,7 +64,7 @@ const dateTime = computed(() => getMonth(props.date))
 
     .day {
       border: none;
-      font-size: 14px;
+      font-size: var(--font-size-day-minimized);
       overflow: hidden;
     }
   }

@@ -27,7 +27,7 @@ onMounted(() => {
   display: flex;
 
   .task-form {
-    max-width: 250px;
+    max-width: var(--size-sidebar-max);
   }
 
   .calendar {

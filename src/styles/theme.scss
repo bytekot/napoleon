@@ -1,0 +1,178 @@
+// Design Tokens — Stage 1
+// SCSS-секция: compile-time константы (сейчас пуста — брейкпоинтов и z-index нет)
+
+:root {
+  // === PRIMITIVE TOKENS ===
+
+  // Colors: Neutral scale (по светлоте)
+  --color-neutral-0: #fff;
+  --color-neutral-50: #f9f9f9;
+  --color-neutral-100: #f5f5f5;
+  --color-neutral-200: #eee;
+  --color-neutral-250: #e9e9e9;
+  --color-neutral-300: #e5e5e5;
+  --color-neutral-350: #e1e1e1;
+  --color-neutral-400: #ddd;
+  --color-neutral-450: #d5d5d5;
+  --color-neutral-500: #ccc;
+  --color-neutral-600: #aaa;
+  --color-neutral-700: #999;
+  --color-neutral-800: #555;
+  --color-neutral-900: #0f1111;
+
+  // Typography primitives
+  --font-size-14: 14px;
+  --font-size-20: 20px;
+
+  // Spacing primitives
+  --space-5: 5px;
+  --space-10: 10px;
+  --space-20: 20px;
+  --space-30: 30px;
+
+  // Radius primitives
+  --radius-4: 4px;
+  --radius-10: 10px;
+  --radius-30: 30px;
+
+  // Motion primitives
+  --duration-fast: 0.1s;
+  --duration-base: 0.2s;
+  --ease-default: ease;
+  --ease-in: ease-in;
+  --ease-in-out: ease-in-out;
+
+  // === SEMANTIC TOKENS ===
+
+  // Colors: Backgrounds
+  --color-bg-app: var(--color-neutral-200);
+  --color-bg-surface: var(--color-neutral-0);
+  --color-bg-sidebar: var(--color-neutral-300);
+  --color-bg-header: var(--color-neutral-200);
+  --color-bg-controls: var(--color-neutral-200);
+  --color-bg-input: var(--color-neutral-200);
+  --color-bg-card: var(--color-neutral-0);
+  --color-bg-card-hover: rgba(255, 255, 255, 0.93);
+  --color-bg-day-today: var(--color-neutral-300);
+  --color-bg-month-cell: var(--color-neutral-250);
+  --color-bg-action-area: var(--color-neutral-350);
+  --color-bg-action-area-active: var(--color-neutral-450);
+  --color-bg-checkmark: var(--color-neutral-0);
+  --color-bg-checkmark-hover: var(--color-neutral-50);
+  --color-bg-checkmark-checked: var(--color-neutral-200);
+  --color-bg-danger: rgba(255, 0, 0, 0.2);
+  --color-bg-danger-active: rgba(255, 0, 0, 0.4);
+
+  // Colors: Text
+  --color-text-primary: var(--color-neutral-900);
+  --color-text-secondary: var(--color-neutral-700);
+  --color-text-input: var(--color-neutral-800);
+  --color-text-day: #00000081;
+  --color-text-month-header: var(--color-neutral-600);
+  --color-text-action-area: var(--color-neutral-100);
+
+  // Colors: Icons
+  --color-icon-default: var(--color-neutral-100);
+  --color-icon-muted: var(--color-neutral-450);
+
+  // Colors: Borders
+  --color-border-default: var(--color-neutral-400);
+  --color-border-checkmark: var(--color-neutral-500);
+
+  // Colors: Accent & Shadow
+  --color-accent-drag: #b3d4ff;
+  --color-shadow-base: rgba(0, 0, 0, 0.2);
+
+  // Typography: Semantic
+  --font-family-base: Roboto, sans-serif;
+  --font-size-heading: var(--font-size-20);
+  --font-size-day: var(--font-size-20);
+  --font-size-day-minimized: var(--font-size-14);
+  --font-size-input: var(--font-size-14);
+  --font-size-button: 13px;
+  --font-size-action-area: 32px;
+  --font-weight-heading: 100;
+  --letter-spacing-heading: 1px;
+  --letter-spacing-base: 0.01em;
+  --line-height-button: 16px;
+  --line-height-form-toggle: 35px;
+
+  // Spacing: Semantic
+  --space-list: var(--space-10);
+  --space-list-item-gap: var(--space-10);
+  --space-card: var(--space-20);
+  --space-card-mini: 3px 15px 5px;
+  --space-day: var(--space-5);
+  --space-controls: var(--space-10);
+  --space-controls-gap: var(--space-5);
+  --space-header-title: var(--space-20);
+  --space-input: var(--space-10);
+  --space-form-input: var(--space-10);
+  --space-form-toggle: 0 0 0 var(--space-10);
+  --space-form-toggle-minimized: 8px;
+  --space-form-icon-offset: var(--space-10);
+  --space-form-header: 12.5px 8px;
+  --space-checkmark-text: var(--space-30);
+  --space-action-area: 4px 20px;
+  --space-button: 0 7px;
+  --space-year-grid-gap: 10px 60px;
+  --space-year: 10px 15px;
+  --space-year-header: 10px 5px;
+  --space-month-dow: 5px 5px;
+  --space-overdue-warning: var(--space-5);
+
+  // Radius: Semantic
+  --radius-control: var(--radius-4);
+  --radius-card: var(--radius-10);
+  --radius-checkmark: var(--radius-30);
+  --radius-form-toggle: var(--radius-30);
+  --radius-button-group-first: 4px 0 0 4px;
+  --radius-button-group-last: 0 4px 4px 0;
+
+  // Shadows
+  --shadow-card: 0 2px 1px -1px var(--color-shadow-base);
+  --shadow-card-hover: 0 2px 1px 0 var(--color-shadow-base);
+  --shadow-card-completed: inset 1px 1px 0 0 var(--color-border-default),
+    inset -1px -1px 0 0 var(--color-border-default);
+  --shadow-checkmark: inset 0 0 0 1px var(--color-border-checkmark);
+  --shadow-input-inset: inset 1px 1px 1px 0 var(--color-shadow-base),
+    inset -1px -1px 1px 0 rgba(255, 255, 255, 0.5);
+  --shadow-drag-top: 0 -2px 1px 0 var(--color-accent-drag), 0 2px 1px -1px var(--color-shadow-base);
+  --shadow-drag-bottom: 0 2px 1px 0 var(--color-accent-drag);
+
+  // Sizing
+  --size-button-height: 29px;
+  --size-checkmark: 20px;
+  --size-check-mark-width: 5px;
+  --size-check-mark-height: 10px;
+  --size-overdue-stripe: 10px;
+  --size-icon-small: 16px;
+  --size-icon-medium: 32px;
+  --size-sidebar: 300px;
+  --size-sidebar-minimized: 30px;
+  --size-sidebar-max: 250px;
+  --size-input-height: 15px;
+  --size-input-width: 210px;
+  --size-period-button: 61px;
+  --size-delete-area: 200px;
+  --size-mini-task-height: 30px;
+  --size-mini-task-width: 170px;
+  --size-form-toggle-icon: 20px;
+  --size-month-dow-row: 30px;
+
+  // Motion: Semantic transitions
+  --transition-drag-indicator: var(--duration-base) all var(--ease-in-out);
+  --transition-action-area: var(--duration-fast) all var(--ease-default);
+  --transition-sidebar: var(--duration-base) all var(--ease-in);
+  --transition-card-completed: var(--duration-fast) all var(--ease-in);
+  --transition-header-dnd: var(--duration-base) all var(--ease-default);
+
+  // === COMPONENT TOKENS (Button) ===
+  --button-bg: linear-gradient(#f7f8fa, #e7e9ec);
+  --button-border-color: #adb1b8 #a2a6ac #8d9096;
+  --button-border-color-hover: #a2a6ac #979aa1 #82858a;
+  --button-border-color-active: #a2a6ac;
+  --button-color-focus-border: #e77600;
+  --button-shadow: rgba(255, 255, 255, 0.6) 0 1px 0 inset;
+  --button-shadow-focus: rgba(228, 121, 17, 0.5) 0 0 3px 2px;
+}

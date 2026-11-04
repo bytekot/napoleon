@@ -16,7 +16,7 @@ defineSlots<{
 
 <style scoped lang="scss">
 .layout {
-  background-color: #eee;
+  background-color: var(--color-bg-app);
   height: 100%;
 
   main {
@@ -25,10 +25,10 @@ defineSlots<{
 }
 
 .header {
-  background-color: #fff;
+  background-color: var(--color-bg-surface);
 }
 
 .footer {
-  background-color: #fff;
+  background-color: var(--color-bg-surface);
 }
 </style>

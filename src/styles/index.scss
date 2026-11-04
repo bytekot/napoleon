@@ -1,3 +1,5 @@
+@use './theme';
+
 // Сброс
 html,
 body {
@@ -8,16 +10,16 @@ body {
 h1,
 h2 {
   margin: auto;
-  font-weight: 100;
+  font-weight: var(--font-weight-heading);
 }
 
 h1 {
-  font-size: 20px;
-  letter-spacing: 1px;
+  font-size: var(--font-size-heading);
+  letter-spacing: var(--letter-spacing-heading);
 }
 
 // Шрифт
 body {
-  font-family: Roboto, sans-serif;
-  letter-spacing: 0.01em;
+  font-family: var(--font-family-base);
+  letter-spacing: var(--letter-spacing-base);
 }

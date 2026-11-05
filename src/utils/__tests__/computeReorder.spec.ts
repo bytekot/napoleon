@@ -15,173 +15,414 @@ function makeTask(overrides: Partial<Task> = {}): Task {
 }
 
 describe('computeReorder', () => {
-  describe('cross-date move (дата изменилась)', () => {
-    it('таски на новой дате с order >= newOrder сдвигаются +1', () => {
-      const tasks: Task[] = [
-        makeTask({ id: 'moved', dueDate: '2026-11-01', order: 0 }),
-        makeTask({ id: 'sibling', dueDate: '2026-11-02', order: 1 }),
-        makeTask({ id: 'after', dueDate: '2026-11-02', order: 3 }),
-      ]
+  describe('Группа A: Перемещение между разными днями', () => {
+    it('A1: В пустой день', () => {
+      const tasks: Task[] = [makeTask({ id: 'X', dueDate: '2026-11-01', order: 0 })]
 
-      const result = computeReorder(tasks, 'moved', '2026-11-02', 1)
+      const result = computeReorder(tasks, 'X', '2026-11-02', 0)
 
-      expect(result).toContainEqual({ id: 'moved', dueDate: '2026-11-02', order: 1 })
-      expect(result).toContainEqual({ id: 'sibling', order: 2 })
-      expect(result).toContainEqual({ id: 'after', order: 4 })
+      expect(result).toEqual([{ id: 'X', dueDate: '2026-11-02', order: 0 }])
     })
 
-    it('таски на старой дате с order > oldOrder сдвигаются -1', () => {
+    it('A2: В начало непустого дня', () => {
       const tasks: Task[] = [
-        makeTask({ id: 'moved', dueDate: '2026-11-01', order: 1 }),
-        makeTask({ id: 'before', dueDate: '2026-11-01', order: 0 }),
-        makeTask({ id: 'after', dueDate: '2026-11-01', order: 2 }),
+        makeTask({ id: 'X', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'Y', dueDate: '2026-11-02', order: 0 }),
+        makeTask({ id: 'Z', dueDate: '2026-11-02', order: 1 }),
       ]
 
-      const result = computeReorder(tasks, 'moved', '2026-11-02', 0)
+      const result = computeReorder(tasks, 'X', '2026-11-02', 0)
 
-      expect(result).toContainEqual({ id: 'moved', dueDate: '2026-11-02', order: 0 })
-      expect(result).toContainEqual({ id: 'after', order: 1 })
-      expect(result.find((u) => u.id === 'before')).toBeUndefined()
+      expect(result).toContainEqual({ id: 'X', dueDate: '2026-11-02', order: 0 })
+      expect(result).toContainEqual({ id: 'Y', order: 1 })
+      expect(result).toContainEqual({ id: 'Z', order: 2 })
+      expect(result).toHaveLength(3)
     })
 
-    it('сам таск получает новые dueDate и order', () => {
-      const tasks: Task[] = [makeTask({ id: 'moved', dueDate: '2026-11-01', order: 0 })]
-
-      const result = computeReorder(tasks, 'moved', '2026-11-05', 3)
-
-      expect(result).toEqual([{ id: 'moved', dueDate: '2026-11-05', order: 3 }])
-    })
-
-    it('нет тасков на старой/новой дате кроме перемещаемого → только сам таск', () => {
+    it('A3: В середину непустого дня', () => {
       const tasks: Task[] = [
-        makeTask({ id: 'moved', dueDate: '2026-11-01', order: 0 }),
-        makeTask({ id: 'other', dueDate: '2026-11-03', order: 0 }),
+        makeTask({ id: 'X', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'Y', dueDate: '2026-11-02', order: 0 }),
+        makeTask({ id: 'Z', dueDate: '2026-11-02', order: 1 }),
+        makeTask({ id: 'W', dueDate: '2026-11-02', order: 2 }),
       ]
 
-      const result = computeReorder(tasks, 'moved', '2026-11-02', 0)
+      const result = computeReorder(tasks, 'X', '2026-11-02', 1)
 
-      expect(result).toEqual([{ id: 'moved', dueDate: '2026-11-02', order: 0 }])
+      expect(result).toContainEqual({ id: 'X', dueDate: '2026-11-02', order: 1 })
+      expect(result).toContainEqual({ id: 'Z', order: 2 })
+      expect(result).toContainEqual({ id: 'W', order: 3 })
+      expect(result.find((u) => u.id === 'Y')).toBeUndefined()
+      expect(result).toHaveLength(3)
+    })
+
+    it('A4: В конец непустого дня', () => {
+      const tasks: Task[] = [
+        makeTask({ id: 'X', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'Y', dueDate: '2026-11-02', order: 0 }),
+        makeTask({ id: 'Z', dueDate: '2026-11-02', order: 1 }),
+      ]
+
+      const result = computeReorder(tasks, 'X', '2026-11-02', 2)
+
+      expect(result).toEqual([{ id: 'X', dueDate: '2026-11-02', order: 2 }])
+    })
+
+    it('A5: В день с 1 задачей — перед ней', () => {
+      const tasks: Task[] = [
+        makeTask({ id: 'X', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'Y', dueDate: '2026-11-02', order: 0 }),
+      ]
+
+      const result = computeReorder(tasks, 'X', '2026-11-02', 0)
+
+      expect(result).toContainEqual({ id: 'X', dueDate: '2026-11-02', order: 0 })
+      expect(result).toContainEqual({ id: 'Y', order: 1 })
+      expect(result).toHaveLength(2)
+    })
+
+    it('A6: В день с 1 задачей — после неё', () => {
+      const tasks: Task[] = [
+        makeTask({ id: 'X', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'Y', dueDate: '2026-11-02', order: 0 }),
+      ]
+
+      const result = computeReorder(tasks, 'X', '2026-11-02', 1)
+
+      expect(result).toEqual([{ id: 'X', dueDate: '2026-11-02', order: 1 }])
+    })
+
+    it('A7: Исходный день опустел (единственная задача ушла)', () => {
+      const tasks: Task[] = [
+        makeTask({ id: 'X', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'Y', dueDate: '2026-11-02', order: 0 }),
+      ]
+
+      const result = computeReorder(tasks, 'X', '2026-11-02', 0)
+
+      expect(result).toContainEqual({ id: 'X', dueDate: '2026-11-02', order: 0 })
+      expect(result).toContainEqual({ id: 'Y', order: 1 })
+      expect(result.find((u) => u.id === 'X' && u.order !== 0)).toBeUndefined()
+    })
+
+    it('A8: Исходный день не опустел — уплотнение', () => {
+      const tasks: Task[] = [
+        makeTask({ id: 'X', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'P', dueDate: '2026-11-01', order: 1 }),
+        makeTask({ id: 'Q', dueDate: '2026-11-01', order: 2 }),
+        makeTask({ id: 'Y', dueDate: '2026-11-02', order: 0 }),
+      ]
+
+      const result = computeReorder(tasks, 'X', '2026-11-02', 0)
+
+      expect(result).toContainEqual({ id: 'X', dueDate: '2026-11-02', order: 0 })
+      expect(result).toContainEqual({ id: 'P', order: 0 })
+      expect(result).toContainEqual({ id: 'Q', order: 1 })
+      expect(result).toContainEqual({ id: 'Y', order: 1 })
+      expect(result).toHaveLength(4)
     })
   })
 
-  describe('same-date reorder (дата не изменилась)', () => {
-    it('сдвиг вперёд (oldOrder < newOrder) → таски в (oldOrder, newOrder] сдвигаются -1', () => {
+  describe('Группа B: Перемещение внутри того же дня (DOM-позиция)', () => {
+    it('B1: No-op — drop на верхней половине своей карты', () => {
       const tasks: Task[] = [
-        makeTask({ id: 'moved', dueDate: '2026-11-01', order: 0 }),
-        makeTask({ id: 'a', dueDate: '2026-11-01', order: 1 }),
-        makeTask({ id: 'b', dueDate: '2026-11-01', order: 2 }),
-        makeTask({ id: 'c', dueDate: '2026-11-01', order: 3 }),
+        makeTask({ id: 'X', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'Y', dueDate: '2026-11-01', order: 1 }),
+        makeTask({ id: 'Z', dueDate: '2026-11-01', order: 2 }),
       ]
 
-      const result = computeReorder(tasks, 'moved', '2026-11-01', 2)
+      const result = computeReorder(tasks, 'X', '2026-11-01', 0)
 
-      expect(result).toContainEqual({ id: 'moved', dueDate: '2026-11-01', order: 2 })
-      expect(result).toContainEqual({ id: 'a', order: 0 })
-      expect(result).toContainEqual({ id: 'b', order: 1 })
-      expect(result.find((u) => u.id === 'c')).toBeUndefined()
+      expect(result).toEqual([])
     })
 
-    it('сдвиг назад (oldOrder > newOrder) → таски в [newOrder, oldOrder) сдвигаются +1', () => {
+    it('B1b: No-op — drop на нижней половине своей карты (соседняя позиция)', () => {
       const tasks: Task[] = [
-        makeTask({ id: 'a', dueDate: '2026-11-01', order: 0 }),
-        makeTask({ id: 'b', dueDate: '2026-11-01', order: 1 }),
-        makeTask({ id: 'moved', dueDate: '2026-11-01', order: 2 }),
-        makeTask({ id: 'c', dueDate: '2026-11-01', order: 3 }),
+        makeTask({ id: 'X', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'Y', dueDate: '2026-11-01', order: 1 }),
       ]
 
-      const result = computeReorder(tasks, 'moved', '2026-11-01', 0)
+      const result = computeReorder(tasks, 'X', '2026-11-01', 1)
 
-      expect(result).toContainEqual({ id: 'moved', dueDate: '2026-11-01', order: 0 })
-      expect(result).toContainEqual({ id: 'a', order: 1 })
-      expect(result).toContainEqual({ id: 'b', order: 2 })
-      expect(result.find((u) => u.id === 'c')).toBeUndefined()
+      expect(result).toEqual([])
     })
 
-    it('та же позиция → никаких сдвигов, только сам таск', () => {
+    it('B2: Сдвиг вверх (к началу)', () => {
       const tasks: Task[] = [
-        makeTask({ id: 'moved', dueDate: '2026-11-01', order: 1 }),
-        makeTask({ id: 'other', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'X', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'Y', dueDate: '2026-11-01', order: 1 }),
+        makeTask({ id: 'Z', dueDate: '2026-11-01', order: 2 }),
+        makeTask({ id: 'W', dueDate: '2026-11-01', order: 3 }),
       ]
 
-      const result = computeReorder(tasks, 'moved', '2026-11-01', 1)
+      const result = computeReorder(tasks, 'W', '2026-11-01', 1)
 
-      expect(result).toEqual([{ id: 'moved', dueDate: '2026-11-01', order: 1 }])
+      expect(result).toContainEqual({ id: 'W', dueDate: '2026-11-01', order: 1 })
+      expect(result).toContainEqual({ id: 'Y', order: 2 })
+      expect(result).toContainEqual({ id: 'Z', order: 3 })
+      expect(result.find((u) => u.id === 'X')).toBeUndefined()
+      expect(result).toHaveLength(3)
+    })
+
+    it('B3: Сдвиг вниз (к концу), DOM-позиция нормализуется на −1', () => {
+      const tasks: Task[] = [
+        makeTask({ id: 'X', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'Y', dueDate: '2026-11-01', order: 1 }),
+        makeTask({ id: 'Z', dueDate: '2026-11-01', order: 2 }),
+        makeTask({ id: 'W', dueDate: '2026-11-01', order: 3 }),
+      ]
+
+      const result = computeReorder(tasks, 'X', '2026-11-01', 3)
+
+      expect(result).toContainEqual({ id: 'X', dueDate: '2026-11-01', order: 2 })
+      expect(result).toContainEqual({ id: 'Y', order: 0 })
+      expect(result).toContainEqual({ id: 'Z', order: 1 })
+      expect(result.find((u) => u.id === 'W')).toBeUndefined()
+      expect(result).toHaveLength(3)
+    })
+
+    it('B4: Перемещение в начало', () => {
+      const tasks: Task[] = [
+        makeTask({ id: 'X', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'Y', dueDate: '2026-11-01', order: 1 }),
+        makeTask({ id: 'Z', dueDate: '2026-11-01', order: 2 }),
+      ]
+
+      const result = computeReorder(tasks, 'Z', '2026-11-01', 0)
+
+      expect(result).toContainEqual({ id: 'Z', dueDate: '2026-11-01', order: 0 })
+      expect(result).toContainEqual({ id: 'X', order: 1 })
+      expect(result).toContainEqual({ id: 'Y', order: 2 })
+      expect(result).toHaveLength(3)
+    })
+
+    it('B5: Перемещение в конец (drop в пустую область, позиция = N)', () => {
+      const tasks: Task[] = [
+        makeTask({ id: 'X', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'Y', dueDate: '2026-11-01', order: 1 }),
+        makeTask({ id: 'Z', dueDate: '2026-11-01', order: 2 }),
+      ]
+
+      const result = computeReorder(tasks, 'X', '2026-11-01', 3)
+
+      expect(result).toContainEqual({ id: 'X', dueDate: '2026-11-01', order: 2 })
+      expect(result).toContainEqual({ id: 'Y', order: 0 })
+      expect(result).toContainEqual({ id: 'Z', order: 1 })
+      expect(result).toHaveLength(3)
+    })
+
+    it('B6: Единственная задача в дне — no-op при любой позиции', () => {
+      const tasks: Task[] = [makeTask({ id: 'X', dueDate: '2026-11-01', order: 0 })]
+
+      expect(computeReorder(tasks, 'X', '2026-11-01', 0)).toEqual([])
+      expect(computeReorder(tasks, 'X', '2026-11-01', 1)).toEqual([])
+    })
+
+    it('B7: Swap двух задач', () => {
+      const tasks: Task[] = [
+        makeTask({ id: 'X', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'Y', dueDate: '2026-11-01', order: 1 }),
+      ]
+
+      const result = computeReorder(tasks, 'Y', '2026-11-01', 0)
+
+      expect(result).toContainEqual({ id: 'Y', dueDate: '2026-11-01', order: 0 })
+      expect(result).toContainEqual({ id: 'X', order: 1 })
+      expect(result).toHaveLength(2)
     })
   })
 
-  describe('edge cases', () => {
-    it('order === null у перемещаемого (был unplanned, получил дату)', () => {
-      const tasks: Task[] = [
-        makeTask({ id: 'moved', dueDate: null, order: null }),
-        makeTask({ id: 'existing', dueDate: '2026-11-01', order: 0 }),
-      ]
+  describe('Группа C: Из TaskForm в день (dueDate был null)', () => {
+    it('C1: В пустой день', () => {
+      const tasks: Task[] = [makeTask({ id: 'X', dueDate: null, order: null })]
 
-      const result = computeReorder(tasks, 'moved', '2026-11-01', 0)
+      const result = computeReorder(tasks, 'X', '2026-11-01', 0)
 
-      expect(result).toContainEqual({ id: 'moved', dueDate: '2026-11-01', order: 0 })
-      expect(result).toContainEqual({ id: 'existing', order: 1 })
+      expect(result).toEqual([{ id: 'X', dueDate: '2026-11-01', order: 0 }])
     })
 
-    it('order === null у соседних тасков → они пропускаются', () => {
+    it('C2: В начало непустого дня', () => {
       const tasks: Task[] = [
-        makeTask({ id: 'moved', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'X', dueDate: null, order: null }),
+        makeTask({ id: 'Y', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'Z', dueDate: '2026-11-01', order: 1 }),
+      ]
+
+      const result = computeReorder(tasks, 'X', '2026-11-01', 0)
+
+      expect(result).toContainEqual({ id: 'X', dueDate: '2026-11-01', order: 0 })
+      expect(result).toContainEqual({ id: 'Y', order: 1 })
+      expect(result).toContainEqual({ id: 'Z', order: 2 })
+      expect(result).toHaveLength(3)
+    })
+
+    it('C3: В середину непустого дня', () => {
+      const tasks: Task[] = [
+        makeTask({ id: 'X', dueDate: null, order: null }),
+        makeTask({ id: 'Y', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'Z', dueDate: '2026-11-01', order: 1 }),
+        makeTask({ id: 'W', dueDate: '2026-11-01', order: 2 }),
+      ]
+
+      const result = computeReorder(tasks, 'X', '2026-11-01', 1)
+
+      expect(result).toContainEqual({ id: 'X', dueDate: '2026-11-01', order: 1 })
+      expect(result).toContainEqual({ id: 'Z', order: 2 })
+      expect(result).toContainEqual({ id: 'W', order: 3 })
+      expect(result.find((u) => u.id === 'Y')).toBeUndefined()
+      expect(result).toHaveLength(3)
+    })
+
+    it('C4: В конец непустого дня', () => {
+      const tasks: Task[] = [
+        makeTask({ id: 'X', dueDate: null, order: null }),
+        makeTask({ id: 'Y', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'Z', dueDate: '2026-11-01', order: 1 }),
+      ]
+
+      const result = computeReorder(tasks, 'X', '2026-11-01', 2)
+
+      expect(result).toEqual([{ id: 'X', dueDate: '2026-11-01', order: 2 }])
+    })
+
+    it('C5: Задача уже имеет dueDate — обрабатывается как cross-date move', () => {
+      const tasks: Task[] = [
+        makeTask({ id: 'X', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'Y', dueDate: '2026-11-02', order: 0 }),
+      ]
+
+      const result = computeReorder(tasks, 'X', '2026-11-02', 0)
+
+      expect(result).toContainEqual({ id: 'X', dueDate: '2026-11-02', order: 0 })
+      expect(result).toContainEqual({ id: 'Y', order: 1 })
+      expect(result).toHaveLength(2)
+    })
+  })
+
+  describe('Группа D: Из дня в TaskForm (сброс даты)', () => {
+    it('D1: Сброс даты — уплотнение исходного дня', () => {
+      const tasks: Task[] = [
+        makeTask({ id: 'X', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'Y', dueDate: '2026-11-01', order: 1 }),
+        makeTask({ id: 'Z', dueDate: '2026-11-01', order: 2 }),
+      ]
+
+      const result = computeReorder(tasks, 'Y', null, 0)
+
+      expect(result).toContainEqual({ id: 'Y', dueDate: null, order: null })
+      expect(result).toContainEqual({ id: 'Z', order: 1 })
+      expect(result.find((u) => u.id === 'X')).toBeUndefined()
+      expect(result).toHaveLength(2)
+    })
+
+    it('D2: Сброс даты у единственной задачи в дне', () => {
+      const tasks: Task[] = [makeTask({ id: 'X', dueDate: '2026-11-01', order: 0 })]
+
+      const result = computeReorder(tasks, 'X', null, 0)
+
+      expect(result).toEqual([{ id: 'X', dueDate: null, order: null }])
+    })
+  })
+
+  describe('Группа E: Граничные случаи и ошибки', () => {
+    it('E1: Несуществующая задача', () => {
+      const tasks: Task[] = [makeTask({ id: 'Y', dueDate: '2026-11-01', order: 0 })]
+
+      const result = computeReorder(tasks, 'nonexistent', '2026-11-01', 0)
+
+      expect(result).toEqual([])
+    })
+
+    it('E3a: Позиция < 0', () => {
+      const tasks: Task[] = [
+        makeTask({ id: 'X', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'Y', dueDate: '2026-11-02', order: 0 }),
+      ]
+
+      const result = computeReorder(tasks, 'X', '2026-11-02', -1)
+
+      expect(result).toEqual([])
+    })
+
+    it('E3b: Позиция > N (cross-date)', () => {
+      const tasks: Task[] = [
+        makeTask({ id: 'X', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'Y', dueDate: '2026-11-02', order: 0 }),
+      ]
+
+      const result = computeReorder(tasks, 'X', '2026-11-02', 5)
+
+      expect(result).toEqual([])
+    })
+
+    it('E3c: Позиция > N (same-date)', () => {
+      const tasks: Task[] = [
+        makeTask({ id: 'X', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'Y', dueDate: '2026-11-01', order: 1 }),
+      ]
+
+      const result = computeReorder(tasks, 'X', '2026-11-01', 3)
+
+      expect(result).toEqual([])
+    })
+
+    it('E3d: Нецелочисленная позиция', () => {
+      const tasks: Task[] = [
+        makeTask({ id: 'X', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'Y', dueDate: '2026-11-02', order: 0 }),
+      ]
+
+      const result = computeReorder(tasks, 'X', '2026-11-02', 0.5)
+
+      expect(result).toEqual([])
+    })
+
+    it('E7: Уже в целевой позиции (same date, same order)', () => {
+      const tasks: Task[] = [
+        makeTask({ id: 'Y', dueDate: '2026-11-01', order: 0 }),
+        makeTask({ id: 'X', dueDate: '2026-11-01', order: 1 }),
+      ]
+
+      const result = computeReorder(tasks, 'X', '2026-11-01', 1)
+
+      expect(result).toEqual([])
+    })
+
+    it('unplanned → unplanned (без даты) → no-op', () => {
+      const tasks: Task[] = [
+        makeTask({ id: 'X', dueDate: null, order: null }),
+        makeTask({ id: 'Y', dueDate: null, order: null }),
+      ]
+
+      const result = computeReorder(tasks, 'X', null, 0)
+
+      expect(result).toEqual([])
+    })
+
+    it('задачи с order=null в целевом дне чинятся при перенумерации', () => {
+      const tasks: Task[] = [
+        makeTask({ id: 'X', dueDate: null, order: null }),
         makeTask({ id: 'null-order', dueDate: '2026-11-01', order: null }),
-        makeTask({ id: 'valid', dueDate: '2026-11-01', order: 1 }),
+        makeTask({ id: 'valid', dueDate: '2026-11-01', order: 0 }),
       ]
 
-      const result = computeReorder(tasks, 'moved', '2026-11-01', 1)
+      const result = computeReorder(tasks, 'X', '2026-11-01', 0)
 
-      expect(result).toContainEqual({ id: 'moved', dueDate: '2026-11-01', order: 1 })
-      expect(result).toContainEqual({ id: 'valid', order: 0 })
-      expect(result.find((u) => u.id === 'null-order')).toBeUndefined()
+      expect(result).toContainEqual({ id: 'X', dueDate: '2026-11-01', order: 0 })
+      expect(result).toContainEqual({ id: 'null-order', order: 1 })
+      expect(result).toContainEqual({ id: 'valid', order: 2 })
+      expect(result).toHaveLength(3)
     })
 
-    it('перемещение в пустую дату → только сам таск, order = newPosition', () => {
+    it('задачи других дней не затрагиваются', () => {
       const tasks: Task[] = [
-        makeTask({ id: 'moved', dueDate: '2026-11-01', order: 2 }),
+        makeTask({ id: 'X', dueDate: '2026-11-01', order: 0 }),
         makeTask({ id: 'other', dueDate: '2026-11-03', order: 0 }),
       ]
 
-      const result = computeReorder(tasks, 'moved', '2026-11-02', 0)
+      const result = computeReorder(tasks, 'X', '2026-11-02', 0)
 
-      expect(result).toEqual([{ id: 'moved', dueDate: '2026-11-02', order: 0 }])
-    })
-
-    it('unplanned → unplanned (без даты) → нет reorder-логики', () => {
-      const tasks: Task[] = [
-        makeTask({ id: 'moved', dueDate: null, order: null }),
-        makeTask({ id: 'other', dueDate: null, order: null }),
-      ]
-
-      const result = computeReorder(tasks, 'moved', null, 0)
-
-      expect(result).toEqual([{ id: 'moved', dueDate: null, order: null }])
-    })
-
-    it('один таск в списке → только сам таск обновляется', () => {
-      const tasks: Task[] = [makeTask({ id: 'only', dueDate: '2026-11-01', order: 0 })]
-
-      const result = computeReorder(tasks, 'only', '2026-11-01', 0)
-
-      expect(result).toEqual([{ id: 'only', dueDate: '2026-11-01', order: 0 }])
-    })
-
-    it('cross-date: сдвиг на новую дату с existing тасками на обеих датах', () => {
-      const tasks: Task[] = [
-        makeTask({ id: 'a', dueDate: '2026-11-01', order: 0 }),
-        makeTask({ id: 'moved', dueDate: '2026-11-01', order: 1 }),
-        makeTask({ id: 'b', dueDate: '2026-11-01', order: 2 }),
-        makeTask({ id: 'c', dueDate: '2026-11-02', order: 0 }),
-        makeTask({ id: 'd', dueDate: '2026-11-02', order: 1 }),
-      ]
-
-      const result = computeReorder(tasks, 'moved', '2026-11-02', 1)
-
-      expect(result).toContainEqual({ id: 'moved', dueDate: '2026-11-02', order: 1 })
-      expect(result).toContainEqual({ id: 'b', order: 1 })
-      expect(result).toContainEqual({ id: 'd', order: 2 })
-      expect(result.find((u) => u.id === 'a')).toBeUndefined()
-      expect(result.find((u) => u.id === 'c')).toBeUndefined()
+      expect(result).toEqual([{ id: 'X', dueDate: '2026-11-02', order: 0 }])
     })
   })
 })

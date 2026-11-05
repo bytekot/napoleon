@@ -42,7 +42,7 @@ function onDrop(event: DragEvent) {
   const id = event.dataTransfer?.getData('text/plain')
 
   if (!id || position.value === null) return
-  void store.editTask({ id, dueDate: props.dueDate, order: position.value })
+  void store.reorderTask(id, props.dueDate, position.value)
   track(null)
 }
 </script>

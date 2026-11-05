@@ -118,7 +118,7 @@ describe('useTaskStore', () => {
       const task = makeTask({ completed: false })
       const updated = makeTask({ completed: true })
 
-      mockApi.editTask.mockResolvedValue(updated)
+      mockApi.editTasks.mockResolvedValue([updated])
       const store = useTaskStore()
 
       store.entities[task.id] = task
@@ -129,52 +129,111 @@ describe('useTaskStore', () => {
       expect(store.entities[task.id]!.completed).toBe(true)
     })
 
-    it('при order: 0 смещение -0.5 применяется', async () => {
-      const task = makeTask({ order: 5 })
+    it('optimistic update применяется сразу', async () => {
+      const task = makeTask({ completed: false })
 
-      mockApi.editTask.mockImplementation(neverResolve)
+      mockApi.editTasks.mockImplementation(neverResolve)
       const store = useTaskStore()
 
       store.entities[task.id] = task
       store.ids = [task.id]
 
-      void store.editTask({ id: task.id, order: 0 })
+      void store.editTask({ id: task.id, completed: true })
 
       await vi.waitFor(() => {
-        expect(store.entities[task.id]!.order).toBe(-0.5)
+        expect(store.entities[task.id]!.completed).toBe(true)
       })
     })
 
-    it('ответ-массив обновляет все затронутые сущности', async () => {
-      const task1 = makeTask({ id: '1', order: 1 })
-      const task2 = makeTask({ id: '2', order: 2 })
-      const reordered = [makeTask({ id: '1', order: 2 }), makeTask({ id: '2', order: 1 })]
-
-      mockApi.editTask.mockResolvedValue(reordered)
-      const store = useTaskStore()
-
-      store.entities = { '1': task1, '2': task2 }
-      store.ids = ['1', '2']
-
-      await store.editTask({ id: '1', order: 1 })
-
-      expect(store.entities['1']!.order).toBe(2)
-      expect(store.entities['2']!.order).toBe(1)
-    })
-
     it('при ошибке состояние откатывается', async () => {
-      const task = makeTask({ order: 5 })
+      const task = makeTask({ completed: false })
 
-      mockApi.editTask.mockRejectedValue(new Error('Fail'))
+      mockApi.editTasks.mockRejectedValue(new Error('Fail'))
       const store = useTaskStore()
 
       store.entities[task.id] = task
       store.ids = [task.id]
 
-      await store.editTask({ id: task.id, order: 10 })
+      await store.editTask({ id: task.id, completed: true })
 
-      expect(store.entities[task.id]!.order).toBe(5)
+      expect(store.entities[task.id]!.completed).toBe(false)
       expect(store.request.status).toBe('error')
+    })
+  })
+
+  describe('reorderTask', () => {
+    it('optimistic update применяется ко всем затронутым таскам', async () => {
+      const moved = makeTask({ id: 'moved', dueDate: '2026-11-01', order: 0 })
+      const sibling = makeTask({ id: 'sibling', dueDate: '2026-11-01', order: 1 })
+
+      mockApi.editTasks.mockImplementation(neverResolve)
+      const store = useTaskStore()
+
+      store.entities = { moved, sibling }
+      store.ids = ['moved', 'sibling']
+
+      void store.reorderTask('moved', '2026-11-01', 1)
+
+      await vi.waitFor(() => {
+        expect(store.entities.moved!.order).toBe(1)
+        expect(store.entities.sibling!.order).toBe(0)
+      })
+    })
+
+    it('ответ сервера заменяет optimistic updates', async () => {
+      const moved = makeTask({ id: 'moved', dueDate: '2026-11-01', order: 0 })
+      const sibling = makeTask({ id: 'sibling', dueDate: '2026-11-01', order: 1 })
+      const serverResponse = [
+        makeTask({ id: 'moved', dueDate: '2026-11-01', order: 1 }),
+        makeTask({ id: 'sibling', dueDate: '2026-11-01', order: 0 }),
+      ]
+
+      mockApi.editTasks.mockResolvedValue(serverResponse)
+      const store = useTaskStore()
+
+      store.entities = { moved, sibling }
+      store.ids = ['moved', 'sibling']
+
+      await store.reorderTask('moved', '2026-11-01', 1)
+
+      expect(store.entities.moved!.order).toBe(1)
+      expect(store.entities.sibling!.order).toBe(0)
+    })
+
+    it('при ошибке все затронутые таски откатываются', async () => {
+      const moved = makeTask({ id: 'moved', dueDate: '2026-11-01', order: 0 })
+      const sibling = makeTask({ id: 'sibling', dueDate: '2026-11-01', order: 1 })
+
+      mockApi.editTasks.mockRejectedValue(new Error('Fail'))
+      const store = useTaskStore()
+
+      store.entities = { moved, sibling }
+      store.ids = ['moved', 'sibling']
+
+      await store.reorderTask('moved', '2026-11-01', 1)
+
+      expect(store.entities.moved!.order).toBe(0)
+      expect(store.entities.sibling!.order).toBe(1)
+      expect(store.request.status).toBe('error')
+    })
+
+    it('cross-date move: обновляет dueDate и order', async () => {
+      const moved = makeTask({ id: 'moved', dueDate: '2026-11-01', order: 0 })
+      const target = makeTask({ id: 'target', dueDate: '2026-11-02', order: 0 })
+
+      mockApi.editTasks.mockImplementation(neverResolve)
+      const store = useTaskStore()
+
+      store.entities = { moved, target }
+      store.ids = ['moved', 'target']
+
+      void store.reorderTask('moved', '2026-11-02', 0)
+
+      await vi.waitFor(() => {
+        expect(store.entities.moved!.dueDate).toBe('2026-11-02')
+        expect(store.entities.moved!.order).toBe(0)
+        expect(store.entities.target!.order).toBe(1)
+      })
     })
   })
 

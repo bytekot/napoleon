@@ -6,25 +6,20 @@ export interface CreateTaskParams {
   creationDate: string
 }
 
-/**
- * ВАЖНО: при добавлении нового поля необходимо обновить optimistic update
- * в `src/stores/task.ts` → action `editTask`.
- */
-export interface EditTaskParams {
+export interface EditTaskPayload {
   id: string
   dueDate?: string | null
   order?: number | null
   completed?: boolean
+  name?: string
 }
-
-export type EditTaskResponse = Task | Task[]
 
 export const getTasks = () => request<Task[]>('/tasks')
 
 export const createTask = (params: CreateTaskParams) =>
   request<Task>('/task', { method: 'POST', body: JSON.stringify(params) })
 
-export const editTask = ({ id, ...body }: EditTaskParams) =>
-  request<EditTaskResponse>(`/task/${id}`, { method: 'PATCH', body: JSON.stringify(body) })
+export const editTasks = (updates: EditTaskPayload[]) =>
+  request<Task[]>('/tasks/edit', { method: 'POST', body: JSON.stringify({ tasks: updates }) })
 
 export const deleteTask = (id: string) => request<string>(`/task/${id}`, { method: 'DELETE' })

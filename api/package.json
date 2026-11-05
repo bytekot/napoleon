@@ -5,7 +5,8 @@
   "scripts": {
     "start": "tsx watch server.ts",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "db:reset": "rm -f data/napoleon.db* && rm -rf drizzle && pnpm db:generate && pnpm db:migrate"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.7",

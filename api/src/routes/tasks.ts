@@ -1,8 +1,8 @@
 import { Hono } from 'hono'
-import { eq, and, gte, gt, lte, lt } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 import { db } from '../db/connection.js'
 import { tasks } from '../db/schema.js'
-import { createTaskSchema, editTaskSchema, taskIdParamSchema } from '../schemas/task.schema.js'
+import { createTaskSchema, batchEditSchema, taskIdParamSchema } from '../schemas/task.schema.js'
 import { nanoid } from 'nanoid'
 
 const taskRoutes = new Hono()
@@ -31,102 +31,35 @@ taskRoutes.post('/task', async (c) => {
   return c.json(newTask, 201)
 })
 
-// TODO: revisit reorder logic — consider simplifying to single-update with client-side orchestration
-taskRoutes.patch('/task/:id', async (c) => {
-  const rawId = c.req.param('id')
-  const paramResult = taskIdParamSchema.safeParse({ id: rawId })
-  if (!paramResult.success) {
-    return c.json({ error: 'Invalid task id' }, 400)
-  }
-
+taskRoutes.post('/tasks/edit', async (c) => {
   const body = await c.req.json()
-  const data = editTaskSchema.parse(body)
-  const taskId = paramResult.data.id
+  const validated = batchEditSchema.parse(body)
 
-  const currentTask = await db.select().from(tasks).where(eq(tasks.id, taskId)).get()
-  if (!currentTask) {
-    return c.json({ error: 'Task not found' }, 404)
-  }
+  const updatedTasks = db.transaction((tx) => {
+    const result: (typeof tasks.$inferSelect)[] = []
 
-  const hasOrderChange = typeof data.order === 'number' && data.dueDate !== undefined
-  const isReorderWithDateChange = hasOrderChange && data.dueDate !== null
+    for (const update of validated.tasks) {
+      const rows = tx
+        .update(tasks)
+        .set({
+          dueDate: update.dueDate,
+          order: update.order,
+          completed: update.completed,
+          name: update.name,
+        })
+        .where(eq(tasks.id, update.id))
+        .returning()
+        .all()
 
-  if (isReorderWithDateChange) {
-    const oldDueDate = currentTask.dueDate
-    const oldOrder = currentTask.order
-    const newDueDate = data.dueDate
-    const newOrder = data.order!
-
-    const dateChanged = oldDueDate !== newDueDate
-
-    if (dateChanged) {
-      const updatedTasks: typeof currentTask[] = []
-
-      const allTasks = await db.select().from(tasks)
-
-      for (const task of allTasks) {
-        if (task.id === taskId) {
-          const updated = { ...task, ...data }
-          await db.update(tasks).set(data).where(eq(tasks.id, taskId))
-          updatedTasks.push(updated as typeof currentTask)
-        } else if (task.dueDate === newDueDate && task.order !== null && task.order >= newOrder) {
-          const newTaskOrder = task.order + 1
-          await db.update(tasks).set({ order: newTaskOrder }).where(eq(tasks.id, task.id))
-          updatedTasks.push({ ...task, order: newTaskOrder })
-        } else if (task.dueDate === oldDueDate && task.order !== null && oldOrder !== null && task.order > oldOrder) {
-          const newTaskOrder = task.order - 1
-          await db.update(tasks).set({ order: newTaskOrder }).where(eq(tasks.id, task.id))
-          updatedTasks.push({ ...task, order: newTaskOrder })
-        }
+      if (rows.length > 0) {
+        result.push(rows[0])
       }
-
-      return c.json(updatedTasks)
-    } else {
-      const sameDateTasks = await db
-        .select()
-        .from(tasks)
-        .where(and(eq(tasks.dueDate, newDueDate)))
-
-      const updatedTasks: typeof currentTask[] = []
-
-      if (oldOrder !== null && oldOrder < newOrder) {
-        for (const task of sameDateTasks) {
-          if (task.id === taskId) {
-            const updated = { ...task, ...data }
-            await db.update(tasks).set(data).where(eq(tasks.id, taskId))
-            updatedTasks.push(updated as typeof currentTask)
-          } else if (task.order !== null && task.order > oldOrder && task.order <= newOrder) {
-            const newTaskOrder = task.order - 1
-            await db.update(tasks).set({ order: newTaskOrder }).where(eq(tasks.id, task.id))
-            updatedTasks.push({ ...task, order: newTaskOrder })
-          }
-        }
-      } else if (oldOrder !== null && oldOrder > newOrder) {
-        for (const task of sameDateTasks) {
-          if (task.id === taskId) {
-            const updated = { ...task, ...data }
-            await db.update(tasks).set(data).where(eq(tasks.id, taskId))
-            updatedTasks.push(updated as typeof currentTask)
-          } else if (task.order !== null && task.order < oldOrder && task.order >= newOrder) {
-            const newTaskOrder = task.order + 1
-            await db.update(tasks).set({ order: newTaskOrder }).where(eq(tasks.id, task.id))
-            updatedTasks.push({ ...task, order: newTaskOrder })
-          }
-        }
-      } else {
-        await db.update(tasks).set(data).where(eq(tasks.id, taskId))
-        const updated = await db.select().from(tasks).where(eq(tasks.id, taskId)).get()
-        if (updated) updatedTasks.push(updated)
-      }
-
-      return c.json(updatedTasks)
     }
-  }
 
-  await db.update(tasks).set(data).where(eq(tasks.id, taskId))
-  const updated = await db.select().from(tasks).where(eq(tasks.id, taskId)).get()
+    return result
+  })
 
-  return c.json(updated)
+  return c.json(updatedTasks)
 })
 
 taskRoutes.delete('/task/:id', async (c) => {

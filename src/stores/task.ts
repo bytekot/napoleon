@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import * as api from '../api/tasks'
 import type { Task } from '../types/tasks'
 import type { RequestState } from '../types/request'
+import { computeReorder } from '../utils/tasks'
 
 interface TaskState {
   entities: Record<string, Task>
@@ -87,7 +88,7 @@ export const useTaskStore = defineStore('task', {
       }
     },
 
-    async editTask(params: api.EditTaskParams) {
+    async editTask(params: api.EditTaskPayload) {
       const previous = this.entities[params.id]
 
       if (!previous) return
@@ -96,22 +97,57 @@ export const useTaskStore = defineStore('task', {
 
       if (params.completed !== undefined) updated.completed = params.completed
       if (params.dueDate !== undefined) updated.dueDate = params.dueDate
-      if (typeof params.order === 'number') updated.order = params.order - 0.5
+      if (params.order !== undefined) updated.order = params.order
+      if (params.name !== undefined) updated.name = params.name
 
       this.entities[params.id] = updated
 
       try {
-        const response = await api.editTask(params)
+        const response = await api.editTasks([params])
 
-        if (Array.isArray(response)) {
-          response.forEach((task) => {
-            this.entities[task.id] = task
-          })
-        } else {
-          this.entities[response.id] = response
-        }
+        response.forEach((task) => {
+          this.entities[task.id] = task
+        })
       } catch (error) {
         this.entities[params.id] = previous
+        this.request = { status: 'error', error: toMessage(error) }
+      }
+    },
+
+    async reorderTask(taskId: string, newDueDate: string | null, newPosition: number) {
+      const allTasks = Object.values(this.entities)
+      const updates = computeReorder(allTasks, taskId, newDueDate, newPosition)
+
+      if (updates.length === 0) return
+
+      const previousStates: Record<string, Task> = {}
+
+      for (const update of updates) {
+        const task = this.entities[update.id]
+
+        if (task) {
+          previousStates[update.id] = { ...task }
+
+          const optimistic = { ...task }
+
+          if (update.dueDate !== undefined) optimistic.dueDate = update.dueDate
+          if (update.order !== undefined) optimistic.order = update.order
+
+          this.entities[update.id] = optimistic
+        }
+      }
+
+      try {
+        const response = await api.editTasks(updates)
+
+        response.forEach((task) => {
+          this.entities[task.id] = task
+        })
+      } catch (error) {
+        for (const [id, prev] of Object.entries(previousStates)) {
+          this.entities[id] = prev
+        }
+
         this.request = { status: 'error', error: toMessage(error) }
       }
     },

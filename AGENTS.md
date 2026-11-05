@@ -5,7 +5,7 @@ Task board с календарём.
 ## Tech Stack
 
 - **Frontend:** Vue 3, TypeScript, Pinia, Vue Router
-- **Backend:** Express.js REST API, in-memory storage (стабильный, не меняется)
+- **Backend:** Hono REST API, Drizzle ORM, SQLite (better-sqlite3), Zod validation
 - **Build:** Vite, pnpm
 - **Runtime:** Node v24 LTS (через nvm), pnpm 12.x
 
@@ -13,7 +13,17 @@ Task board с календарём.
 
 ```
 napoleon/
-├── api/                 # backend (Express.js)
+├── api/                 # backend (Hono + Drizzle + SQLite)
+│   ├── src/
+│   │   ├── db/          # Drizzle schema + connection
+│   │   ├── routes/      # HTTP handlers
+│   │   ├── schemas/     # Zod validation schemas
+│   │   ├── middleware/   # Error handler, etc.
+│   │   └── index.ts     # Hono app assembly
+│   ├── server.ts        # Entry point
+│   ├── data/            # SQLite DB file (gitignored)
+│   └── drizzle.config.ts
+├── api-backup/          # legacy Express API (read-only reference)
 ├── legacy-react/        # legacy React app (read-only reference)
 ├── src/                 # Vue app (основной проект)
 │   ├── api/             # API client
@@ -34,7 +44,14 @@ napoleon/
 
 ```bash
 pnpm dev             # Vue app на localhost:5173
-pnpm start-server    # API :3001
+pnpm start-server    # API :3001 (tsx watch)
+```
+
+### Backend / Database
+
+```bash
+pnpm --filter simple_api db:generate   # Generate Drizzle migration
+pnpm --filter simple_api db:migrate    # Apply migrations
 ```
 
 ### Проверки и форматирование
@@ -52,11 +69,17 @@ pnpm check           # lint + format:check + type-check параллельно
 - **State Management:** Pinia (не Vuex)
 - **Store structure:** entity-based для задач (обосновано CRUD + ID lookup; не догма для всех сущностей)
 - **Composition API** + `<script setup>`
+- **Backend HTTP:** Hono (не Express)
+- **ORM:** Drizzle ORM (не raw SQL, не Prisma)
+- **Database:** SQLite через better-sqlite3, WAL-mode; файл `api/data/napoleon.db` gitignored
+- **Validation:** Zod schemas в `api/src/schemas/`, повторно используются в роутах
+- **API contract:** Контракт с фронтендом сохранён из legacy (см. `api-backup/`). PATCH `/api/task/:id` может возвращать `Task | Task[]` при переупорядочивании — это известная особенность, не баг
 
 ## Legacy Reference
 
 - `/legacy-react` — архивный React-код, read-only. Не модифицировать.
-- При необходимости и **только по запросу** можно обращаться как к справочнику по бизнес-логике.
+- `/api-backup` — архивный Express API, read-only. Не модифицировать.
+- При необходимости и **только по запросу** можно обращаться как к справочнику по бизнес-логике и логике переупорядочивания задач.
 
 ## Агент: границы самостоятельности
 
@@ -104,6 +127,15 @@ pnpm check           # lint + format:check + type-check параллельно
 - Форматирование: Prettier
 - Вертикальная группировка внутри функций: разделяй логические блоки пустыми строками (контролируется ESLint `padding-line-between-statements`)
 
+### Backend (api/)
+
+- ESM (`"type": "module"`)
+- Роуты: один файл на ресурс в `api/src/routes/`
+- Zod-схемы: параллельно с роутами в `api/src/schemas/[resource].schema.ts`
+- Drizzle schema: `api/src/db/schema.ts`, миграции через Drizzle Kit
+- Middleware: `api/src/middleware/`, глобальный error handler обязателен
+- Точка входа: `api/server.ts`, сборка приложения: `api/src/index.ts`
+
 ### Git
 
 - Агент работает с git **только в режиме чтения** (`git log`, `git diff`, `git status`, `git show`, `git branch`)
@@ -115,7 +147,7 @@ pnpm check           # lint + format:check + type-check параллельно
 - Формат: `<type>(<scope>): <description>` ([Conventional Commits](https://www.conventionalcommits.org/))
 - Язык: английский, imperative mood, ≤ 50 символов, без точки в конце
 - Типы: `feat` | `fix` | `refactor` | `docs` | `style` | `test` | `chore`
-- Scope (опционально): `api` | `store` | `router` | `ui` | `deps`
+- Scope (опционально): `api` | `db` | `store` | `router` | `ui` | `deps`
 - Body: только если нужно объяснить «почему»; отделять пустой строкой
 
 ### Обязательные проверки после задачи

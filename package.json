@@ -14,7 +14,7 @@
     "format:check": "prettier --check \"src/**/*.{ts,vue}\"",
     "format": "prettier --write \"src/**/*.{ts,vue}\"",
     "check": "run-p lint format:check type-check",
-    "start-server": "node api/server.js",
+    "start-server": "pnpm --filter simple_api start",
     "start": "run-p dev start-server"
   },
   "dependencies": {

@@ -25,6 +25,6 @@ export const createTask = (params: CreateTaskParams) =>
   request<Task>('/task', { method: 'POST', body: JSON.stringify(params) })
 
 export const editTask = ({ id, ...body }: EditTaskParams) =>
-  request<EditTaskResponse>(`/task${id}`, { method: 'PATCH', body: JSON.stringify(body) })
+  request<EditTaskResponse>(`/task/${id}`, { method: 'PATCH', body: JSON.stringify(body) })
 
-export const deleteTask = (id: string) => request<string>(`/task${id}`, { method: 'DELETE' })
+export const deleteTask = (id: string) => request<string>(`/task/${id}`, { method: 'DELETE' })

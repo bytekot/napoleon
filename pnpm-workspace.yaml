@@ -1,0 +1,7 @@
+packages:
+  - api
+  - legacy-react
+
+allowBuilds:
+  better-sqlite3: true
+  esbuild: true

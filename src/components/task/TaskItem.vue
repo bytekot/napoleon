@@ -138,8 +138,8 @@ function onDragStart(event: DragEvent) {
   label .checkmark:after {
     left: 8px;
     top: 4px;
-    width: var(--size-check-mark-width);
-    height: var(--size-check-mark-height);
+    width: 5px;
+    height: 10px;
     border: solid var(--color-border-checkmark);
     border-width: 0 1px 1px 0;
     transform: rotate(45deg);

@@ -47,7 +47,7 @@ const yearMonths = computed(() => getYearMonthDates(props.date))
       border: 1px solid var(--color-border-default);
       border-radius: var(--radius-card);
       text-align: center;
-      margin-bottom: var(--space-10);
+      margin-bottom: 10px;
     }
   }
 }

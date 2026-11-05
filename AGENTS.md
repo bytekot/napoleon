@@ -104,6 +104,20 @@ pnpm check           # lint + format:check + type-check параллельно
 - Форматирование: Prettier
 - Вертикальная группировка внутри функций: разделяй логические блоки пустыми строками (контролируется ESLint `padding-line-between-statements`)
 
+### Git
+
+- Агент работает с git **только в режиме чтения** (`git log`, `git diff`, `git status`, `git show`, `git branch`)
+- Запрещено: `git add`, `git commit`, `git merge`, `git rebase`, `git push`, `git checkout`, `git reset`, `git stash` и любые другие мутации репозитория
+- Подготовка коммитов, веток и PR — задача пользователя; агент может предложить сообщение или стратегию, но не исполняет их
+
+### Commit Messages
+
+- Формат: `<type>(<scope>): <description>` ([Conventional Commits](https://www.conventionalcommits.org/))
+- Язык: английский, imperative mood, ≤ 50 символов, без точки в конце
+- Типы: `feat` | `fix` | `refactor` | `docs` | `style` | `test` | `chore`
+- Scope (опционально): `api` | `store` | `router` | `ui` | `deps`
+- Body: только если нужно объяснить «почему»; отделять пустой строкой
+
 ### Обязательные проверки после задачи
 
 После изменений: `pnpm check`. Падает → исправить до завершения.

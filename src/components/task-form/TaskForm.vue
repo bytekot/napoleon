@@ -62,9 +62,9 @@ function toggleMinimized() {
     }
 
     button {
-      margin: 0px 0px 0px var(--space-10);
+      margin: 0px 0px 0px 10px;
       line-height: var(--line-height-form-toggle);
-      padding: 0 var(--space-5);
+      padding: 0 5px;
       border-radius: var(--radius-form-toggle);
       box-shadow: var(--button-shadow), var(--shadow-card);
       opacity: 0.99;

@@ -432,6 +432,7 @@ describe('computeReorder', () => {
 
       return () => {
         s = (s * 1664525 + 1013904223) & 0xffffffff
+
         return (s >>> 0) / 0xffffffff
       }
     }
@@ -445,7 +446,7 @@ describe('computeReorder', () => {
         const date = dates[Math.floor(rand() * dates.length)]!
         const hasDate = rand() > 0.2
 
-        if (!dayCounters[date]) dayCounters[date] = 0
+        dayCounters[date] ??= 0
 
         tasks.push(
           makeTask({
@@ -495,9 +496,10 @@ describe('computeReorder', () => {
         const sorted = [...orders].sort((a, b) => a - b)
         const expected = Array.from({ length: sorted.length }, (_, i) => i)
 
-        expect(sorted, `день ${date}: ожидалось [${expected}], получено [${sorted}]`).toEqual(
-          expected,
-        )
+        expect(
+          sorted,
+          `день ${date}: ожидалось [${expected.join(',')}] получено [${sorted.join(',')}]`,
+        ).toEqual(expected)
       }
     }
 

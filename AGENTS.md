@@ -23,9 +23,7 @@ napoleon/
 │   ├── server.ts        # Entry point
 │   ├── data/            # SQLite DB file (gitignored)
 │   └── drizzle.config.ts
-├── api-backup/          # legacy Express API (read-only reference)
-├── legacy-react/        # legacy React app (read-only reference)
-├── src/                 # Vue app (основной проект)
+├── src/                 # Vue app
 │   ├── api/             # API client
 │   ├── components/      # Vue компоненты
 │   ├── composables/     # Composition API хуки
@@ -81,13 +79,11 @@ pnpm --filter simple_api test:watch   # watch mode
 - **ORM:** Drizzle ORM (не raw SQL, не Prisma)
 - **Database:** SQLite через better-sqlite3, WAL-mode; файл `api/data/napoleon.db` gitignored
 - **Validation:** Zod schemas в `api/src/schemas/`, повторно используются в роутах
-- **API contract:** Контракт с фронтендом сохранён из legacy (см. `api-backup/`). PATCH `/api/task/:id` может возвращать `Task | Task[]` при переупорядочивании — это известная особенность, не баг
-
-## Legacy Reference
-
-- `/legacy-react` — архивный React-код, read-only. Не модифицировать.
-- `/api-backup` — архивный Express API, read-only. Не модифицировать.
-- При необходимости и **только по запросу** можно обращаться как к справочнику по бизнес-логике и логике переупорядочивания задач.
+- **API contract:**
+  - `GET /api/tasks` — список всех задач, возвращает `Task[]`
+  - `POST /api/task` — создание задачи, возвращает `Task` (201)
+  - `POST /api/tasks/edit` — batch-редактирование, принимает массив обновлений, возвращает `Task[]`
+  - `DELETE /api/task/:id` — удаление задачи, возвращает `string` (ID удалённой задачи)
 
 ## Агент: границы самостоятельности
 

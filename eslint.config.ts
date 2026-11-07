@@ -7,7 +7,7 @@ import globals from 'globals'
 
 export default tseslint.config(
   {
-    ignores: ['dist/**', 'api/**', 'api-backup/**', 'legacy-react/**'],
+    ignores: ['dist/**', 'api/**'],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,

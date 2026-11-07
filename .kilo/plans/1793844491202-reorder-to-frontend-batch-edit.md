@@ -26,7 +26,7 @@
 
 Функция `computeReorder(tasks, movedTaskId, newDueDate, newPosition)` → `EditTaskPayload[]`.
 
-**Тестовые кейсы** (по оригинальной логике `updateTask` из `api-backup/src/utils.js`):
+**Тестовые кейсы**:
 
 #### Cross-date move (дата изменилась)
 - [ ] Таск перемещён на новую дату → таски на новой дате с `order >= newOrder` сдвигаются +1

@@ -1,5 +1,61 @@
 import { describe, it, expect } from 'vitest'
-import { batchEditSchema } from '../task.schema.js'
+import { batchEditSchema, createTaskSchema, taskIdParamSchema } from '../task.schema.js'
+
+describe('createTaskSchema', () => {
+  it('принимает валидные данные', () => {
+    const result = createTaskSchema.safeParse({
+      name: 'New Task',
+      creationDate: '2024-06-15',
+    })
+
+    expect(result.success).toBe(true)
+  })
+
+  it('отклоняет пустое имя', () => {
+    const result = createTaskSchema.safeParse({
+      name: '',
+      creationDate: '2024-06-15',
+    })
+
+    expect(result.success).toBe(false)
+  })
+
+  it('отклоняет отсутствие creationDate', () => {
+    const result = createTaskSchema.safeParse({
+      name: 'Task',
+    })
+
+    expect(result.success).toBe(false)
+  })
+
+  it('отклоняет отсутствие name', () => {
+    const result = createTaskSchema.safeParse({
+      creationDate: '2024-06-15',
+    })
+
+    expect(result.success).toBe(false)
+  })
+})
+
+describe('taskIdParamSchema', () => {
+  it('принимает непустой id', () => {
+    const result = taskIdParamSchema.safeParse({ id: 'abc123' })
+
+    expect(result.success).toBe(true)
+  })
+
+  it('отклоняет пустой id', () => {
+    const result = taskIdParamSchema.safeParse({ id: '' })
+
+    expect(result.success).toBe(false)
+  })
+
+  it('отклоняет отсутствие id', () => {
+    const result = taskIdParamSchema.safeParse({})
+
+    expect(result.success).toBe(false)
+  })
+})
 
 describe('batchEditSchema', () => {
   it('принимает задачу с одним полем для обновления', () => {

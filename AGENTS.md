@@ -54,7 +54,7 @@ pnpm --filter simple_api db:generate   # Generate Drizzle migration
 pnpm --filter simple_api db:migrate    # Apply migrations
 ```
 
-### Проверки и форматирование
+### Проверки и форматирование (frontend)
 
 ```bash
 pnpm lint            # ESLint (качество кода)
@@ -62,6 +62,14 @@ pnpm format          # Prettier: автоформатирование
 pnpm format:check    # Prettier: проверка без изменений
 pnpm type-check      # vue-tsc
 pnpm check           # lint + format:check + type-check параллельно
+pnpm vitest run      # frontend-тесты (однократный запуск)
+```
+
+### Тесты backend (api/)
+
+```bash
+pnpm --filter simple_api test         # однократный запуск
+pnpm --filter simple_api test:watch   # watch mode
 ```
 
 ## Architecture Decisions
@@ -95,6 +103,8 @@ pnpm check           # lint + format:check + type-check параллельно
 - Новый функционал (компоненты, composables, stores, utils) обязательно сопровождается
   тестами, покрывающими новое поведение. Изменение поведения → обновить существующие тесты.
   Отсутствие тестов = незавершённая задача
+- Конвенции написания, организации и запуска тестов: `docs/testing.md`.
+  Читать перед написанием или изменением тестов
 
 ### Решения принимает пользователь
 
@@ -152,5 +162,19 @@ pnpm check           # lint + format:check + type-check параллельно
 
 ### Обязательные проверки после задачи
 
-После изменений: `pnpm check`. Падает → исправить до завершения.
-Исключение: задача без изменения кода (исследование, обсуждение, работа с документацией).
+Состав проверок определяется затронутым кодом. Не запускать проверки другой части
+монорепозитория «на всякий случай»:
+
+| Затронутый код | Обязательные проверки |
+|---|---|
+| Только frontend (`src/`, `public/`, `index.html`, корневые конфиги) | `pnpm check` + `pnpm vitest run` |
+| Только backend (`api/`) | `pnpm --filter simple_api test` |
+| Обе части | всё перечисленное выше |
+| Код не менялся (исследование, обсуждение, документация) | ничего |
+
+- Проверка падает → исправить до завершения.
+- `pnpm check` покрывает только frontend: eslint игнорирует `api/**`, prettier ограничен
+  `src/**`, корневые tsconfig-references не включают api. Единственная проверка backend
+  сейчас — его тесты.
+- Падение или проблема в части **вне скоупа** задачи → одна строка в ответе, не чинить
+  (см. «Объём работы»).

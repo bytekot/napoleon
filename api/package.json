@@ -4,6 +4,8 @@
   "type": "module",
   "scripts": {
     "start": "tsx watch server.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:reset": "rm -f data/napoleon.db* && rm -rf drizzle && pnpm db:generate && pnpm db:migrate"
@@ -20,6 +22,7 @@
     "@types/better-sqlite3": "^7.6.12",
     "drizzle-kit": "^0.28.1",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vitest": "^4.1.11"
   }
 }

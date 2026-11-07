@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1793839224378,
-      "tag": "0000_ambitious_la_nuit",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1793842626311,
-      "tag": "0001_salty_squadron_supreme",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1794090131895,
-      "tag": "0002_lying_masque",
+      "when": 1794092817904,
+      "tag": "0000_soft_blockbuster",
       "breakpoints": true
     }
   ]

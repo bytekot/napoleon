@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "5082c5ea-50c8-4396-8a39-e9dd9233e305",
+  "id": "2e7bf0a5-df6f-4ca6-988a-15eac6de9dba",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "tasks": {
@@ -51,11 +51,25 @@
           "default": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "due_date_order_idx": {
+          "name": "due_date_order_idx",
+          "columns": [
+            "due_date",
+            "order"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "checkConstraints": {}
+      "checkConstraints": {
+        "order_integrity_check": {
+          "name": "order_integrity_check",
+          "value": "\"tasks\".\"due_date\" IS NULL OR \"tasks\".\"order\" IS NOT NULL"
+        }
+      }
     }
   },
   "views": {},

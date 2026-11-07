@@ -285,7 +285,7 @@ describe('useTaskStore', () => {
     it('удаление оптимистичное, при ошибке — откат', async () => {
       const task = makeTask()
 
-      mockApi.deleteTask.mockRejectedValue(new Error('Fail'))
+      mockApi.deleteTasks.mockRejectedValue(new Error('Fail'))
       const store = useTaskStore()
 
       store.entities[task.id] = task
@@ -301,7 +301,7 @@ describe('useTaskStore', () => {
     it('успешное удаление', async () => {
       const task = makeTask()
 
-      mockApi.deleteTask.mockResolvedValue(task.id)
+      mockApi.deleteTasks.mockResolvedValue([task.id])
       const store = useTaskStore()
 
       store.entities[task.id] = task

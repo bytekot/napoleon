@@ -162,7 +162,7 @@ export const useTaskStore = defineStore('task', {
       this.ids.splice(previousIndex, 1)
 
       try {
-        await api.deleteTask(id)
+        await api.deleteTasks([id])
       } catch (error) {
         this.entities[id] = previous
         this.ids.splice(previousIndex, 0, id)

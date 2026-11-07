@@ -1,8 +1,8 @@
 import { Hono } from 'hono'
-import { eq } from 'drizzle-orm'
+import { eq, inArray } from 'drizzle-orm'
 import { db } from '../db/connection.js'
 import { tasks } from '../db/schema.js'
-import { createTaskSchema, batchEditSchema, taskIdParamSchema } from '../schemas/task.schema.js'
+import { createTaskSchema, batchEditSchema, batchDeleteSchema } from '../schemas/task.schema.js'
 import { nanoid } from 'nanoid'
 
 const taskRoutes = new Hono()
@@ -12,7 +12,7 @@ taskRoutes.get('/tasks', async (c) => {
   return c.json(allTasks)
 })
 
-taskRoutes.post('/task', async (c) => {
+taskRoutes.post('/tasks', async (c) => {
   const body = await c.req.json()
   const validated = createTaskSchema.parse(body)
 
@@ -31,14 +31,14 @@ taskRoutes.post('/task', async (c) => {
   return c.json(newTask, 201)
 })
 
-taskRoutes.post('/tasks/edit', async (c) => {
+taskRoutes.patch('/tasks', async (c) => {
   const body = await c.req.json()
   const validated = batchEditSchema.parse(body)
 
   const updatedTasks = db.transaction((tx) => {
     const result: (typeof tasks.$inferSelect)[] = []
 
-    for (const update of validated.tasks) {
+    for (const update of validated) {
       const rows = tx
         .update(tasks)
         .set({
@@ -62,22 +62,13 @@ taskRoutes.post('/tasks/edit', async (c) => {
   return c.json(updatedTasks)
 })
 
-taskRoutes.delete('/task/:id', async (c) => {
-  const rawId = c.req.param('id')
-  const paramResult = taskIdParamSchema.safeParse({ id: rawId })
-  if (!paramResult.success) {
-    return c.json({ error: 'Invalid task id' }, 400)
-  }
+taskRoutes.delete('/tasks', async (c) => {
+  const body = await c.req.json()
+  const validated = batchDeleteSchema.parse(body)
 
-  const taskId = paramResult.data.id
-  const existing = await db.select().from(tasks).where(eq(tasks.id, taskId)).get()
-  if (!existing) {
-    return c.json({ error: 'Task not found' }, 404)
-  }
+  await db.delete(tasks).where(inArray(tasks.id, validated))
 
-  await db.delete(tasks).where(eq(tasks.id, taskId))
-
-  return c.json(taskId)
+  return c.json(validated)
 })
 
 export default taskRoutes

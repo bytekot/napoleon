@@ -55,9 +55,9 @@ describe('GET /api/tasks', () => {
   })
 })
 
-describe('POST /api/task', () => {
+describe('POST /api/tasks', () => {
   it('создаёт задачу с валидными данными и возвращает 201', async () => {
-    const res = await app.request('/api/task', {
+    const res = await app.request('/api/tasks', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: 'New Task', creationDate: '2024-06-15' }),
@@ -75,7 +75,7 @@ describe('POST /api/task', () => {
   })
 
   it('отклоняет запрос с пустым name (400)', async () => {
-    const res = await app.request('/api/task', {
+    const res = await app.request('/api/tasks', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: '', creationDate: '2024-06-15' }),
@@ -85,7 +85,7 @@ describe('POST /api/task', () => {
   })
 
   it('отклоняет запрос без creationDate (400)', async () => {
-    const res = await app.request('/api/task', {
+    const res = await app.request('/api/tasks', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: 'Task' }),
@@ -95,7 +95,7 @@ describe('POST /api/task', () => {
   })
 })
 
-describe('POST /api/tasks/edit', () => {
+describe('PATCH /api/tasks', () => {
   beforeEach(() => {
     testDb.insert(tasks).values([
       { id: 'a', name: 'A', creationDate: '2024-01-01', dueDate: '2024-06-01', order: 0, completed: false },
@@ -105,10 +105,10 @@ describe('POST /api/tasks/edit', () => {
   })
 
   it('обновляет одно поле у одной задачи', async () => {
-    const res = await app.request('/api/tasks/edit', {
-      method: 'POST',
+    const res = await app.request('/api/tasks', {
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tasks: [{ id: 'a', completed: true }] }),
+      body: JSON.stringify([{ id: 'a', completed: true }]),
     })
     const body = await res.json()
 
@@ -119,15 +119,13 @@ describe('POST /api/tasks/edit', () => {
   })
 
   it('обновляет несколько задач в одном батче', async () => {
-    const res = await app.request('/api/tasks/edit', {
-      method: 'POST',
+    const res = await app.request('/api/tasks', {
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        tasks: [
-          { id: 'a', name: 'Updated A' },
-          { id: 'b', order: 5 },
-        ],
-      }),
+      body: JSON.stringify([
+        { id: 'a', name: 'Updated A' },
+        { id: 'b', order: 5 },
+      ]),
     })
     const body = await res.json()
 
@@ -136,10 +134,10 @@ describe('POST /api/tasks/edit', () => {
   })
 
   it('очищает dueDate и order через null', async () => {
-    const res = await app.request('/api/tasks/edit', {
-      method: 'POST',
+    const res = await app.request('/api/tasks', {
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tasks: [{ id: 'a', dueDate: null, order: null }] }),
+      body: JSON.stringify([{ id: 'a', dueDate: null, order: null }]),
     })
     const body = await res.json()
 
@@ -149,15 +147,13 @@ describe('POST /api/tasks/edit', () => {
   })
 
   it('пропускает несуществующий id и возвращает только обновлённые', async () => {
-    const res = await app.request('/api/tasks/edit', {
-      method: 'POST',
+    const res = await app.request('/api/tasks', {
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        tasks: [
-          { id: 'nonexistent', completed: true },
-          { id: 'a', completed: true },
-        ],
-      }),
+      body: JSON.stringify([
+        { id: 'nonexistent', completed: true },
+        { id: 'a', completed: true },
+      ]),
     })
     const body = await res.json()
 
@@ -166,62 +162,89 @@ describe('POST /api/tasks/edit', () => {
     expect(body[0].id).toBe('a')
   })
 
-  it('отклоняет батч с задачей без полей для обновления (400)', async () => {
-    const res = await app.request('/api/tasks/edit', {
-      method: 'POST',
+  it('отклоняет элемент без полей для обновления (400)', async () => {
+    const res = await app.request('/api/tasks', {
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tasks: [{ id: 'a' }] }),
+      body: JSON.stringify([{ id: 'a' }]),
     })
 
     expect(res.status).toBe(400)
   })
 
-  it('отклоняет пустой массив tasks (400)', async () => {
-    const res = await app.request('/api/tasks/edit', {
-      method: 'POST',
+  it('отклоняет пустой массив (400)', async () => {
+    const res = await app.request('/api/tasks', {
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tasks: [] }),
+      body: JSON.stringify([]),
     })
 
     expect(res.status).toBe(400)
   })
 })
 
-describe('DELETE /api/task/:id', () => {
+describe('DELETE /api/tasks', () => {
   beforeEach(() => {
-    testDb.insert(tasks).values({
-      id: 'existing',
-      name: 'To Delete',
-      creationDate: '2024-01-01',
-      dueDate: null,
-      order: null,
-      completed: false,
-    }).run()
+    testDb.insert(tasks).values([
+      { id: 't1', name: 'Task 1', creationDate: '2024-01-01', dueDate: null, order: null, completed: false },
+      { id: 't2', name: 'Task 2', creationDate: '2024-01-01', dueDate: null, order: null, completed: false },
+      { id: 't3', name: 'Task 3', creationDate: '2024-01-01', dueDate: null, order: null, completed: false },
+    ]).run()
   })
 
-  it('удаляет существующую задачу и возвращает её id', async () => {
-    const res = await app.request('/api/task/existing', { method: 'DELETE' })
+  it('удаляет одну задачу и возвращает массив ID', async () => {
+    const res = await app.request('/api/tasks', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(['t1']),
+    })
     const body = await res.json()
 
     expect(res.status).toBe(200)
-    expect(body).toBe('existing')
+    expect(body).toEqual(['t1'])
 
     const remaining = testDb.select().from(tasks).all()
 
-    expect(remaining).toHaveLength(0)
+    expect(remaining).toHaveLength(2)
+    expect(remaining.find((t) => t.id === 't1')).toBeUndefined()
   })
 
-  it('возвращает 404 для несуществующей задачи', async () => {
-    const res = await app.request('/api/task/nonexistent', { method: 'DELETE' })
+  it('удаляет несколько задач за раз', async () => {
+    const res = await app.request('/api/tasks', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(['t1', 't3']),
+    })
     const body = await res.json()
 
-    expect(res.status).toBe(404)
-    expect(body.error).toBe('Task not found')
+    expect(res.status).toBe(200)
+    expect(body).toEqual(['t1', 't3'])
+
+    const remaining = testDb.select().from(tasks).all()
+
+    expect(remaining).toHaveLength(1)
+    expect(remaining[0].id).toBe('t2')
   })
 
-  it('возвращает 404 для пустого id', async () => {
-    const res = await app.request('/api/task/nonexistent', { method: 'DELETE' })
+  it('не падает при удалении несуществующих ID', async () => {
+    const res = await app.request('/api/tasks', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(['nonexistent']),
+    })
+    const body = await res.json()
 
-    expect(res.status).toBe(404)
+    expect(res.status).toBe(200)
+    expect(body).toEqual(['nonexistent'])
+  })
+
+  it('отклоняет пустой массив (400)', async () => {
+    const res = await app.request('/api/tasks', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify([]),
+    })
+
+    expect(res.status).toBe(400)
   })
 })

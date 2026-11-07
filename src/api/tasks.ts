@@ -17,9 +17,10 @@ export interface EditTaskPayload {
 export const getTasks = () => request<Task[]>('/tasks')
 
 export const createTask = (params: CreateTaskParams) =>
-  request<Task>('/task', { method: 'POST', body: JSON.stringify(params) })
+  request<Task>('/tasks', { method: 'POST', body: JSON.stringify(params) })
 
 export const editTasks = (updates: EditTaskPayload[]) =>
-  request<Task[]>('/tasks/edit', { method: 'POST', body: JSON.stringify({ tasks: updates }) })
+  request<Task[]>('/tasks', { method: 'PATCH', body: JSON.stringify(updates) })
 
-export const deleteTask = (id: string) => request<string>(`/task/${id}`, { method: 'DELETE' })
+export const deleteTasks = (ids: string[]) =>
+  request<string[]>('/tasks', { method: 'DELETE', body: JSON.stringify(ids) })

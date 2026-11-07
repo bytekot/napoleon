@@ -81,9 +81,9 @@ pnpm --filter simple_api test:watch   # watch mode
 - **Validation:** Zod schemas в `api/src/schemas/`, повторно используются в роутах
 - **API contract:**
   - `GET /api/tasks` — список всех задач, возвращает `Task[]`
-  - `POST /api/task` — создание задачи, возвращает `Task` (201)
-  - `POST /api/tasks/edit` — batch-редактирование, принимает массив обновлений, возвращает `Task[]`
-  - `DELETE /api/task/:id` — удаление задачи, возвращает `string` (ID удалённой задачи)
+  - `POST /api/tasks` — создание задачи, возвращает `Task` (201)
+  - `PATCH /api/tasks` — batch-редактирование, принимает массив обновлений, возвращает `Task[]`
+  - `DELETE /api/tasks` — batch-удаление, принимает массив ID (`string[]`), возвращает `string[]`
 
 ## Агент: границы самостоятельности
 

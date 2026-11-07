@@ -5,26 +5,41 @@ export const createTaskSchema = z.object({
   creationDate: z.string().min(1),
 })
 
-export const batchEditSchema = z
-  .array(
-    z
-      .object({
-        id: z.string().min(1),
-        dueDate: z.string().nullable().optional(),
-        order: z.number().nullable().optional(),
-        completed: z.boolean().optional(),
-        name: z.string().min(1).optional(),
-      })
-      .refine(
-        (task) =>
-          task.dueDate !== undefined ||
-          task.order !== undefined ||
-          task.completed !== undefined ||
-          task.name !== undefined,
-        { message: 'At least one field to update is required' },
-      ),
+const editTaskItemSchema = z
+  .object({
+    id: z.string().min(1),
+    dueDate: z.string().nullable().optional(),
+    order: z.number().nullable().optional(),
+    completed: z.boolean().optional(),
+    name: z.string().min(1).optional(),
+  })
+  .refine(
+    (task) =>
+      task.dueDate !== undefined ||
+      task.order !== undefined ||
+      task.completed !== undefined ||
+      task.name !== undefined,
+    { message: 'At least one field to update is required' },
   )
-  .min(1)
+  .superRefine((task, ctx) => {
+    if (task.dueDate !== undefined && task.dueDate !== null && task.order === undefined) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'order is required when dueDate is set',
+        path: ['order'],
+      })
+    }
+
+    if (task.dueDate === null && task.order !== undefined && task.order !== null) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'order must be null when dueDate is null',
+        path: ['order'],
+      })
+    }
+  })
+
+export const batchEditSchema = z.array(editTaskItemSchema).min(1)
 
 export const batchDeleteSchema = z.array(z.string().min(1)).min(1)
 

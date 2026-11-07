@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { getDraggedTaskOrder } from '../utils/tasks'
+import { getDraggedTaskOrder } from '../utils/task/dom'
 
 /**
  * Отслеживание позиции курсора внутри drop-зоны.

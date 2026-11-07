@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { getDraggedTaskOrder } from '../tasks'
+import { getDraggedTaskOrder } from '../dom'
 
 describe('getDraggedTaskOrder', () => {
   it('игнорирует текстовые узлы при расчёте позиции', () => {

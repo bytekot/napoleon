@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { computeReorder } from '../tasks'
-import type { Task } from '../../types/tasks'
+import { computeReorder, type ReorderUpdate } from '../reordering'
+import type { Task } from '../../../types/tasks'
 
 function makeTask(overrides: Partial<Task> = {}): Task {
   return {
@@ -423,6 +423,139 @@ describe('computeReorder', () => {
       const result = computeReorder(tasks, 'X', '2026-11-02', 0)
 
       expect(result).toEqual([{ id: 'X', dueDate: '2026-11-02', order: 0 }])
+    })
+  })
+
+  describe('Property-based: инвариант плотной перестановки', () => {
+    function seededRandom(seed: number): () => number {
+      let s = seed
+
+      return () => {
+        s = (s * 1664525 + 1013904223) & 0xffffffff
+        return (s >>> 0) / 0xffffffff
+      }
+    }
+
+    function generateTasks(rand: () => number, count: number): Task[] {
+      const dates = ['2026-11-01', '2026-11-02', '2026-11-03']
+      const tasks: Task[] = []
+      const dayCounters: Record<string, number> = {}
+
+      for (let i = 0; i < count; i++) {
+        const date = dates[Math.floor(rand() * dates.length)]!
+        const hasDate = rand() > 0.2
+
+        if (!dayCounters[date]) dayCounters[date] = 0
+
+        tasks.push(
+          makeTask({
+            id: `task-${i}`,
+            dueDate: hasDate ? date : null,
+            order: hasDate ? dayCounters[date]++ : null,
+          }),
+        )
+      }
+
+      return tasks
+    }
+
+    function applyUpdates(tasks: Task[], updates: ReorderUpdate[]): Task[] {
+      const map = new Map(updates.map((u) => [u.id, u]))
+      const result: Task[] = []
+
+      for (const task of tasks) {
+        const update = map.get(task.id)
+
+        if (update) {
+          result.push({
+            ...task,
+            dueDate: update.dueDate !== undefined ? update.dueDate : task.dueDate,
+            order: update.order !== undefined ? update.order : task.order,
+          })
+        } else {
+          result.push(task)
+        }
+      }
+
+      return result
+    }
+
+    function assertDenseOrders(tasks: Task[]) {
+      const byDay = new Map<string, number[]>()
+
+      for (const task of tasks) {
+        if (task.dueDate === null) continue
+
+        if (!byDay.has(task.dueDate)) byDay.set(task.dueDate, [])
+
+        byDay.get(task.dueDate)!.push(task.order!)
+      }
+
+      for (const [date, orders] of byDay) {
+        const sorted = [...orders].sort((a, b) => a - b)
+        const expected = Array.from({ length: sorted.length }, (_, i) => i)
+
+        expect(sorted, `день ${date}: ожидалось [${expected}], получено [${sorted}]`).toEqual(
+          expected,
+        )
+      }
+    }
+
+    it('результат всегда даёт плотную нумерацию 0..N-1 в каждом дне', () => {
+      const ITERATIONS = 200
+      const MAX_TASKS = 15
+
+      for (let seed = 0; seed < ITERATIONS; seed++) {
+        const rand = seededRandom(seed)
+        const taskCount = 3 + Math.floor(rand() * MAX_TASKS)
+        const allTasks = generateTasks(rand, taskCount)
+
+        const movedIndex = Math.floor(rand() * allTasks.length)
+        const movedTask = allTasks[movedIndex]!
+        const dates = ['2026-11-01', '2026-11-02', '2026-11-03', null]
+        const newDueDate = dates[Math.floor(rand() * dates.length)]!
+        const maxPos = allTasks.filter(
+          (t) => t.dueDate === newDueDate && t.id !== movedTask.id,
+        ).length
+        const dropPosition = Math.floor(rand() * (maxPos + 1))
+
+        const updates = computeReorder(allTasks, movedTask.id, newDueDate, dropPosition)
+
+        if (updates.length === 0) continue
+
+        const after = applyUpdates(allTasks, updates)
+
+        assertDenseOrders(after)
+      }
+    })
+
+    it('cross-day перемещение сохраняет плотную нумерацию в обоих днях', () => {
+      const ITERATIONS = 100
+
+      for (let seed = 1000; seed < 1000 + ITERATIONS; seed++) {
+        const rand = seededRandom(seed)
+        const allTasks = generateTasks(rand, 8 + Math.floor(rand() * 8))
+
+        const plannedTasks = allTasks.filter((t) => t.dueDate !== null)
+
+        if (plannedTasks.length === 0) continue
+
+        const movedTask = plannedTasks[Math.floor(rand() * plannedTasks.length)]!
+        const otherDates = ['2026-11-01', '2026-11-02', '2026-11-03'].filter(
+          (d) => d !== movedTask.dueDate,
+        )
+        const newDueDate = otherDates[Math.floor(rand() * otherDates.length)]!
+        const targetCount = allTasks.filter((t) => t.dueDate === newDueDate).length
+        const dropPosition = Math.floor(rand() * (targetCount + 1))
+
+        const updates = computeReorder(allTasks, movedTask.id, newDueDate, dropPosition)
+
+        if (updates.length === 0) continue
+
+        const after = applyUpdates(allTasks, updates)
+
+        assertDenseOrders(after)
+      }
     })
   })
 })

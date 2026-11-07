@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import * as api from '../api/tasks'
 import type { Task } from '../types/tasks'
 import type { RequestState } from '../types/request'
-import { computeReorder } from '../utils/tasks'
+import { computeReorder } from '../utils/task/reordering'
 
 interface TaskState {
   entities: Record<string, Task>

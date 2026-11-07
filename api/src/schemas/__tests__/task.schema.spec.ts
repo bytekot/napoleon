@@ -87,6 +87,42 @@ describe('batchEditSchema', () => {
 
     expect(result.success).toBe(false)
   })
+
+  it('отклоняет установку dueDate без order', () => {
+    const result = batchEditSchema.safeParse([{ id: 'abc', dueDate: '2026-11-05' }])
+
+    expect(result.success).toBe(false)
+    if (!result.success) {
+      expect(result.error.issues.some((i) => i.message === 'order is required when dueDate is set')).toBe(true)
+    }
+  })
+
+  it('принимает установку dueDate с order', () => {
+    const result = batchEditSchema.safeParse([{ id: 'abc', dueDate: '2026-11-05', order: 0 }])
+
+    expect(result.success).toBe(true)
+  })
+
+  it('отклоняет сброс dueDate без сброса order', () => {
+    const result = batchEditSchema.safeParse([{ id: 'abc', dueDate: null, order: 3 }])
+
+    expect(result.success).toBe(false)
+    if (!result.success) {
+      expect(result.error.issues.some((i) => i.message === 'order must be null when dueDate is null')).toBe(true)
+    }
+  })
+
+  it('принимает одновременный сброс dueDate и order', () => {
+    const result = batchEditSchema.safeParse([{ id: 'abc', dueDate: null, order: null }])
+
+    expect(result.success).toBe(true)
+  })
+
+  it('принимает изменение order без dueDate', () => {
+    const result = batchEditSchema.safeParse([{ id: 'abc', order: 5 }])
+
+    expect(result.success).toBe(true)
+  })
 })
 
 describe('batchDeleteSchema', () => {

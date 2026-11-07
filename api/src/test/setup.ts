@@ -8,7 +8,8 @@ db.run(sql`
     creation_date TEXT NOT NULL,
     due_date TEXT,
     "order" INTEGER,
-    completed INTEGER DEFAULT 0
+    completed INTEGER DEFAULT 0,
+    CONSTRAINT order_integrity_check CHECK(due_date IS NULL OR "order" IS NOT NULL)
   )
 `)
 

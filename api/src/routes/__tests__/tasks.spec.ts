@@ -248,3 +248,46 @@ describe('DELETE /api/tasks', () => {
     expect(res.status).toBe(400)
   })
 })
+
+describe('CHECK-констрейнт order_integrity_check', () => {
+  beforeEach(() => {
+    testDb.insert(tasks).values([
+      { id: 'a', name: 'A', creationDate: '2024-01-01', dueDate: '2024-06-01', order: 0, completed: false },
+    ]).run()
+  })
+
+  it('отклоняет установку dueDate без order через прямой INSERT', () => {
+    expect(() => {
+      testDb.insert(tasks).values({
+        id: 'bad',
+        name: 'Bad',
+        creationDate: '2024-01-01',
+        dueDate: '2024-06-01',
+        order: null,
+        completed: false,
+      }).run()
+    }).toThrow()
+  })
+
+  it('отклоняет UPDATE устанавливающий dueDate без order', () => {
+    expect(() => {
+      testDb.update(tasks)
+        .set({ dueDate: '2024-07-01', order: null })
+        .where(sql`${tasks.id} = 'a'`)
+        .run()
+    }).toThrow()
+  })
+
+  it('разрешает задачу без dueDate и без order', () => {
+    expect(() => {
+      testDb.insert(tasks).values({
+        id: 'ok',
+        name: 'OK',
+        creationDate: '2024-01-01',
+        dueDate: null,
+        order: null,
+        completed: false,
+      }).run()
+    }).not.toThrow()
+  })
+})

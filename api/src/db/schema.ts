@@ -1,4 +1,5 @@
-import { sqliteTable, text, integer, index } from 'drizzle-orm/sqlite-core'
+import { sqliteTable, text, integer, index, check } from 'drizzle-orm/sqlite-core'
+import { sql } from 'drizzle-orm'
 
 export const tasks = sqliteTable('tasks', {
   id: text('id').primaryKey(),
@@ -9,4 +10,6 @@ export const tasks = sqliteTable('tasks', {
   completed: integer('completed', { mode: 'boolean' }).default(false),
 }, (table) => ({
   dueDateOrderIdx: index('due_date_order_idx').on(table.dueDate, table.order),
+  // Инвариант: docs/task-reordering.md
+  orderIntegrityCheck: check('order_integrity_check', sql`${table.dueDate} IS NULL OR ${table.order} IS NOT NULL`),
 }))

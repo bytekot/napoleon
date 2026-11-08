@@ -47,3 +47,9 @@ __screenshots__/
 api/data/*.db
 api/data/*.db-wal
 api/data/*.db-shm
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

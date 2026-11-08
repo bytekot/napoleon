@@ -7,7 +7,7 @@ import globals from 'globals'
 
 export default tseslint.config(
   {
-    ignores: ['dist/**', 'api/**'],
+    ignores: ['dist/**', 'api/**', 'test-results/**', 'playwright-report/**', 'blob-report/**'],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,

@@ -71,7 +71,7 @@ describe('computeReorder', () => {
 
 - **Environment:** jsdom
 - **Config:** `vitest.config.ts` (корень)
-- **Запуск:** `pnpm test:unit` (watch), `pnpm vitest run` (CI)
+- **Запуск:** `pnpm test:unit` (run), `pnpm test:unit:watch` (watch)
 - **Библиотеки:** vitest, @vue/test-utils, Pinia testing utilities
 
 ### Что тестировать
@@ -103,7 +103,7 @@ describe('computeReorder', () => {
 
 - **Environment:** node
 - **Config:** `api/vitest.config.ts`
-- **Запуск:** `pnpm --filter simple_api test` (run), `pnpm --filter simple_api test:watch`
+- **Запуск:** `pnpm test:api` (run), `pnpm test:api:watch`
 - **Setup:** `api/src/test/setup.ts` устанавливает `DATABASE_URL=:memory:`
 - **Библиотеки:** vitest, Hono `app.request()`, better-sqlite3
 
@@ -143,35 +143,94 @@ describe('computeReorder', () => {
 Если потребуются интеграционные тесты с транзакциями/WAL — перейти на temp-файлы
 (`mkdtemp` + уникальный путь на тест). Решение принимается по мере необходимости.
 
-## 5. Организация монорепозитория
+## 5. E2E (Playwright)
+
+### Среда
+
+- **Runner:** Playwright Test (`@playwright/test`)
+- **Браузер:** Chromium (единственный проект)
+- **Config:** `playwright.config.ts` (корень), `testDir: ./e2e`
+- **TS-проект:** `tsconfig.e2e.json` (подключён к root `tsconfig.json`), среда Node
+- **Запуск:** `pnpm test:e2e`
+- **Расположение тестов:** `e2e/*.spec.ts`
+
+Установка браузера (один раз после клонирования или обновления Playwright):
+
+```bash
+pnpm exec playwright install chromium
+```
+
+### Изоляция окружения
+
+E2E поднимает полный стек через `webServer` (два процесса) на **выделенных портах**, чтобы не пересекаться с dev-стеком (5173 / 3001):
+
+| Сервис | Команда | Порт | БД |
+|---|---|---|---|
+| Frontend (Vite) | `pnpm exec vite --port 5273 --strictPort` | 5273 | — |
+| Backend (Hono) | reset → `drizzle-kit migrate` → `tsx server.ts` | 3101 | `api/data/napoleon-e2e.db` |
+
+- Backend использует **отдельную файловую БД** `napoleon-e2e.db` — не dev-БД и не `:memory:` backend-тестов. Файл покрыт `.gitignore` (`api/data/*.db`).
+- Перед каждым запуском БД очищается и заново мигрируется — детерминированное начальное состояние.
+- `DATABASE_URL` и `PORT` передаются через env webServer-а. E2E-backend запускается командой `tsx server.ts` без `--env-file`, поэтому значения берутся только из webServer.env и не конфликтуют с dev-`.env`.
+- `api/server.ts` читает `process.env.PORT` (fallback 3001) — dev-поведение не меняется, E2E задаёт 3101.
+- `api/drizzle.config.ts` требует `process.env.DATABASE_URL` (бросает ошибку при отсутствии) — миграции применяются к E2E-БД.
+- Frontend-webServer получает `VITE_API_URL=http://localhost:3101`, поэтому клиент (`src/api/client.ts`) обращается к E2E-API, а не к dev-`:3001`.
+- Оба webServer стартуют с `reuseExistingServer: false`: E2E всегда поднимает свой стек с нужным env и БД. Благодаря выделенным портам E2E можно запускать параллельно с `pnpm start`.
+
+### Последовательное выполнение
+
+Все тесты используют одну БД и один API-сервер, поэтому заданы `fullyParallel: false` и `workers: 1` — это исключает гонку за данные. Параллелизация возможна только после перехода на изоляцию БД на воркер (отдельный сервер/БД на воркер).
+
+### Что тестировать
+
+| Тип | Приоритет | Примеры |
+|---|---|---|
+| Сквозные пользовательские сценарии | Высокий | создание/редактирование/удаление задачи через UI |
+| Интеграция UI ↔ API ↔ БД | Высокий | optimistic updates, round-trip данных |
+| Навигация / календарь | Средний | переключение периодов, отображение задач по дням |
+| Drag-and-drop | Средний | reorder задач между днями (после интеграции DnD-библиотеки) |
+
+### Соглашения
+
+- Файлы: `<name>.spec.ts` в `e2e/`
+- `test.describe` — группа сценариев; `test(...)` — описание поведения на русском, начинается с глагола
+- Селекторы: предпочитать семантические (`getByRole`, `getByPlaceholder`, `getByText`) и стабильные data-атрибуты (`[data-task-list]`, `[data-task]`)
+- Каждый тест начинается с `page.goto('/')`
+- Все тесты одного запуска разделяют общую БД: она очищается и мигрируется один раз перед запуском (не перед каждым тестом). Тесты не должны предполагать пустую БД и зависеть от порядка выполнения
+
+## 6. Организация монорепозитория
 
 ### Разделение конфигураций
 
-Frontend и backend имеют **независимые** vitest-конфиги:
+Frontend и backend имеют **независимые** vitest-конфиги; E2E использует отдельный Playwright-конфиг:
 
-| Пакет | Config | Environment | Exclude из root |
+| Пакет | Config | Environment | Exclude из root vitest |
 |---|---|---|---|
 | Frontend | `vitest.config.ts` (root) | jsdom | — |
 | API | `api/vitest.config.ts` | node | `api/**` в root config |
+| E2E | `playwright.config.ts` (root) | browser (Chromium) | `e2e/**` в root config |
 
-Root vitest **исключает** `api/**` чтобы избежать:
+Root vitest **исключает** `api/**` и `e2e/**` чтобы избежать:
 - Двойного запуска тестов
-- Некорректной среды (jsdom для Node.js кода)
+- Некорректной среды (jsdom для Node.js/браузерного кода)
 - Конфликтов resolution зависимостей
 
 ### Запуск тестов
 
 ```bash
 # Frontend only
-pnpm test:unit              # watch mode
-pnpm vitest run             # single run (CI)
+pnpm test:unit              # single run
+pnpm test:unit:watch        # watch mode
 
 # API only
-pnpm --filter simple_api test         # single run
-pnpm --filter simple_api test:watch   # watch mode
+pnpm test:api                         # single run
+pnpm test:api:watch                   # watch mode
 
 # Оба пакета (параллельно)
-pnpm test:unit & pnpm --filter simple_api test
+pnpm test:unit & pnpm test:api
+
+# E2E (полный стек: Vite + API + Chromium)
+pnpm test:e2e
 ```
 
 ### Добавление нового пакета
@@ -182,12 +241,13 @@ pnpm test:unit & pnpm --filter simple_api test
 3. Добавить скрипт `test` в package.json пакета
 4. Документировать среду и подход в этом файле
 
-## 6. Покрытие и gate
+## 7. Покрытие и gate
 
 ### Обязательные проверки
 
 - `pnpm check` (lint + format + type-check) — **не включает тесты**
 - Тесты запускаются отдельно и не блокируют `pnpm check`
+- E2E (`pnpm test:e2e`) поднимает полный стек и выполняется отдельно от unit/integration
 - В CI тесты должны быть отдельным шагом после `pnpm check`
 
 ### Целевое покрытие
@@ -206,7 +266,7 @@ pnpm test:unit & pnpm --filter simple_api test
 - Trivial re-exports и barrel files
 - UI-стили и layout (если нет интерактивной логики)
 
-## 7. Mocking и зависимости
+## 8. Mocking и зависимости
 
 ### Принципы
 
@@ -230,7 +290,7 @@ pnpm test:unit & pnpm --filter simple_api test
 - Мокирование фреймворка (Vue reactivity, Pinia internals)
 - Partial mocks, нарушающие контракт интерфейса
 
-## 8. Процесс
+## 9. Процесс
 
 ### При добавлении функциональности
 
@@ -252,8 +312,9 @@ pnpm test:unit & pnpm --filter simple_api test
 3. Тесты остаются зелёными без изменений (если изменились — это не рефакторинг)
 4. Добавить тесты на ранее непокрытые edge cases, обнаруженные при рефакторинге
 
-## 9. Ссылки
+## 10. Ссылки
 
 - api/src/schemas/__tests__/task.schema.spec.ts — пример schema-тестов
 - src/utils/__tests__/computeReorder.spec.ts — пример comprehensive unit-тестов
 - src/stores/__tests__/task.spec.ts — пример store integration tests
+- e2e/smoke.spec.ts — пример E2E smoke-тестов (Playwright)

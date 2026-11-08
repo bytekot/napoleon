@@ -60,14 +60,19 @@ pnpm format          # Prettier: автоформатирование
 pnpm format:check    # Prettier: проверка без изменений
 pnpm type-check      # vue-tsc
 pnpm check           # lint + format:check + type-check параллельно
-pnpm vitest run      # frontend-тесты (однократный запуск)
+pnpm test:unit       # frontend-тесты (однократный запуск)
 ```
 
 ### Тесты backend (api/)
 
 ```bash
-pnpm --filter simple_api test         # однократный запуск
-pnpm --filter simple_api test:watch   # watch mode
+pnpm test:api        # однократный запуск
+```
+
+### E2E (Playwright)
+
+```bash
+pnpm test:e2e        # полный стек (Vite + API + Chromium)
 ```
 
 ## Architecture Decisions
@@ -126,6 +131,16 @@ pnpm --filter simple_api test:watch   # watch mode
 - задачу можно понять более чем одним способом
 - планируется действие, которого в запросе буквально нет
 
+### Документация
+
+Документы (`docs/**/*.md`, `AGENTS.md`, `README.md`) фиксируют устойчивые правила, конвенции
+и справочную информацию. Запрещено добавлять в них разделы со статусом реализации, моментальными
+снимками покрытия, прогрессом работ или планами («текущий статус», «что уже сделано», «следующие
+шаги», «roadmap»). Статусные заметки — в трекер задач или в отчёт пользователю, не в док.
+
+Исключение: разделы «References / Ссылки» на конкретные файлы-примеры в коде — это справочная
+информация, а не статус.
+
 ## Code Conventions
 
 - TypeScript strict mode
@@ -165,14 +180,14 @@ pnpm --filter simple_api test:watch   # watch mode
 
 | Затронутый код | Обязательные проверки |
 |---|---|
-| Только frontend (`src/`, `public/`, `index.html`, корневые конфиги) | `pnpm check` + `pnpm vitest run` |
-| Только backend (`api/`) | `pnpm --filter simple_api test` |
+| Только frontend (`src/`, `public/`, `index.html`, корневые конфиги) | `pnpm check` + `pnpm test:unit` |
+| Только backend (`api/`) | `pnpm test:api` |
 | Обе части | всё перечисленное выше |
-| Код не менялся (исследование, обсуждение, документация, только стили) | ничего |
+| Код не менялся (исследование, обсуждение, документация) | ничего |
 
 - Проверка падает → исправить до завершения.
-- `pnpm check` покрывает только frontend: eslint игнорирует `api/**`, prettier ограничен
-  `src/**`, корневые tsconfig-references не включают api. Единственная проверка backend
-  сейчас — его тесты.
+- `pnpm check` покрывает frontend и e2e: eslint игнорирует `api/**`, prettier проверяет
+  `src/**/*.{ts,vue}` и `e2e/**/*.ts`, корневые tsconfig-references включают `tsconfig.e2e.json`,
+  но не `api/`. Единственная проверка backend сейчас — его тесты.
 - Падение или проблема в части **вне скоупа** задачи → одна строка в ответе, не чинить
   (см. «Объём работы»).

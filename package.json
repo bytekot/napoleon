@@ -5,17 +5,21 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check \"build-only {@}\" --",
+    "start-server": "pnpm --filter simple_api start",
+    "start": "run-p dev start-server",
     "preview": "vite preview",
-    "test:unit": "vitest",
+    "build": "run-p type-check \"build-only {@}\" --",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
-    "format:check": "prettier --check \"src/**/*.{ts,vue}\"",
-    "format": "prettier --write \"src/**/*.{ts,vue}\"",
+    "format": "prettier --write \"src/**/*.{ts,vue}\" \"e2e/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.{ts,vue}\" \"e2e/**/*.ts\"",
     "check": "run-p lint format:check type-check",
-    "start-server": "pnpm --filter simple_api start",
-    "start": "run-p dev start-server"
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:api": "pnpm --filter simple_api test",
+    "test:api:watch": "pnpm --filter simple_api test:watch",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "pinia": "^4.0.3",
@@ -24,6 +28,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.65.0",
     "@tsconfig/node24": "^24.0.5",
     "@types/jsdom": "^30.0.0",
     "@types/node": "^24.13.4",

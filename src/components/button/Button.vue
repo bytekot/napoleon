@@ -67,10 +67,20 @@ defineSlots<{
     border-color: var(--button-border-color-hover);
   }
 
-  &:focus {
+  &:focus-visible {
     border-color: var(--button-color-focus-border);
     box-shadow: var(--button-shadow-focus);
     outline: 0;
+  }
+
+  &[aria-pressed='true'] {
+    background-image: none;
+    background-color: var(--color-bg-input);
+    box-shadow: var(--shadow-input-inset);
+
+    &:focus-visible {
+      box-shadow: var(--shadow-input-inset), var(--button-shadow-focus);
+    }
   }
 }
 </style>

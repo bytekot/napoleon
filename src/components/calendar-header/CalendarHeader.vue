@@ -49,11 +49,18 @@ function onDeleteDrop(event: DragEvent) {
 .calendar-header {
   display: flex;
   flex-direction: row;
+  align-items: center;
+  min-height: var(--size-header-height);
+  padding: var(--space-header-padding-y) 0;
+  box-sizing: border-box;
   background: var(--color-bg-header);
 
   h1 {
+    font-size: var(--font-size-heading);
+    font-weight: var(--font-weight-heading);
+    letter-spacing: var(--letter-spacing-heading);
     color: var(--color-text-secondary);
-    padding-left: var(--space-header-title);
+    padding-left: var(--space-header-title-x);
   }
 
   .action-toggle-period,

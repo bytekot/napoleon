@@ -48,9 +48,14 @@ const dateTime = computed(() => getMonth(props.date))
   }
 
   .day {
+    min-width: 0;
     border: solid var(--color-border-default);
     border-width: 0 1px 1px 0;
     font-size: var(--font-size-day);
+
+    .tasks {
+      flex: 1;
+    }
   }
 
   &.minimized {

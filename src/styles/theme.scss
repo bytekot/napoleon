@@ -1,7 +1,7 @@
 @use 'primitives' as *;
 
 :root {
-  /** Semantic — Colors */
+  /* Colors */
   --color-bg-app: #{$color-neutral-200};
   --color-bg-surface: #{$color-neutral-0};
   --color-bg-sidebar: #{$color-neutral-300};
@@ -36,7 +36,7 @@
   --color-accent-drag: #b3d4ff;
   --color-shadow-base: rgba(0, 0, 0, 0.2);
 
-  /** Semantic — Typography */
+  /* Typography */
   --font-family-base: Roboto, sans-serif;
   --font-size-heading: #{$font-size-20};
   --font-size-day: #{$font-size-20};
@@ -46,19 +46,20 @@
   --font-size-action-area: 32px;
   --font-weight-heading: 100;
   --letter-spacing-heading: 1px;
-  --letter-spacing-base: 0.01em;
+  --letter-spacing-base: 0.02em;
   --line-height-button: 16px;
   --line-height-form-toggle: 35px;
 
-  /** Semantic — Spacing */
+  /* Spacing */
   --space-list: #{$space-s};
   --space-list-item-gap: #{$space-s};
   --space-card: #{$space-xl};
   --space-card-mini: 3px 15px 5px;
   --space-day: #{$space-xs};
-  --space-controls: #{$space-s};
+  --space-controls-x: #{$space-s};
+  --space-header-padding-y: #{$space-xs};
   --space-controls-gap: #{$space-xs};
-  --space-header-title: #{$space-xl};
+  --space-header-title-x: #{$space-m};
   --space-input: #{$space-s};
   --space-form-input: #{$space-s};
   --space-form-icon-offset: #{$space-s};
@@ -73,7 +74,7 @@
   --space-month-dow: #{$space-xs} #{$space-xs};
   --space-overdue-warning: #{$space-xs};
 
-  /** Semantic — Radius */
+  /* Radius */
   --radius-control: #{$radius-s};
   --radius-card: #{$radius-m};
   --radius-checkmark: #{$radius-full};
@@ -81,7 +82,7 @@
   --radius-button-group-first: #{$radius-s} 0 0 #{$radius-s};
   --radius-button-group-last: 0 #{$radius-s} #{$radius-s} 0;
 
-  /** Semantic — Shadows */
+  /* Shadows */
   --shadow-card: 0 2px 1px -1px var(--color-shadow-base);
   --shadow-card-hover: 0 2px 1px 0 var(--color-shadow-base);
   --shadow-card-completed: inset 1px 1px 0 0 var(--color-border-default),
@@ -92,7 +93,7 @@
   --shadow-drag-top: 0 -2px 1px 0 var(--color-accent-drag), 0 2px 1px -1px var(--color-shadow-base);
   --shadow-drag-bottom: 0 2px 1px 0 var(--color-accent-drag);
 
-  /** Semantic — Sizes */
+  /* Sizes */
   --size-button-height: 29px;
   --size-checkmark: 20px;
   --size-overdue-stripe: 10px;
@@ -108,15 +109,16 @@
   --size-mini-task-width: 170px;
   --size-form-toggle-icon: 20px;
   --size-month-dow-row: 30px;
+  --size-header-height: 45px;
 
-  /** Semantic — Transitions */
+  /* Transitions */
   --transition-drag-indicator: #{$duration-base} all #{$ease-in-out};
   --transition-action-area: #{$duration-fast} all #{$ease-default};
   --transition-sidebar: #{$duration-base} all #{$ease-in};
   --transition-card-completed: #{$duration-fast} all #{$ease-in};
   --transition-header-dnd: #{$duration-base} all #{$ease-default};
 
-  /** Components */
+  /* Components */
   --button-bg: linear-gradient(#f7f8fa, #e7e9ec);
   --button-border-color: #adb1b8 #a2a6ac #8d9096;
   --button-border-color-hover: #a2a6ac #979aa1 #82858a;

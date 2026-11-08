@@ -7,17 +7,23 @@ const store = useCalendarStore()
 </script>
 
 <template>
-  <div class="calendar-period-controls">
-    <Button @click="store.setPeriod(CALENDAR_PERIODS.week)">Неделя</Button>
-    <Button @click="store.setPeriod(CALENDAR_PERIODS.month)">Месяц</Button>
-    <Button @click="store.setPeriod(CALENDAR_PERIODS.year)">Год</Button>
+  <div class="calendar-period-controls" role="group" aria-label="Период календаря">
+    <Button :aria-pressed="store.isPeriodWeek" @click="store.setPeriod(CALENDAR_PERIODS.week)">
+      Неделя
+    </Button>
+    <Button :aria-pressed="store.isPeriodMonth" @click="store.setPeriod(CALENDAR_PERIODS.month)">
+      Месяц
+    </Button>
+    <Button :aria-pressed="store.isPeriodYear" @click="store.setPeriod(CALENDAR_PERIODS.year)">
+      Год
+    </Button>
   </div>
 </template>
 
 <style scoped lang="scss">
 .calendar-period-controls {
   background: var(--color-bg-controls);
-  padding: var(--space-controls);
+  padding: 0 var(--space-controls-x);
 
   button {
     border-radius: 0;

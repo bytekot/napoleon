@@ -39,6 +39,7 @@ const yearMonths = computed(() => getYearMonthDates(props.date))
       color: var(--color-text-month-header);
       padding: var(--space-year-header);
       font-size: var(--font-size-heading);
+      font-weight: var(--font-weight-heading);
     }
 
     .month {

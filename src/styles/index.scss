@@ -1,24 +1,10 @@
 @use './theme';
 
-// Сброс
 html,
 body {
   margin: 0;
 }
 
-// Типографика
-h1,
-h2 {
-  margin: auto;
-  font-weight: var(--font-weight-heading);
-}
-
-h1 {
-  font-size: var(--font-size-heading);
-  letter-spacing: var(--letter-spacing-heading);
-}
-
-// Шрифт
 body {
   font-family: var(--font-family-base);
   letter-spacing: var(--letter-spacing-base);

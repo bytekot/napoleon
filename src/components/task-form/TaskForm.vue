@@ -12,7 +12,9 @@ const taskName = ref('')
 const minimized = ref(false)
 
 function onInputKeydown(event: KeyboardEvent) {
-  if (event.key === 'Enter' && taskName.value.trim()) {
+  const isSubmit = event.key === 'Enter' && (event.ctrlKey || event.metaKey)
+
+  if (isSubmit && taskName.value.trim()) {
     void store.createTask({
       name: taskName.value,
       creationDate: new Date().toISOString(),
@@ -38,10 +40,13 @@ function toggleMinimized() {
       <TextArea
         v-model="taskName"
         placeholder="Что нужно сделать?"
+        hint="Ctrl+Enter ↵"
         auto-focus
+        :resize="'none'"
+        class="task-input"
         @keydown="onInputKeydown"
       />
-      <TaskList :due-date="null" empty-text="Список пуст." />
+      <TaskList :due-date="null" empty-text="Список пуст." class="tasks" />
     </template>
   </div>
 </template>
@@ -51,19 +56,28 @@ function toggleMinimized() {
   background: var(--color-bg-sidebar);
   box-shadow: var(--shadow-card);
   width: var(--size-sidebar);
+  display: flex;
+  flex-direction: column;
 
   .header {
     border: 1px solid var(--color-border-default);
+    flex-shrink: 0;
+    min-height: var(--size-header-height);
+    padding: var(--space-header-padding-y) 0;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
 
     h1 {
-      display: inline-block;
-      padding: var(--space-form-header);
+      font-size: var(--font-size-heading);
+      font-weight: var(--font-weight-heading);
+      letter-spacing: var(--letter-spacing-heading);
       color: var(--color-text-secondary);
+      padding-left: var(--space-header-title-x);
     }
 
     button {
       margin: 0px 0px 0px 10px;
-      line-height: var(--line-height-form-toggle);
       padding: 0 5px;
       border-radius: var(--radius-form-toggle);
       box-shadow: var(--button-shadow), var(--shadow-card);
@@ -72,9 +86,13 @@ function toggleMinimized() {
       svg {
         height: var(--size-form-toggle-icon);
         width: var(--size-form-toggle-icon);
-        padding-bottom: var(--space-form-icon-offset);
       }
     }
+  }
+
+  .tasks {
+    flex: 1;
+    min-height: 0;
   }
 
   &.minimized {
@@ -90,10 +108,9 @@ function toggleMinimized() {
     }
   }
 
-  input {
-    height: var(--size-input-height);
-    width: var(--size-input-width);
+  .task-input {
     margin: var(--space-form-input);
+    flex-shrink: 0;
   }
 }
 </style>

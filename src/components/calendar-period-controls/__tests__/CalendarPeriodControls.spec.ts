@@ -51,4 +51,17 @@ describe('CalendarPeriodControls', () => {
 
     expect(store.period).toBe(CALENDAR_PERIODS.year)
   })
+
+  it('выставляет aria-pressed="true" только на активной кнопке', () => {
+    const store = useCalendarStore()
+
+    store.setPeriod(CALENDAR_PERIODS.year)
+
+    const wrapper = mountControls()
+    const buttons = wrapper.findAll('button')
+
+    expect(buttons[0]!.attributes('aria-pressed')).toBe('false')
+    expect(buttons[1]!.attributes('aria-pressed')).toBe('false')
+    expect(buttons[2]!.attributes('aria-pressed')).toBe('true')
+  })
 })

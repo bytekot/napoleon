@@ -26,6 +26,7 @@ const weekDates = computed(() => getWeekDayDates(props.date))
 
   .day {
     flex: 1;
+    min-width: 0;
     border-right: 1px solid var(--color-border-default);
 
     .tasks {

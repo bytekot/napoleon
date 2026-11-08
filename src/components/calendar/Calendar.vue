@@ -26,7 +26,7 @@ const store = useCalendarStore()
   flex-direction: column;
 
   .header {
-    flex: 0;
+    flex: 0 0 auto;
   }
 
   .view {

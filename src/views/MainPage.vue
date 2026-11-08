@@ -28,6 +28,7 @@ onMounted(() => {
 
   .task-form {
     max-width: var(--size-sidebar-max);
+    height: 100%;
   }
 
   .calendar {

@@ -1,9 +1,16 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { shallowMount } from '@vue/test-utils'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { mount, type VueWrapper } from '@vue/test-utils'
+import { defineComponent, h } from 'vue'
 import { setActivePinia, createPinia } from 'pinia'
-import TaskItem from '../TaskItem.vue'
+import { DndScope } from '../../../composables/dnd'
+import TaskList from '../../tasks/TaskList.vue'
 import { useTaskStore } from '../../../stores/task'
+import * as api from '../../../api/tasks'
 import type { Task } from '../../../types/tasks'
+
+vi.mock('../../../api/tasks')
+
+const mockApi = vi.mocked(api)
 
 function makeTask(overrides: Partial<Task> = {}): Task {
   return {
@@ -18,55 +25,58 @@ function makeTask(overrides: Partial<Task> = {}): Task {
 }
 
 describe('TaskItem', () => {
+  let wrapper: VueWrapper
+
   beforeEach(() => {
     setActivePinia(createPinia())
     vi.clearAllMocks()
+    mockApi.editTasks.mockResolvedValue([])
   })
 
-  it('рендерит задачу с правильным текстом', () => {
+  afterEach(() => {
+    wrapper.unmount()
+  })
+
+  function mountTaskItem(task: Task) {
     const store = useTaskStore()
-    const task = makeTask({ name: 'My task' })
 
     store.entities[task.id] = task
     store.ids = [task.id]
 
-    const wrapper = shallowMount(TaskItem, {
-      props: { taskId: task.id },
+    const TestWrapper = defineComponent({
+      components: { DndScope, TaskList },
+      setup() {
+        return () => h(DndScope, null, () => h(TaskList, { dueDate: task.dueDate }))
+      },
     })
 
-    expect(wrapper.find('.text').text()).toBe('My task')
+    wrapper = mount(TestWrapper, { attachTo: document.body })
+
+    return wrapper
+  }
+
+  it('рендерит задачу с правильным текстом', () => {
+    const task = makeTask({ name: 'My task' })
+    const w = mountTaskItem(task)
+
+    expect(w.find('.text').text()).toBe('My task')
   })
 
   it('добавляет класс completed для завершённой задачи', () => {
-    const store = useTaskStore()
     const task = makeTask({ completed: true })
+    const w = mountTaskItem(task)
 
-    store.entities[task.id] = task
-    store.ids = [task.id]
-
-    const wrapper = shallowMount(TaskItem, {
-      props: { taskId: task.id },
-    })
-
-    expect(wrapper.find('.task').classes()).toContain('completed')
+    expect(w.find('.task').classes()).toContain('completed')
   })
 
   it('не добавляет класс completed для незавершённой задачи', () => {
-    const store = useTaskStore()
     const task = makeTask({ completed: false })
+    const w = mountTaskItem(task)
 
-    store.entities[task.id] = task
-    store.ids = [task.id]
-
-    const wrapper = shallowMount(TaskItem, {
-      props: { taskId: task.id },
-    })
-
-    expect(wrapper.find('.task').classes()).not.toContain('completed')
+    expect(w.find('.task').classes()).not.toContain('completed')
   })
 
   it('добавляет класс overdue для просроченной задачи', () => {
-    const store = useTaskStore()
     const yesterday = new Date()
 
     yesterday.setDate(yesterday.getDate() - 1)
@@ -74,19 +84,12 @@ describe('TaskItem', () => {
       completed: false,
       dueDate: yesterday.toISOString().split('T')[0],
     })
+    const w = mountTaskItem(task)
 
-    store.entities[task.id] = task
-    store.ids = [task.id]
-
-    const wrapper = shallowMount(TaskItem, {
-      props: { taskId: task.id },
-    })
-
-    expect(wrapper.find('.task').classes()).toContain('overdue')
+    expect(w.find('.task').classes()).toContain('overdue')
   })
 
   it('не добавляет класс overdue для завершённой просроченной задачи', () => {
-    const store = useTaskStore()
     const yesterday = new Date()
 
     yesterday.setDate(yesterday.getDate() - 1)
@@ -94,19 +97,12 @@ describe('TaskItem', () => {
       completed: true,
       dueDate: yesterday.toISOString().split('T')[0],
     })
+    const w = mountTaskItem(task)
 
-    store.entities[task.id] = task
-    store.ids = [task.id]
-
-    const wrapper = shallowMount(TaskItem, {
-      props: { taskId: task.id },
-    })
-
-    expect(wrapper.find('.task').classes()).not.toContain('overdue')
+    expect(w.find('.task').classes()).not.toContain('overdue')
   })
 
   it('не добавляет класс overdue для задачи со сроком сегодня', () => {
-    const store = useTaskStore()
     const now = new Date()
     const pad = (n: number) => String(n).padStart(2, '0')
     const today = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
@@ -114,56 +110,33 @@ describe('TaskItem', () => {
       completed: false,
       dueDate: today,
     })
+    const w = mountTaskItem(task)
 
-    store.entities[task.id] = task
-    store.ids = [task.id]
-
-    const wrapper = shallowMount(TaskItem, {
-      props: { taskId: task.id },
-    })
-
-    expect(wrapper.find('.task').classes()).not.toContain('overdue')
-  })
-
-  it('draggable=false для завершённой задачи', () => {
-    const store = useTaskStore()
-    const task = makeTask({ completed: true })
-
-    store.entities[task.id] = task
-    store.ids = [task.id]
-
-    const wrapper = shallowMount(TaskItem, {
-      props: { taskId: task.id },
-    })
-
-    expect(wrapper.find('.task').attributes('draggable')).toBe('false')
-  })
-
-  it('draggable=true для незавершённой задачи', () => {
-    const store = useTaskStore()
-    const task = makeTask({ completed: false })
-
-    store.entities[task.id] = task
-    store.ids = [task.id]
-
-    const wrapper = shallowMount(TaskItem, {
-      props: { taskId: task.id },
-    })
-
-    expect(wrapper.find('.task').attributes('draggable')).toBe('true')
+    expect(w.find('.task').classes()).not.toContain('overdue')
   })
 
   it('устанавливает data-task-id на корневой элемент', () => {
-    const store = useTaskStore()
     const task = makeTask({ id: 'task-42' })
+    const w = mountTaskItem(task)
 
-    store.entities[task.id] = task
-    store.ids = [task.id]
+    expect(w.find('[data-task]').attributes('data-task-id')).toBe('task-42')
+  })
 
-    const wrapper = shallowMount(TaskItem, {
-      props: { taskId: task.id },
-    })
+  it('переключает выполнение при клике по карточке', async () => {
+    const task = makeTask({ completed: false })
+    const store = useTaskStore()
+    const spy = vi.spyOn(store, 'editTask')
+    const w = mountTaskItem(task)
 
-    expect(wrapper.find('[data-task]').attributes('data-task-id')).toBe('task-42')
+    await w.find('[data-task]').trigger('click')
+
+    expect(spy).toHaveBeenCalledWith({ id: task.id, completed: true })
+  })
+
+  it('устанавливает aria-label на чекбокс из имени задачи', () => {
+    const task = makeTask({ name: 'Buy milk' })
+    const w = mountTaskItem(task)
+
+    expect(w.find('input[type="checkbox"]').attributes('aria-label')).toBe('Buy milk')
   })
 })

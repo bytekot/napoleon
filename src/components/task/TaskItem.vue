@@ -1,66 +1,56 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, useTemplateRef } from 'vue'
 import { useTaskStore } from '../../stores/task'
-import { useCalendarStore } from '../../stores/calendar'
+import { useSortableTaskItem } from '../../composables/dnd'
+import type { Task } from '../../types/tasks'
 
 const props = defineProps<{
-  taskId: string
+  task: Task
   mini?: boolean
 }>()
 
 const store = useTaskStore()
-const calendarStore = useCalendarStore()
 
-const task = computed(() => store.taskById(props.taskId))
+const el = useTemplateRef<HTMLElement>('el')
+const { isPlaceholder } = useSortableTaskItem(el, { task: () => props.task })
 
 const now = new Date()
 
 now.setHours(0, 0, 0, 0)
 
 const isOverdue = computed(() => {
-  if (!task.value) return false
-
-  return !task.value.completed && task.value.dueDate !== null && new Date(task.value.dueDate) < now
+  return !props.task.completed && props.task.dueDate !== null && new Date(props.task.dueDate) < now
 })
 
-const isDragged = computed(() => calendarStore.movingItemId === props.taskId)
-
-function onCheckChange(event: Event) {
-  if (!task.value) return
-  const target = event.target as HTMLInputElement
-
-  void store.editTask({ id: props.taskId, completed: target.checked })
+function onCheckChange() {
+  void store.editTask({ id: props.task.id, completed: !props.task.completed })
 }
 
-function onDragStart(event: DragEvent) {
-  if (!task.value) return
-  calendarStore.setMovingItemId(null)
-  const target = event.currentTarget as HTMLElement
-
-  event.dataTransfer!.effectAllowed = 'move'
-  event.dataTransfer!.setData('text/plain', props.taskId)
-  calendarStore.setMovingItemId(props.taskId)
-  target.addEventListener('dragend', () => calendarStore.setMovingItemId(null), { once: true })
+function onInputKeydown(event: KeyboardEvent) {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault()
+    onCheckChange()
+  }
 }
 </script>
 
 <template>
-  <!-- data-task: точка приложения внешних классов (border-top, border-bottom) из TaskList -->
-  <div data-task :data-task-id="taskId">
+  <div ref="el" data-task :data-task-id="task.id" @click="onCheckChange">
     <div
-      v-if="task"
       class="task"
-      :class="{ completed: task.completed, overdue: isOverdue, dragged: isDragged, mini }"
-      :draggable="!task.completed"
-      @dragstart="onDragStart"
+      :class="{ completed: task.completed, overdue: isOverdue, dragged: isPlaceholder, mini }"
     >
       <span class="style" />
       <span>
-        <label>
-          <input type="checkbox" :checked="task.completed" @change="onCheckChange" />
-          <span class="checkmark" />
-          <span class="text">{{ task.name }}</span>
-        </label>
+        <input
+          type="checkbox"
+          :checked="task.completed"
+          :aria-label="task.name"
+          @click.stop
+          @keydown.stop="onInputKeydown"
+        />
+        <span class="checkmark" />
+        <span class="text">{{ task.name }}</span>
       </span>
     </div>
   </div>
@@ -77,45 +67,41 @@ function onDragStart(event: DragEvent) {
   overflow: hidden;
   cursor: pointer;
 
-  label {
-    display: block;
-    position: relative;
+  input[type='checkbox'] {
+    position: absolute;
+    opacity: 0;
+    height: 0;
+    width: 0;
     cursor: pointer;
+  }
 
-    input {
-      position: absolute;
-      opacity: 0;
-      height: 0;
-      width: 0;
-      cursor: pointer;
-    }
+  .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: var(--size-checkmark);
+    width: var(--size-checkmark);
+    padding: 0;
+    background-color: var(--color-bg-checkmark);
+    box-shadow: var(--shadow-checkmark);
+    border-radius: var(--radius-checkmark);
+    cursor: pointer;
+  }
 
-    .checkmark {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: var(--size-checkmark);
-      width: var(--size-checkmark);
-      padding: 0;
-      background-color: var(--color-bg-checkmark);
-      box-shadow: var(--shadow-checkmark);
-      border-radius: var(--radius-checkmark);
-    }
+  .text {
+    margin-left: var(--space-checkmark-text);
+  }
 
-    .text {
-      margin-left: var(--space-checkmark-text);
-    }
+  &:hover {
+    background-color: var(--color-bg-card-hover);
+    box-shadow: var(--shadow-card-hover);
 
-    &:hover {
-      input {
-        ~ .checkmark {
-          background-color: var(--color-bg-checkmark-hover);
-        }
-      }
+    input[type='checkbox'] ~ .checkmark {
+      background-color: var(--color-bg-checkmark-hover);
     }
   }
 
-  label input:checked ~ .checkmark {
+  input[type='checkbox']:checked ~ .checkmark {
     background-color: var(--color-bg-checkmark-checked);
     box-shadow: var(--shadow-checkmark);
     opacity: 0.8;
@@ -131,11 +117,11 @@ function onDragStart(event: DragEvent) {
     display: none;
   }
 
-  label input:checked ~ .checkmark:after {
+  input[type='checkbox']:checked ~ .checkmark:after {
     display: block;
   }
 
-  label .checkmark:after {
+  .checkmark:after {
     left: 8px;
     top: 4px;
     width: 5px;
@@ -153,11 +139,6 @@ function onDragStart(event: DragEvent) {
     height: 100%;
   }
 
-  &:hover {
-    background-color: var(--color-bg-card-hover);
-    box-shadow: var(--shadow-card-hover);
-  }
-
   &.dragged {
     opacity: 0.5;
   }
@@ -168,7 +149,7 @@ function onDragStart(event: DragEvent) {
     cursor: default;
     transition: var(--transition-card-completed);
 
-    label {
+    .checkmark {
       cursor: default;
     }
   }
@@ -182,7 +163,7 @@ function onDragStart(event: DragEvent) {
       padding-right: var(--space-overdue-warning);
     }
 
-    label input:checked ~ .text {
+    input[type='checkbox']:checked ~ .text {
       opacity: 0.1;
     }
   }

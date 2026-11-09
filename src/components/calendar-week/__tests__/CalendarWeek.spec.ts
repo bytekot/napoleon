@@ -14,7 +14,7 @@ describe('CalendarWeek', () => {
   function mountWeek(date: Date = new Date(2026, 10, 2)) {
     return mount(CalendarWeek, {
       props: { date },
-      global: { plugins: [pinia] },
+      global: { plugins: [pinia], stubs: { TaskList: true } },
     })
   }
 

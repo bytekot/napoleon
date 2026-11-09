@@ -428,6 +428,49 @@ const { items } = useSortableTaskList(listRef, {
 - Reorder внутри дня работает в браузере: pointer + keyboard (Tab → Space → ↑/↓ → Space)
 - Характеризационный e2e-тест #2 (внутри дня) зелёный после переписывания `dragTask()` на pointer-жест
 
+### 2.4. Известная промежуточная поломка (до Фазы 4)
+
+Фаза 2 удаляет вызов `calendarStore.setMovingItemId` из TaskItem, но `isDndMode` в
+CalendarHeader всё ещё читает `movingItemId`. Результат:
+
+- **E2E-тесты #3 (no-op + midDragAssert на dnd-mode) и #4 (корзина) красные.** Тест #3
+  падает на `toHaveClass(/dnd-mode/)` в midDragAssert; тест #4 — на таймауте видимости
+  `.action-delete` (`display: none` до `dnd-mode`).
+- **В приложении корзина недоступна через drag** между Фазой 2 и Фазой 4: `dnd-mode`
+  никогда не появляется, `action-delete` остаётся скрытой. Удаление задач возможно только
+  через API или будущие UI-альтернативы.
+
+Это осознанный компромисс фазного подхода: Фаза 4 переносит `isDndMode` на
+`useDnDStatus().isDragging` и заменяет HTML5-хендлеры ActionArea на `makeDroppable`,
+после чего тесты #3 и #4 снова зеленеют. До этого момента решение №6 плана («каждая фаза
+зелёная в CI») выполняется только для подмножества тестов, указанных в критерии фазы 2.
+
+### 2.5. Решения, принятые при реализации фазы 2 (по итогам ревью, 2026-11-09)
+
+- **R-1. Toggle по клику всей карточки.** Скетч 2.1 оставлял чекбокс без способа
+  переключения мышью (label удалён, `@click` не добавлен). Фактически: `@click` на корневом
+  `div[data-task]` → `editTask(completed: !task.completed)`; у чекбокса `@click.stop`
+  (чтобы не было двойного toggle) и `@keydown.stop` (Space/Enter переключают и не всплывают
+  до keyboard-сенсора библиотеки). После drag библиотека сама глотает click (pitfall #31) —
+  случайного toggle при drop нет.
+- **R-2. `aria-label` на чекбоксе.** Без label input потерял accessible name;
+  `:aria-label="task.name"` возвращает его скринридеру.
+- **R-3. `task` в `useSortableTaskItem` — геттер (`MaybeRefOrGetter` + `toValue`).**
+  Скетч фазы 1 передавал объект значением: снимок устаревал после любой замены объекта
+  в store (editTask/reorderTask), ломая `disabled` и данные overlay при переиспользовании
+  компонента (`:key="task.id"`). Геттер — предписанный паттерн библиотеки (pitfall #16).
+- **R-4. `showAddIcon` = `isOver && taskIds.length === 0`.** Промежуточная реализация
+  показывала «+» у любого пустого списка всегда, делая ветку `empty-text` недостижимой.
+  Старая семантика (только при drag-over) восстановлена через `isOver` из `makeSortableList`
+  (аналог прежнего `position !== null`).
+- **R-5. `<li>`-обёртки в `<ul>` вместо скетча 2.2** (TaskItem прямым потомком `ul`):
+  `<ul>` требует `<li>`, измерение библиотеки работает по ref-элементу карточки — e2e
+  подтверждает. Margin перенесён на `> li`.
+- **R-6. Тесты компонентов** (TaskItem, TaskList) монтируются внутри `DndScope`
+  (композитables требуют провайдера); CalendarWeek/Month/TaskForm стабят `TaskList`.
+  В TaskItem.spec добавлены тесты toggle-клика и `aria-label`; mount — с `unmount()`
+  в `afterEach` (attachTo document.body).
+
 ---
 
 ## Фаза 3. Cross-day и unplanned

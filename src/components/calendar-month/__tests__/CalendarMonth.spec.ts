@@ -14,7 +14,7 @@ describe('CalendarMonth', () => {
   function mountMonth(date: Date = new Date(2026, 10, 1), minimized = false) {
     return mount(CalendarMonth, {
       props: { date, minimized },
-      global: { plugins: [pinia] },
+      global: { plugins: [pinia], stubs: { TaskList: true } },
     })
   }
 

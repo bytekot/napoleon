@@ -19,7 +19,7 @@ describe('TaskForm', () => {
   })
 
   function mountForm() {
-    return mount(TaskForm, { global: { plugins: [pinia] } })
+    return mount(TaskForm, { global: { plugins: [pinia], stubs: { TaskList: true } } })
   }
 
   it('очищает textarea после создания задачи', async () => {

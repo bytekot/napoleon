@@ -1,4 +1,4 @@
-import { computed, type Ref } from 'vue'
+import { computed, type Ref, toValue, type MaybeRefOrGetter } from 'vue'
 import { makeSortableList, makeSortableItem } from '@vue-dnd-kit/core'
 import { useTaskStore } from '../../stores/task'
 import type { Task } from '../../types/tasks'
@@ -17,7 +17,7 @@ export function useSortableTaskList(
         .filter(Boolean) as Task[],
   )
 
-  const { items } = makeSortableList(listRef, {
+  const { items, isOver } = makeSortableList(listRef, {
     id: options.dueDate ?? 'unplanned',
     group: 'tasks',
     items: tasks,
@@ -31,13 +31,16 @@ export function useSortableTaskList(
     },
   })
 
-  return { items }
+  return { items, isOver }
 }
 
-export function useSortableTaskItem(elRef: Ref<HTMLElement | null>, options: { task: Task }) {
+export function useSortableTaskItem(
+  elRef: Ref<HTMLElement | null>,
+  options: { task: MaybeRefOrGetter<Task> },
+) {
   const { isDragging, isPlaceholder, selected } = makeSortableItem(elRef, {
-    item: () => options.task,
-    disabled: () => options.task.completed,
+    item: () => toValue(options.task),
+    disabled: () => toValue(options.task).completed,
   })
 
   return { isDragging, isPlaceholder, selected }

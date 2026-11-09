@@ -48,7 +48,13 @@ function onDrop(event: DragEvent) {
 </script>
 
 <template>
-  <div class="task-list" @dragover="onDragOver" @dragleave="onDragLeave" @drop="onDrop">
+  <div
+    class="task-list"
+    :data-due-date="dueDate ?? 'unplanned'"
+    @dragover="onDragOver"
+    @dragleave="onDragLeave"
+    @drop="onDrop"
+  >
     <div v-if="isLoading" class="loading">Загрузка...</div>
     <div v-else-if="showAddIcon" class="add-task"><Plus size="medium" /></div>
     <div v-else-if="taskIds.length === 0 && emptyText" class="empty-text">{{ emptyText }}</div>

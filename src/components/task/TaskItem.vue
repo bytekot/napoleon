@@ -46,7 +46,7 @@ function onDragStart(event: DragEvent) {
 
 <template>
   <!-- data-task: точка приложения внешних классов (border-top, border-bottom) из TaskList -->
-  <div data-task>
+  <div data-task :data-task-id="taskId">
     <div
       v-if="task"
       class="task"

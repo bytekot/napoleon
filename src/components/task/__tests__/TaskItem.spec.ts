@@ -152,4 +152,18 @@ describe('TaskItem', () => {
 
     expect(wrapper.find('.task').attributes('draggable')).toBe('true')
   })
+
+  it('устанавливает data-task-id на корневой элемент', () => {
+    const store = useTaskStore()
+    const task = makeTask({ id: 'task-42' })
+
+    store.entities[task.id] = task
+    store.ids = [task.id]
+
+    const wrapper = shallowMount(TaskItem, {
+      props: { taskId: task.id },
+    })
+
+    expect(wrapper.find('[data-task]').attributes('data-task-id')).toBe('task-42')
+  })
 })

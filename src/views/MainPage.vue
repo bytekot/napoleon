@@ -4,6 +4,7 @@ import Layout from '../components/layout/Layout.vue'
 import TaskForm from '../components/task-form/TaskForm.vue'
 import Calendar from '../components/calendar/Calendar.vue'
 import { useTaskStore } from '../stores/task'
+import { DndScope } from '../composables/dnd'
 
 const store = useTaskStore()
 
@@ -14,10 +15,12 @@ onMounted(() => {
 
 <template>
   <Layout>
-    <div class="main-page">
-      <TaskForm class="task-form" />
-      <Calendar class="calendar" />
-    </div>
+    <DndScope>
+      <div class="main-page">
+        <TaskForm class="task-form" />
+        <Calendar class="calendar" />
+      </div>
+    </DndScope>
   </Layout>
 </template>
 

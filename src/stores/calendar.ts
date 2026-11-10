@@ -4,17 +4,15 @@ import type { CalendarPeriod } from '../types/calendar'
 import { getDateWithOffset } from '../utils/calendar'
 
 export const useCalendarStore = defineStore('calendar', {
-  state: (): { date: Date; period: CalendarPeriod; movingItemId: string | null } => ({
+  state: (): { date: Date; period: CalendarPeriod } => ({
     date: new Date(),
     period: DEFAULT_CALENDAR_PERIOD,
-    movingItemId: null,
   }),
 
   getters: {
     isPeriodWeek: (state) => state.period === CALENDAR_PERIODS.week,
     isPeriodMonth: (state) => state.period === CALENDAR_PERIODS.month,
     isPeriodYear: (state) => state.period === CALENDAR_PERIODS.year,
-    isDndMode: (state) => state.movingItemId !== null,
   },
 
   actions: {
@@ -36,10 +34,6 @@ export const useCalendarStore = defineStore('calendar', {
 
     setToday() {
       this.date = new Date()
-    },
-
-    setMovingItemId(id: string | null) {
-      this.movingItemId = id
     },
   },
 })

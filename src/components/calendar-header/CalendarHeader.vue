@@ -4,6 +4,7 @@ import { useCalendarStore } from '../../stores/calendar'
 import { useTaskStore } from '../../stores/task'
 import { CALENDAR_PERIODS } from '../../constants/calendar'
 import { getMonthName } from '../../utils/calendar'
+import { useDndStatus } from '../../composables/dnd'
 import ActionArea from '../action-area/ActionArea.vue'
 import CaretUp from '../icon/CaretUp.vue'
 import Trash from '../icon/Trash.vue'
@@ -12,10 +13,9 @@ import CalendarDateControls from '../calendar-date-controls/CalendarDateControls
 
 const store = useCalendarStore()
 const taskStore = useTaskStore()
+const { isDragging } = useDndStatus()
 
 const headerText = computed(() => `${getMonthName(store.date)} ${store.date.getFullYear()}`)
-
-const isDndMode = computed(() => store.isDndMode)
 
 function onTogglePeriodEnter() {
   const target = store.isPeriodMonth ? CALENDAR_PERIODS.week : CALENDAR_PERIODS.month
@@ -23,21 +23,18 @@ function onTogglePeriodEnter() {
   setTimeout(() => store.setPeriod(target), 200)
 }
 
-function onDeleteDrop(event: DragEvent) {
-  const id = event.dataTransfer?.getData('text/plain')
-
-  if (!id) return
-  void taskStore.deleteTask(id)
+function onDeleteDrop(taskId: string) {
+  void taskStore.deleteTask(taskId)
 }
 </script>
 
 <template>
-  <div class="calendar-header" :class="{ 'dnd-mode': isDndMode }">
+  <div class="calendar-header" :class="{ 'dnd-mode': isDragging }">
     <h1>{{ headerText }}</h1>
     <ActionArea class="action-toggle-period" @enter="onTogglePeriodEnter">
       <CaretUp size="medium" />
     </ActionArea>
-    <ActionArea class="action-delete" dangerous @drop="onDeleteDrop">
+    <ActionArea id="trash" class="action-delete" dangerous @drop="onDeleteDrop">
       <Trash size="medium" />
     </ActionArea>
     <CalendarPeriodControls class="period-controls" />

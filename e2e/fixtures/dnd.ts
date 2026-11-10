@@ -83,8 +83,11 @@ export async function dragTask(
   toSelector: string,
   options: DragOptions = {},
 ): Promise<void> {
-  const from = page.locator(`[data-task-id="${fromTaskId}"]`)
-  const to = page.locator(toSelector)
+  const notPlaceholder = ':not([data-dnd-placeholder])'
+  const from = page.locator(`[data-task-id="${fromTaskId}"]${notPlaceholder}`)
+  const to = page.locator(
+    toSelector.includes('[data-task-id') ? `${toSelector}${notPlaceholder}` : toSelector,
+  )
 
   await from.waitFor({ state: 'visible' })
 

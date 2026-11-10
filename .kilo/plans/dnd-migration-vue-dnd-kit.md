@@ -651,6 +651,14 @@ const { isOver } = useDropZone(el, {
 - `dnd-mode` хедера появляется/исчезает при drag
 - Unit-тесты `calendarStore` обновлены (удалить `movingItemId`-тесты, добавить `isDndMode` из adapter если нужно)
 
+### 4.5. Решения, принятые при реализации фазы 4
+
+- **F4-1. Гибридный ActionArea через единый `useDropZone`.** Нативные HTML5 drag events не генерируются во время vue-dnd-kit drag. Toggle-period zone тоже идёт через `makeDroppable`: без `id` — синтетический id `'action-area-hover'`, emit `enter` через `onDragEnter` callback.
+- **F4-2. `accept: '*'` вместо `accept: 'task'`.** Standalone droppable с `accept: 'task'` не принимал untyped sortable items. Все draggable в приложении — задачи, фильтрация не нужна.
+- **F4-3. `e.active.ids[0]` вместо `e.active.id`.** Документация указывает `e.active.ids` (массив).
+- **F4-4. E2E: `:not([data-dnd-placeholder])` в селекторах.** Placeholder имеет тот же `data-task-id`; strict mode Playwright падает. Атрибут `data-dnd-placeholder` — публичный API библиотеки.
+- **F4-5. Emit `enter` без аргументов.** `onDragEnter` callback библиотеки не даёт `DragEvent`; CalendarHeader не использовал аргумент.
+
 ---
 
 ## Фаза 5. Characterization → full e2e
@@ -756,10 +764,10 @@ test('keyboard drag: Space → ArrowDown → Space', async ({ page }) => {
 
 - [ ] Pre-step: (отменён — см. O-1)
 - [x] Фаза 0: `@vue-dnd-kit/core` установлен; `docs/testing.md` обновлён; 5 characterization-тестов зелёные на HTML5 (решения и отклонения — раздел 0.4)
-- [ ] Фаза 1: Adapter-слой в `src/composables/dnd/`; `pnpm check` зелёный; ноль импортов библиотеки вне adapter
-- [ ] Фаза 2: Пилот (reorder внутри дня) работает; unit-тесты `computeReorder` и store без изменений; e2e #2 зелёный
-- [ ] Фаза 3: Cross-day и unplanned работают; e2e #1, #2, #5, #6 зелёные; #3, #4 красные (до фазы 4); unit-тесты computeReorder и store без изменений; month-view smoke-check пройден
-- [ ] Фаза 4: Action zones (корзина) работают; `movingItemId` удалён из store; e2e #4 зелёный
+- [x] Фаза 1: Adapter-слой в `src/composables/dnd/`; `pnpm check` зелёный; ноль импортов библиотеки вне adapter
+- [x] Фаза 2: Пилот (reorder внутри дня) работает; unit-тесты `computeReorder` и store без изменений; e2e #2 зелёный
+- [x] Фаза 3: Cross-day и unplanned работают; e2e #1, #2, #5, #6 зелёные; #3, #4 красные (до фазы 4); unit-тесты computeReorder и store без изменений; month-view smoke-check пройден
+- [x] Фаза 4: Action zones (корзина) работают; `movingItemId` удалён из store; e2e #3, #4 зелёные (решения и отклонения — раздел 4.5)
 - [ ] Фаза 5: `dragTask()` переписан на pointer; mid-drag ассерты; keyboard-drag сценарий; все 5 e2e зелёные в обеих модах
 
 ---

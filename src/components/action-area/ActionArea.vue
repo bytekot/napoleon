@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, useTemplateRef } from 'vue'
+import { useDropZone } from '../../composables/dnd'
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
+    id?: string
     dangerous?: boolean
   }>(),
   {
+    id: undefined,
     dangerous: false,
   },
 )
@@ -15,44 +18,34 @@ defineSlots<{
 }>()
 
 const emit = defineEmits<{
-  enter: [event: DragEvent]
-  leave: [event: DragEvent]
-  drop: [event: DragEvent]
+  enter: []
+  drop: [taskId: string]
 }>()
 
-const hovered = ref(false)
+const el = useTemplateRef<HTMLElement>('el')
 
-function onDragEnter(event: DragEvent) {
-  if (hovered.value) return
+const isDropMode = computed(() => !!props.id)
 
-  hovered.value = true
-  emit('enter', event)
-}
+const { isOver } = useDropZone(el, {
+  id: props.id ?? 'action-area-hover',
+  accept: '*',
+  onDragEnter: () => {
+    if (!isDropMode.value) {
+      emit('enter')
+    }
+  },
+  onDrop: (taskId) => {
+    if (isDropMode.value) {
+      emit('drop', taskId)
+    }
+  },
+})
 
-function onDragLeave(event: DragEvent) {
-  const root = event.currentTarget as HTMLElement
-
-  if (event.relatedTarget instanceof Node && root.contains(event.relatedTarget)) return
-
-  hovered.value = false
-  emit('leave', event)
-}
-
-function onDrop(event: DragEvent) {
-  hovered.value = false
-  emit('drop', event)
-}
+const active = computed(() => isOver.value)
 </script>
 
 <template>
-  <div
-    class="action-area"
-    :class="{ dangerous, active: hovered }"
-    @dragenter="onDragEnter"
-    @dragleave="onDragLeave"
-    @dragover.prevent
-    @drop="onDrop"
-  >
+  <div ref="el" class="action-area" :class="{ dangerous, active }">
     <slot />
   </div>
 </template>

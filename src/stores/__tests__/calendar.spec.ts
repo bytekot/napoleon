@@ -132,33 +132,4 @@ describe('useCalendarStore', () => {
       expect(store.date.toDateString()).toBe(new Date().toDateString())
     })
   })
-
-  describe('movingItemId и isDndMode', () => {
-    it('начальное состояние: movingItemId === null, isDndMode === false', () => {
-      const store = useCalendarStore()
-
-      expect(store.movingItemId).toBeNull()
-      expect(store.isDndMode).toBe(false)
-    })
-
-    it('setMovingItemId("task-1") → movingItemId === "task-1", isDndMode === true', () => {
-      const store = useCalendarStore()
-
-      store.setMovingItemId('task-1')
-
-      expect(store.movingItemId).toBe('task-1')
-      expect(store.isDndMode).toBe(true)
-    })
-
-    it('setMovingItemId(null) → сброс в null и isDndMode === false', () => {
-      const store = useCalendarStore()
-
-      store.setMovingItemId('task-1')
-
-      store.setMovingItemId(null)
-
-      expect(store.movingItemId).toBeNull()
-      expect(store.isDndMode).toBe(false)
-    })
-  })
 })

@@ -25,8 +25,8 @@ const dateTime = computed(() => getMonth(props.date))
       {{ day }}
     </div>
     <CalendarDay
-      v-for="(dayDate, index) in monthDates"
-      :key="index"
+      v-for="dayDate in monthDates"
+      :key="formatDateISO(dayDate)"
       :date="dayDate"
       :minimized="minimized"
       class="day"

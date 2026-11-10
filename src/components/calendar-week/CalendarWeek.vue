@@ -13,7 +13,12 @@ const weekDates = computed(() => getWeekDayDates(props.date))
 
 <template>
   <time class="calendar-week">
-    <CalendarDay v-for="(dayDate, index) in weekDates" :key="index" :date="dayDate" class="day">
+    <CalendarDay
+      v-for="dayDate in weekDates"
+      :key="formatDateISO(dayDate)"
+      :date="dayDate"
+      class="day"
+    >
       <TaskList :due-date="formatDateISO(dayDate)" class="tasks" />
     </CalendarDay>
   </time>

@@ -3,7 +3,8 @@ import { dragTask, seedTasks, taskIdsInList, weekDayISO } from './fixtures/dnd'
 
 // Characterization-тесты: ассерты на конечное состояние, механизм drag изолирован
 // в хелпере dragTask (e2e/fixtures/dnd.ts). Дни недели распределены по тестам без
-// пересечений: пн — «между днями», вт — «из unplanned», ср — «в конец», чт — «no-op».
+// пересечений: пн — «между днями», вт — «из unplanned», ср — «в конец», чт — «no-op»,
+// пт — «из дня в unplanned» (тест 6, источник cross-day в тесте 2).
 test.describe('Characterization-тесты DnD', () => {
   test('переносит задачу из unplanned в конкретный день', async ({ page }) => {
     const tuesday = weekDayISO(1)
@@ -125,5 +126,28 @@ test.describe('Characterization-тесты DnD', () => {
     expect(wednesdayIds).toContain(c1.id)
     expect(wednesdayIds[wednesdayIds.length - 1]).toBe(u3.id)
     expect(unplannedIds).not.toContain(u3.id)
+  })
+
+  test('переносит задачу из конкретного дня в unplanned', async ({ page }) => {
+    const friday = weekDayISO(4)
+    const [d1, d2] = await seedTasks([
+      { name: 'Char D1', dueDate: friday, order: 0 },
+      { name: 'Char D2', dueDate: friday, order: 1 },
+    ])
+
+    await page.goto('/?period=week')
+
+    await dragTask(page, d1.id, '.task-list[data-due-date="unplanned"]')
+
+    await expect(
+      page.locator('.task-list[data-due-date="unplanned"] [data-task-id="' + d1.id + '"]'),
+    ).toBeVisible()
+
+    const fridayIds = await taskIdsInList(page, `.task-list[data-due-date="${friday}"]`)
+    const unplannedIds = await taskIdsInList(page, '.task-list[data-due-date="unplanned"]')
+
+    expect(fridayIds).not.toContain(d1.id)
+    expect(fridayIds).toContain(d2.id)
+    expect(unplannedIds).toContain(d1.id)
   })
 })

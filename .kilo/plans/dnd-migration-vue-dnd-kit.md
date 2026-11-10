@@ -24,7 +24,12 @@
 | 8 | @vue-dnd-kit/devtools | Сразу в dev-сборку (devDependency) |
 | 9 | TaskItem `<label>` | Проверить в пилоте; если drag не стартует — реструктурировать (убрать label-обёртку, заменить на @click) |
 | 10 | E2E data seeding | Через API в test fixture (beforeEach → POST /api/tasks) |
-| 11 | `:key` в CalendarWeek/Month | Отложено до завершения фазы 2 (O-1) |
+| 11 | `:key` в CalendarWeek/Month | `:key="formatDateISO(dayDate)"` на `<CalendarDay>` (решено 2026-11-10, см. F3-1) |
+| 12 | Drop-handler индекс | Переход на `e.result.get(e.to.list)` + `findIndex` (F3-2) |
+| 13 | Unplanned intra-list drag | `sort: false` (F3-4) |
+| 14 | E2E day → unplanned | Добавить тест #6 (F3-3) |
+| 15 | Month-view scope | Ручной smoke-check, без e2e (F3-5) |
+| 16 | Day-header droppable | Out of scope для фазы 3 (F3-6) |
 
 ## Фаза 0. Подготовка
 
@@ -475,25 +480,100 @@ CalendarHeader всё ещё читает `movingItemId`. Результат:
 
 ## Фаза 3. Cross-day и unplanned
 
-### 3.1. TaskList.vue — без изменений
+### Решения, принятые перед фазой 3
 
-Adapter уже передаёт `group: 'tasks'` и `id: dueDate ?? 'unplanned'`. Cross-day drop работает из коробки.
+| # | Вопрос | Решение |
+|---|---|---|
+| F3-1 | O-1: stale `id` и closure при навигации | `:key="formatDateISO(dayDate)"` на `<CalendarDay>` в CalendarWeek и CalendarMonth |
+| F3-2 | Семантика `e.to.index` | Переход на `e.result.get(e.to.list)` + `findIndex` |
+| F3-3 | E2E покрытие day → unplanned | Добавить тест #6 |
+| F3-4 | Unplanned intra-list drag | `sort: false` для unplanned-списка |
+| F3-5 | Month-view в scope | Ручной smoke-check cross-day в month-view |
+| F3-6 | Day-header droppable | Out of scope для фазы 3 |
 
-### 3.2. TaskForm.vue (unplanned-список)
+### 3.1. O-1: `:key="formatDateISO(dayDate)"` на CalendarDay
 
+**Файлы:** `src/components/calendar-week/CalendarWeek.vue`, `src/components/calendar-month/CalendarMonth.vue`
+
+**До:**
 ```vue
-<TaskList :due-date="null" empty-text="Список пуст." class="tasks" />
+<CalendarDay v-for="(dayDate, index) in weekDates" :key="index" :date="dayDate">
 ```
 
-Без изменений. Adapter обрабатывает `dueDate: null` → `id: 'unplanned'`. DnD внутри unplanned — no-op (как сейчас), cross-day → работает.
+**После:**
+```vue
+<CalendarDay v-for="dayDate in weekDates" :key="formatDateISO(dayDate)" :date="dayDate">
+```
 
-### 3.3. Drop-handler в adapter
+Аналогично в CalendarMonth.vue (строка 28–29).
 
-Переводит `(taskId, fromDueDate, toDueDate, newIndex)` → `store.reorderTask(taskId, toDueDate, newIndex)`. Для cross-day `reorderTask` уже работает — изменений в логике нет.
+**Обоснование:** `makeSortableList` читает `id` один раз при setup; замыкание `options.dueDate` в `onDrop` тоже захватывается при setup. При reuse компонента (`:key="index"`) навигация между периодами приводит к stale list ID и stale dueDate в onDrop → silent data corruption. Remount при смене даты устраняет обе проблемы по конструкции. CalendarDay и TaskList stateless — потеря внутреннего состояния несущественна. Автоматически защищает будущий day-header droppable в фазе 4.
 
-**Критерий:**
-- E2E-тесты #1 и #2 зелёные
-- Unit-тесты `computeReorder` (группы A, C, D) без изменений
+### 3.2. Adapter: переход на `e.result` и `sort: false`
+
+**Файл:** `src/composables/dnd/sortable.ts`
+
+**Изменения в `useSortableTaskList`:**
+
+1. Передать `sort: options.dueDate !== null` в `makeSortableList` (для unplanned `sort: false`).
+2. Заменить `e.to.index` на позицию из `e.result`:
+
+```ts
+const { items, isOver } = makeSortableList(listRef, {
+  id: options.dueDate ?? 'unplanned',
+  group: 'tasks',
+  items: tasks,
+  sort: options.dueDate !== null,
+  onDrop: (e) => {
+    e.preventDefault()
+
+    const taskId = e.keys[0] as string
+    const targetList = e.result.get(e.to.list)
+
+    if (!targetList) return
+
+    const newIndex = targetList.findIndex((t) => t.id === taskId)
+
+    if (newIndex === -1) return
+
+    void store.reorderTask(taskId, options.dueDate, newIndex)
+  },
+})
+```
+
+**Обоснование `e.result`:** каноническое post-drop состояние ([sortable.md#138, #169–181](../skills/vue-dnd-kit/references/sortable.md)), не зависит от недокументированной семантики `e.to.index`. Одинаково работает для same-day и cross-day. `findIndex` по списку одного дня — O(n) при n < 50, пренебрежимо на фоне `computeReorder` (O(allTasks)).
+
+**Обоснование `sort: false`:** unplanned сортируется по `creationDate`; пользовательский reorder внутри него бессмыслен. Запрет на уровне библиотеки чище, чем визуальный no-op через `computeReorder`. Cross-list drag (из unplanned в день и обратно) не затрагивается.
+
+### 3.3. TaskList.vue и TaskForm.vue — без изменений
+
+Adapter обрабатывает `dueDate: null` → `id: 'unplanned'`, `sort: false`. Cross-day drop работает через общий `group: 'tasks'`.
+
+### 3.4. E2E: добавить тест #6 (day → unplanned)
+
+**Файл:** `e2e/dnd-characterization.spec.ts`
+
+Добавить тест: seed задачи с dueDate, drag на `.task-list[data-due-date="unplanned"]`, ассерт на отсутствие в исходном дне и наличие в unplanned. Уплотнение исходного дня проверяется через порядок оставшихся задач.
+
+При добавлении теста обновить нумерацию во всех ссылках плана (фаза 2.4, фаза 3, фаза 4, фаза 5) и в комментариях spec-файла.
+
+### 3.5. Ручной smoke-check month-view
+
+Проверить вручную после реализации:
+- Cross-day drop в month-view работает
+- Drop из unplanned в день month-view работает
+- Mini-карточки корректно отображают placeholder/overlay
+
+Year-view использует `CalendarMonth` с `minimized=true` — slot не рендерится (`CalendarDay.vue:30`), DnD отсутствует. Smoke-check не требуется.
+
+### Критерий
+
+- E2E-тесты #1, #2, #5, #6 зелёные
+- E2E-тесты #3, #4 остаются красными (исправляются в фазе 4)
+- Unit-тесты `computeReorder` (все группы) без изменений
+- Unit-тесты store (`task.spec.ts`) без изменений
+- Ручной smoke-check month-view пройден
+- `pnpm check` + `pnpm test:unit` зелёные
 
 ---
 
@@ -664,8 +744,8 @@ test('keyboard drag: Space → ArrowDown → Space', async ({ page }) => {
 | Риск | Вероятность | Mitigation |
 |---|---|---|
 | `<label>` блокирует drag | Высокая | Проверить в пилоте; реструктурировать HTML |
-| `v-for :key="index"` → stale list id | Высокая | Отложено (O-1); до фазы 3 навигация по периодам во время drag — известное ограничение |
-| `id` read-once + component reuse | Средняя | Отложено (O-1); adapter передаёт `id: dueDate` |
+| `v-for :key="index"` → stale list id | ~~Высокая~~ Решено | F3-1: `:key="formatDateISO(dayDate)"` на CalendarDay |
+| `id` read-once + component reuse | ~~Средняя~~ Решено | F3-1: remount при смене даты; F3-2: `e.result` вместо `e.to.index` |
 | Adapter слишком тонкий → утечка library API | Низкая | Code review на каждой фазе; grep на импорты |
 | Bus factor 1 у vue-dnd-kit | Средняя | Adapter-слой локализует зависимость; замена библиотеки = переписать 4 файла |
 | Playwright touch-drag не работает | Высокая | Touch тестируем только в Chromium + CDP; для остальных — unit-тесты активации |
@@ -678,7 +758,7 @@ test('keyboard drag: Space → ArrowDown → Space', async ({ page }) => {
 - [x] Фаза 0: `@vue-dnd-kit/core` установлен; `docs/testing.md` обновлён; 5 characterization-тестов зелёные на HTML5 (решения и отклонения — раздел 0.4)
 - [ ] Фаза 1: Adapter-слой в `src/composables/dnd/`; `pnpm check` зелёный; ноль импортов библиотеки вне adapter
 - [ ] Фаза 2: Пилот (reorder внутри дня) работает; unit-тесты `computeReorder` и store без изменений; e2e #2 зелёный
-- [ ] Фаза 3: Cross-day и unplanned работают; e2e #1, #2 зелёные
+- [ ] Фаза 3: Cross-day и unplanned работают; e2e #1, #2, #5, #6 зелёные; #3, #4 красные (до фазы 4); unit-тесты computeReorder и store без изменений; month-view smoke-check пройден
 - [ ] Фаза 4: Action zones (корзина) работают; `movingItemId` удалён из store; e2e #4 зелёный
 - [ ] Фаза 5: `dragTask()` переписан на pointer; mid-drag ассерты; keyboard-drag сценарий; все 5 e2e зелёные в обеих модах
 
@@ -688,21 +768,9 @@ test('keyboard drag: Space → ArrowDown → Space', async ({ page }) => {
 
 ### O-1. `:key="index"` в CalendarWeek/CalendarMonth и read-once `id` у `makeSortableList`
 
-**Статус:** отложено до завершения фазы 2.
+**Статус:** решено (2026-11-10). Решение: `:key="formatDateISO(dayDate)"` на `<CalendarDay>` (см. F3-1 в фазе 3).
 
-**Суть.** В `CalendarWeek.vue:16` и `CalendarMonth.vue:29` используется
-`:key="index"`. Опция `id` у `makeSortableList` читается один раз при setup.
-При навигации по периодам Vue переиспользует компонент — `id` списка остаётся
-от предыдущего периода. Cross-day drop после навигации отправит задачу в «призрак» старого дня.
-
-**Почему отложено.** В фазе 2 (reorder внутри одного дня, фиксированный период) баг не проявляется. Решение требует выбора между несколькими вариантами с разными trade-off (per-ISO-дата key = remount компонентов; adapter с auto-id и маппингом = усложнение adapter-слоя). После пилота поведение Vue с этими компонентами будет проверено на фактах, и решение станет обоснованным.
-
-**Триггер возврата:** завершение фазы 2, перед началом фазы 3 (cross-day). Без решения этого вопроса фаза 3 не начинается.
-
-**Кандидаты на решение (зафиксированы для будущего выбора):**
-1. `:key="formatDateISO(dayDate)"` — тривиально, remount компонентов при навигации (потеря внутреннего state, для календаря незаметно)
-2. Adapter с per-instance `crypto.randomUUID()` и `Map<listId, dueDate>` — компоненты не пересоздаются, adapter усложняется
-3. Иной подход, который может подсказать пилот
+**Обоснование выбора:** remount при смене даты устраняет stale list ID и stale closure в onDrop по конструкции; соответствует дизайну библиотеки (`id` read-once); нулевые изменения в adapter; автоматически защищает будущий day-header droppable в фазе 4. Альтернатива (UUID + Map/getter) отвергнута как более сложная, хрупкая и не дающая преимуществ при реальных размерах данных.
 
 ---
 

@@ -21,11 +21,18 @@ export function useSortableTaskList(
     id: options.dueDate ?? 'unplanned',
     group: 'tasks',
     items: tasks,
+    sort: options.dueDate !== null,
     onDrop: (e) => {
       e.preventDefault()
 
       const taskId = e.keys[0] as string
-      const newIndex = e.to.index
+      const targetList = e.result.get(e.to.list)
+
+      if (!targetList) return
+
+      const newIndex = targetList.findIndex((t) => t.id === taskId)
+
+      if (newIndex === -1) return
 
       void store.reorderTask(taskId, options.dueDate, newIndex)
     },

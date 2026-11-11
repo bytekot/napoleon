@@ -1,6 +1,7 @@
 import { computed, type Ref, toValue, type MaybeRefOrGetter } from 'vue'
 import { makeSortableList, makeSortableItem } from '@vue-dnd-kit/core'
 import { useTaskStore } from '../../stores/task'
+import { buildReorderUpdates } from '../../utils/task'
 import type { Task } from '../../types/tasks'
 
 export function useSortableTaskList(
@@ -25,16 +26,9 @@ export function useSortableTaskList(
     onDrop: (e) => {
       e.preventDefault()
 
-      const taskId = e.keys[0] as string
-      const targetList = e.result.get(e.to.list)
+      const updates = buildReorderUpdates(e, options.dueDate)
 
-      if (!targetList) return
-
-      const newIndex = targetList.findIndex((t) => t.id === taskId)
-
-      if (newIndex === -1) return
-
-      void store.reorderTask(taskId, options.dueDate, newIndex)
+      void store.applyReorder(updates)
     },
   })
 

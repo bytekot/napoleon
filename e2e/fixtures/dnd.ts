@@ -75,7 +75,8 @@ export async function seedTasks(inputs: SeedTaskInput[]): Promise<SeededTask[]> 
   return seeded
 }
 
-// HTML5-версия хелпера (characterization-тесты до миграции на @vue-dnd-kit/core).
+// Pointer-based хелпер для DnD-жестов (mouse.down/move/up).
+// Совместим с @vue-dnd-kit/core (библиотека слушает pointer events).
 // Жест изолирован здесь: тесты ассертят только конечное состояние.
 export async function dragTask(
   page: Page,
@@ -102,7 +103,7 @@ export async function dragTask(
 
   await page.mouse.move(startX, startY)
   await page.mouse.down()
-  // Небольшое смещение после mouse.down инициирует HTML5-drag (dragstart)
+  // Небольшое смещение после mouse.down инициирует drag (pointerdown → pointermove)
   await page.mouse.move(startX + 5, startY + 5, { steps: 3 })
 
   if (options.midDragAssert) {
@@ -138,4 +139,24 @@ export async function taskIdsInList(page: Page, listSelector: string): Promise<s
   }
 
   return ids
+}
+
+export interface TaskFromApi {
+  id: string
+  name: string
+  dueDate: string | null
+  order: number | null
+  completed: boolean
+}
+
+// Возвращает все задачи из БД. Тесты фильтруют по seed-ids при необходимости;
+// общая БД очищается между прогона́ми, коллизии id маловероятны.
+export async function fetchTasks(): Promise<TaskFromApi[]> {
+  const response = await fetch(`${E2E_API_URL}/api/tasks`)
+
+  if (!response.ok) {
+    throw new Error(`GET /api/tasks failed: ${response.status}`)
+  }
+
+  return (await response.json()) as TaskFromApi[]
 }

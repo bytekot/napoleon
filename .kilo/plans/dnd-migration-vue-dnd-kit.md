@@ -661,63 +661,154 @@ const { isOver } = useDropZone(el, {
 
 ---
 
-## Фаза 5. Characterization → full e2e
+## Фаза 5. E2E-финализация
 
-### 5.1. Переписать `dragTask()` в `e2e/fixtures/dnd.ts`
+### Решения, принятые перед фазой 5
 
-**До (HTML5):**
+| # | Вопрос | Решение |
+|---|---|---|
+| F5-1 | Pointer-based `dragTask()` | Уже реализован в фазе 0 (D-5); скетч 5.1 — ошибка раннего планирования, переписывание не требуется |
+| F5-2 | Mid-drag ассерты на `[data-dnd-overlay]` / `[data-dnd-placeholder]` | Отклонено: тестирует библиотеку, а не наш код. Оставляем только `dnd-mode` хедера (наш класс) |
+| F5-3 | Keyboard-drag scope | Intra-list reorder, cross-day, cancel (Escape); ассерты через API (`GET /api/tasks`) |
+| F5-4 | Нумерация тестов | После фазы 3 их 6, а не 5; критерий обновлён |
+
+### 5.1. `dragTask()` — без изменений
+
+Хелпер в `e2e/fixtures/dnd.ts` уже pointer-based (mouse.down/move/up), имеет `targetPosition`,
+`midDragAssert`, `waitFor visible`. Совместим с @vue-dnd-kit/core (библиотека слушает pointer events).
+Скетч 5.1 был написан до реализации фазы 0 и предполагал HTML5 `dragTo()`; реальность оказалась иной.
+
+### 5.2. Mid-drag ассерты — оставить как есть
+
+Текущий ассерт на `dnd-mode` хедера (тест #3) проверяет **наше** состояние, не библиотечное.
+Ассерты на `[data-dnd-overlay]` / `[data-dnd-placeholder]` отклонены: это тестирование контракта
+третьей стороны, хрупкое при обновлениях библиотеки. Визуальная обратная связь (overlay, placeholder)
+проверяется ручным smoke-check, не e2e-ассертом.
+
+### 5.3. Keyboard-drag тесты
+
+**Файл:** `e2e/dnd-characterization.spec.ts`
+
+Добавить `test.describe('Keyboard DnD')` с тремя тестами. Все ассерты через `GET /api/tasks`
+(проверка `dueDate` и `order` в ответе), не через DOM-порядок.
+
+#### Тест K1: Intra-list reorder (Space → ArrowDown → Space)
+
 ```ts
-await from.dragTo(to)
-```
+test('keyboard: перемещает задачу вниз внутри дня', async ({ page }) => {
+  const thursday = weekDayISO(3)
+  const [k1, k2, k3] = await seedTasks([
+    { name: 'Key K1', dueDate: thursday, order: 0 },
+    { name: 'Key K2', dueDate: thursday, order: 1 },
+    { name: 'Key K3', dueDate: thursday, order: 2 },
+  ])
 
-**После (pointer):**
-```ts
-export async function dragTask(
-  page: Page,
-  fromTaskId: string,
-  toSelector: string,
-  options?: { midDragAssert?: () => Promise<void> },
-) {
-  const from = page.locator(`[data-task-id="${fromTaskId}"]`)
-  const to = page.locator(toSelector)
+  await page.goto('/?period=week')
 
-  await from.hover()
-  await page.mouse.down()
-  await to.hover({ steps: 10 })
+  const taskEl = page.locator(`[data-task-id="${k1.id}"]:not([data-dnd-placeholder])`)
+  await taskEl.focus()
+  await page.keyboard.press('Space')      // pickup
+  await page.keyboard.press('ArrowDown')  // move down one slot
+  await page.keyboard.press('Space')      // drop
 
-  if (options?.midDragAssert) {
-    await options.midDragAssert()
-  }
+  // Ассерт через API: k1 теперь после k2
+  const response = await fetch(`${E2E_API_URL}/api/tasks`)
+  const tasks = await response.json()
+  const thursdayTasks = tasks
+    .filter((t: any) => t.dueDate === thursday)
+    .sort((a: any, b: any) => a.order - b.order)
 
-  await page.mouse.up()
-}
-```
-
-### 5.2. Mid-drag ассерты
-
-```ts
-await dragTask(page, 'task-1', '.task-list[data-due-date="2026-11-09"]', {
-  midDragAssert: async () => {
-    await expect(page.locator('[data-dnd-overlay]')).toBeVisible()
-    await expect(page.locator('[data-dnd-placeholder]')).toBeVisible()
-  },
+  expect(thursdayTasks.map((t: any) => t.id)).toEqual([k2.id, k1.id, k3.id])
 })
 ```
 
-### 5.3. Keyboard-drag сценарий (тест a11y)
+#### Тест K2: Cross-day keyboard-drag
 
 ```ts
-test('keyboard drag: Space → ArrowDown → Space', async ({ page }) => {
-  await page.goto('/')
-  await page.locator('[data-task-id="task-1"]').focus()
-  await page.keyboard.press('Space')
-  await page.keyboard.press('ArrowDown')
-  await page.keyboard.press('Space')
-  // Assert new order
+test('keyboard: переносит задачу в другой день стрелками', async ({ page }) => {
+  const monday = weekDayISO(0)
+  const tuesday = weekDayISO(1)
+  const [kc] = await seedTasks([{ name: 'Key Cross', dueDate: monday, order: 0 }])
+
+  await page.goto('/?period=week')
+
+  const taskEl = page.locator(`[data-task-id="${kc.id}"]:not([data-dnd-placeholder])`)
+  await taskEl.focus()
+  await page.keyboard.press('Space')       // pickup
+  // Стрелки вправо/влево перемещают между списками группы (зависит от layout).
+  // Для week-view: ArrowRight → следующий день
+  await page.keyboard.press('ArrowRight')  // move to next day
+  await page.keyboard.press('Space')       // drop
+
+  // Ассерт через API: задача во вторник
+  const response = await fetch(`${E2E_API_URL}/api/tasks`)
+  const tasks = await response.json()
+  const moved = tasks.find((t: any) => t.id === kc.id)
+
+  expect(moved.dueDate).toBe(tuesday)
 })
 ```
 
-**Критерий:** все 5 characterization-тестов зелёные в обеих модах (pointer + keyboard).
+> **Примечание:** направление стрелок для cross-list зависит от визуального layout.
+> В week-view дни расположены слева направо → ArrowRight. Если библиотека использует
+> другую логику (например, порядок регистрации списков), направление уточнить при
+> реализации. Smoke-check вручную перед написанием теста.
+
+#### Тест K3: Cancel (Escape)
+
+```ts
+test('keyboard: отмена drag по Escape оставляет задачу на месте', async ({ page }) => {
+  const wednesday = weekDayISO(2)
+  const [ke1, ke2] = await seedTasks([
+    { name: 'Key Esc1', dueDate: wednesday, order: 0 },
+    { name: 'Key Esc2', dueDate: wednesday, order: 1 },
+  ])
+
+  let patchCount = 0
+  page.on('request', (req) => {
+    if (req.method() === 'PATCH' && req.url().includes('/api/tasks')) patchCount++
+  })
+
+  await page.goto('/?period=week')
+
+  const taskEl = page.locator(`[data-task-id="${ke1.id}"]:not([data-dnd-placeholder])`)
+  await taskEl.focus()
+  await page.keyboard.press('Space')       // pickup
+  await page.keyboard.press('ArrowDown')   // move
+  await page.keyboard.press('Escape')      // cancel
+
+  // Ассерт: PATCH не отправлен, порядок сохранён
+  await expect(page.locator('.calendar-header')).not.toHaveClass(/dnd-mode/)
+  expect(patchCount).toBe(0)
+
+  const wednesdayIds = await taskIdsInList(page, `.task-list[data-due-date="${wednesday}"]`)
+  expect(wednesdayIds.indexOf(ke1.id)).toBeLessThan(wednesdayIds.indexOf(ke2.id))
+})
+```
+
+### 5.4. Обновление комментариев в spec-файле
+
+Обновить комментарий в шапке `dnd-characterization.spec.ts`: распределение дней теперь
+включает keyboard-тесты. Keyboard-тесты используют свои дни/seeds, не пересекаясь с
+pointer-тестами (или используют те же дни, но изолированные seeds).
+
+### Критерий
+
+- Pointer-тесты #1–#6 зелёные (без изменений)
+- Keyboard-тесты K1, K2, K3 зелёные
+- Unit-тесты `diffOrders` и store (`applyReorder`) зелёные
+- `pnpm check` + `pnpm test:unit` зелёные
+- `pnpm test:e2e` полностью зелёный
+
+### 5.5. Решения, принятые при реализации фазы 5
+
+- **F5-5. Замена `computeReorder` на `e.result` + `diffOrders`.** `computeReorder` предполагал семантику pointer-drag (DOM-позиция с нормализацией), но keyboard-drag даёт позицию через `e.result` без нормализации. Вместо правки `computeReorder` (хак) — замена на прямое применение `e.result`. Библиотека берёт на себя вычисление позиции для обоих input-layers. `computeReorder` удалён вместе с тестами.
+- **F5-6. `diffOrders` экспортирован из `src/utils/task.ts`.** Простая функция: сравнивает `task.order !== index`, возвращает updates только для изменённых задач. Не включает `dueDate` — это ответственность adapter'а.
+- **F5-7. Unplanned список исключён из `diffOrders`.** Задачи в unplanned имеют `order: null`, `diffOrders` неприменим. Adapter пропускает `listId === 'unplanned'` в цикле `e.result`. При cross-day drop в unplanned update создаётся явно с `order: null, dueDate: null`.
+- **F5-8. Cross-day `dueDate` добавляется только к перемещённой задаче.** Остальные задачи в target-списке меняют только `order`. Это соответствует принципу «только изменяемые поля» в PATCH.
+- **F5-9. K1 использует вторник вместо четверга.** Test #3 (no-op) использует четверг и создаёт задачи, которые накапливаются в общей E2E-БД. `e.result` содержит все задачи списка, включая чужие, что ломает `diffOrders`. Вторник минимизирует конфликт (test #1 создаёт задачу в unplanned, не во вторнике).
+- **F5-10. K1 ждёт `dnd-mode` перед ArrowDown.** Без ожидания `toHaveClass(/dnd-mode/)` после Space тест нестабилен: ArrowDown может выполниться до активации drag. Аналогично, ожидание `not.toHaveClass(/dnd-mode/)` после финального Space гарантирует завершение drop.
+- **F5-11. Store: `reorderTask` → `applyReorder`.** Новая сигнатура принимает готовые `ReorderUpdate[]`, не вычисляет их. Optimistic update и rollback сохранены. Тесты переписаны.
 
 ---
 
@@ -734,7 +825,7 @@ test('keyboard drag: Space → ArrowDown → Space', async ({ page }) => {
 **Scope:** после стабилизации single-drag в e2e и production.
 
 **Изменения:**
-- Расширение `computeReorder` до массива id (сейчас алгоритм one-task)
+- Расширение adapter для поддержки multi-drag (`e.keys` содержит несколько id)
 - Backend: `PATCH /tasks` уже batch, contract совместим
 - UI: `selected` ref на `TaskItem` + Ctrl/Shift-click; rubber band — позже
 - Overlay: дефолтный pile из библиотеки
@@ -768,7 +859,7 @@ test('keyboard drag: Space → ArrowDown → Space', async ({ page }) => {
 - [x] Фаза 2: Пилот (reorder внутри дня) работает; unit-тесты `computeReorder` и store без изменений; e2e #2 зелёный
 - [x] Фаза 3: Cross-day и unplanned работают; e2e #1, #2, #5, #6 зелёные; #3, #4 красные (до фазы 4); unit-тесты computeReorder и store без изменений; month-view smoke-check пройден
 - [x] Фаза 4: Action zones (корзина) работают; `movingItemId` удалён из store; e2e #3, #4 зелёные (решения и отклонения — раздел 4.5)
-- [ ] Фаза 5: `dragTask()` переписан на pointer; mid-drag ассерты; keyboard-drag сценарий; все 5 e2e зелёные в обеих модах
+- [x] Фаза 5: Keyboard-drag тесты (K1–K3) добавлены; pointer-тесты #1–#6 без изменений; все e2e зелёные; `computeReorder` заменён на `e.result` + `diffOrders` (решения и отклонения — раздел 5, таблица F5-*)
 
 ---
 
@@ -789,4 +880,4 @@ test('keyboard drag: Space → ArrowDown → Space', async ({ page }) => {
 - Текущая реализация: `src/components/task/TaskItem.vue`, `src/components/tasks/TaskList.vue`, `src/components/action-area/ActionArea.vue`
 - Алгоритм: `src/utils/task/reordering.ts`, `docs/task-reordering.md`
 - Store: `src/stores/task.ts`, `src/stores/calendar.ts`
-- E2E: `e2e/smoke.spec.ts`, `playwright.config.ts`
+- E2E: `e2e/dnd-characterization.spec.ts`, `e2e/fixtures/dnd.ts`, `playwright.config.ts`

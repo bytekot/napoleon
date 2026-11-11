@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import * as api from '../api/tasks'
 import type { Task } from '../types/tasks'
 import type { RequestState } from '../types/request'
-import { computeReorder } from '../utils/task/reordering'
+import type { ReorderUpdate } from '../utils/task'
 
 interface TaskState {
   entities: Record<string, Task>
@@ -114,10 +114,7 @@ export const useTaskStore = defineStore('task', {
       }
     },
 
-    async reorderTask(taskId: string, newDueDate: string | null, newPosition: number) {
-      const allTasks = Object.values(this.entities)
-      const updates = computeReorder(allTasks, taskId, newDueDate, newPosition)
-
+    async applyReorder(updates: ReorderUpdate[]) {
       if (updates.length === 0) return
 
       const previousStates: Record<string, Task> = {}

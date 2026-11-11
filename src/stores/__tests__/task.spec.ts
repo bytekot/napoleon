@@ -161,7 +161,7 @@ describe('useTaskStore', () => {
     })
   })
 
-  describe('reorderTask', () => {
+  describe('applyReorder', () => {
     it('optimistic update применяется ко всем затронутым таскам', async () => {
       const moved = makeTask({ id: 'moved', dueDate: '2026-11-01', order: 0 })
       const sibling = makeTask({ id: 'sibling', dueDate: '2026-11-01', order: 1 })
@@ -172,7 +172,10 @@ describe('useTaskStore', () => {
       store.entities = { moved, sibling }
       store.ids = ['moved', 'sibling']
 
-      void store.reorderTask('moved', '2026-11-01', 2)
+      void store.applyReorder([
+        { id: 'moved', order: 1 },
+        { id: 'sibling', order: 0 },
+      ])
 
       await vi.waitFor(() => {
         expect(store.entities.moved!.order).toBe(1)
@@ -194,7 +197,10 @@ describe('useTaskStore', () => {
       store.entities = { moved, sibling }
       store.ids = ['moved', 'sibling']
 
-      await store.reorderTask('moved', '2026-11-01', 2)
+      await store.applyReorder([
+        { id: 'moved', order: 1 },
+        { id: 'sibling', order: 0 },
+      ])
 
       expect(store.entities.moved!.order).toBe(1)
       expect(store.entities.sibling!.order).toBe(0)
@@ -210,55 +216,22 @@ describe('useTaskStore', () => {
       store.entities = { moved, sibling }
       store.ids = ['moved', 'sibling']
 
-      await store.reorderTask('moved', '2026-11-01', 2)
+      await store.applyReorder([
+        { id: 'moved', order: 1 },
+        { id: 'sibling', order: 0 },
+      ])
 
       expect(store.entities.moved!.order).toBe(0)
       expect(store.entities.sibling!.order).toBe(1)
       expect(store.request.status).toBe('error')
     })
 
-    it('no-op: запрос не отправляется, состояние не меняется', async () => {
-      const moved = makeTask({ id: 'moved', dueDate: '2026-11-01', order: 0 })
-      const sibling = makeTask({ id: 'sibling', dueDate: '2026-11-01', order: 1 })
-
+    it('no-op: пустой массив не отправляет запрос', async () => {
       const store = useTaskStore()
 
-      store.entities = { moved, sibling }
-      store.ids = ['moved', 'sibling']
-
-      await store.reorderTask('moved', '2026-11-01', 0)
+      await store.applyReorder([])
 
       expect(mockApi.editTasks).not.toHaveBeenCalled()
-      expect(store.entities.moved!.order).toBe(0)
-      expect(store.entities.sibling!.order).toBe(1)
-    })
-
-    it('последовательный reorder считается от optimistic-состояния', async () => {
-      mockApi.editTasks.mockImplementation(neverResolve)
-
-      const a = makeTask({ id: 'a', dueDate: '2026-11-01', order: 0 })
-      const b = makeTask({ id: 'b', dueDate: '2026-11-01', order: 1 })
-      const c = makeTask({ id: 'c', dueDate: '2026-11-01', order: 2 })
-
-      const store = useTaskStore()
-
-      store.entities = { a, b, c }
-      store.ids = ['a', 'b', 'c']
-
-      void store.reorderTask('c', '2026-11-01', 0)
-
-      await vi.waitFor(() => {
-        expect(store.entities.c!.order).toBe(0)
-      })
-
-      void store.reorderTask('b', '2026-11-01', 0)
-
-      await vi.waitFor(() => {
-        expect(store.entities.b!.order).toBe(0)
-      })
-
-      expect(store.entities.c!.order).toBe(1)
-      expect(store.entities.a!.order).toBe(2)
     })
 
     it('cross-date move: обновляет dueDate и order', async () => {
@@ -271,7 +244,10 @@ describe('useTaskStore', () => {
       store.entities = { moved, target }
       store.ids = ['moved', 'target']
 
-      void store.reorderTask('moved', '2026-11-02', 0)
+      void store.applyReorder([
+        { id: 'moved', order: 0, dueDate: '2026-11-02' },
+        { id: 'target', order: 1 },
+      ])
 
       await vi.waitFor(() => {
         expect(store.entities.moved!.dueDate).toBe('2026-11-02')
